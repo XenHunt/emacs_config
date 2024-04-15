@@ -14,17 +14,18 @@
   - [[#load-scripts][Load Scripts]]
   - [[#defaults][Defaults]]
   - [[#smartparens][Smartparens]]
+  - [[#general-keybindigs][General Keybindigs]]
+  - [[#expand-region][Expand-region]]
   - [[#evil-mode][Evil-Mode]]
-    - [[#evil-embrace][Evil-Embrace]]
+    - [[#smartparens-0][Smartparens]]
     - [[#surround][Surround]]
+    - [[#evil-embrace][Evil-Embrace]]
     - [[#diff][Diff]]
     - [[#nerd-commenter][Nerd-Commenter]]
     - [[#visulstar][Visulstar]]
     - [[#раскладка][Раскладка]]
   - [[#diminish][Diminish]]
-  - [[#general-keybindigs][General Keybindigs]]
   - [[#exec-path-from-shell][Exec-path-from-shell]]
-  - [[#expand-region][Expand-region]]
   - [[#editor-config][Editor-Config]]
   - [[#emacs][Emacs]]
   - [[#bufler][Bufler]]
@@ -180,129 +181,6 @@
   ;; load default config
   (require 'smartparens-config))
 
-(use-package evil-smartparens
-  :after smartparens-mode
-  :config
-  (add-hook 'smartparens-enabled-hook #'evil-smartparens-mode)
-  )
-
-#+end_src
-** Evil-Mode
-:PROPERTIES:
-:CUSTOM_ID: evil-mode
-:END:
-#+begin_src emacs-lisp
-(use-package evil
-  :init
-  (setq evil-want-integration t)
-  (setq evil-want-keybinding nil)
-  (setq evil-vsplit-window-right t)
-  (setq evil-split-window-below t)
-  (evil-mode)
-  :config
-  (evil-define-key 'normal 'global (kbd "g c") 'comment-line)
-  (evil-define-key 'visual 'global (kbd "g c") 'comment-dwim)
-  (evil-define-key 'normal org-mode-map (kbd "RET") 'org-babel-execute-src-block)
-  (evil-define-key 'normal org-mode-map (kbd "C-M-<down>") 'org-promote-subtree)
-  (evil-set-leader nil (kbd "SPC"))
-  (evil-define-key 'normal org-mode-map (kbd "C-M-<up>") 'org-demote-subtree)
-  (evil-set-undo-system 'undo-redo)
-  )
-(elpaca-wait)
-(use-package evil-collection :ensure t :demand t
-  :after evil
-  :config
-  (setq evil-collection-mode-lis '(dashboard dired ibuffer))
-  (evil-collection-init))
-(use-package evil-tutor :ensure t :demand t)
-(elpaca-wait)
-
-(after! 'evil-maps
-  (define-key evil-motion-state-map (kbd "SPC") nil)
-  (define-key evil-motion-state-map (kbd "RET") nil)
-  (define-key evil-motion-state-map (kbd "TAB") nil)
-  (define-key evil-motion-state-map (kbd "C-o") nil)
-  )
-;; Setting RETURN key in org-mode to follow links
-(setq org-return-follows-link  t)
-
-
-#+end_src
-*** Evil-Embrace
-:PROPERTIES:
-:CUSTOM_ID: evil-embrace
-:END:
-#+begin_src emacs-lisp
-(use-package evil-embrace
-  :commands embrace-add-pair embrace-add-pair-regexp
-  :hook (LaTeX-mode . embrace-LaTeX-mode-hook)
-  :hook (org-mode . embrace-org-mode-hook)
-  :hook (ruby-mode . embrace-ruby-mode-hook)
-  :hook (emacs-lisp-mode . embrace-emacs-lisp-mode-hook)
-  ;; :hook ((c++-mode c++-ts-mode rustic-mode csharp-mode java-mode swift-mode typescript-mode)
-  ;;        . +evil-embrace-angle-bracket-modes-hook-h)
-  ;; :hook (scala-mode . +evil-embrace-scala-mode-hook-h)
-  :init
-  (after! evil-surround
-    (evil-embrace-enable-evil-surround-integration))
-)
-#+end_src
-*** Surround
-:PROPERTIES:
-:CUSTOM_ID: surround
-:END:
-#+begin_src emacs-lisp
-(use-package evil-surround
-  :commands (global-evil-surround-mode
-             evil-surround-edit
-             evil-Surround-edit
-             evil-surround-region)
-  :config (global-evil-surround-mode 1))
-
-#+end_src
-*** Diff
-:PROPERTIES:
-:CUSTOM_ID: diff
-:END:
-#+begin_src emacs-lisp
-(use-package evil-quick-diff
-  :commands (evil-quick-diff evil-quick-diff-cancel))
-#+end_src
-*** Nerd-Commenter
-:PROPERTIES:
-:CUSTOM_ID: nerd-commenter
-:END:
-#+begin_src emacs-lisp
-(use-package evil-nerd-commenter
-  :commands (evilnc-comment-operator
-             evilnc-inner-comment
-             evilnc-outer-commenter)
-  :general ([remap comment-line] #'evilnc-comment-or-uncomment-lines))
-#+end_src
-*** Visulstar
-:PROPERTIES:
-:CUSTOM_ID: visulstar
-:END:
-#+begin_src emacs-lisp
-(use-package evil-visualstar
-  :commands (evil-visualstar/begin-search
-             evil-visualstar/begin-search-forward
-             evil-visualstar/begin-search-backward)
-  :init
-  (evil-define-key* 'visual 'global
-    "*" #'evil-visualstar/begin-search-forward
-    "#" #'evil-visualstar/begin-search-backward))
-#+end_src
-*** Раскладка
-:PROPERTIES:
-:CUSTOM_ID: раскладка
-:END:
-** Diminish 
-:PROPERTIES:
-:CUSTOM_ID: diminish
-:END:
-#+begin_src emacs-lisp
-(use-package diminish)
 #+end_src
 ** General Keybindigs
 :PROPERTIES:
@@ -422,6 +300,161 @@
   )
 (elpaca-wait)
 #+end_src
+** Expand-region
+:PROPERTIES:
+:CUSTOM_ID: expand-region
+:END:
+#+begin_src emacs-lisp
+(use-package expand-region
+  :ensure (:depth nil)
+  :config
+  (leader-key
+    "=" '(er/expand-region :wk "Expand region")
+    "-" '(er/contract-region :wk "Contract region")
+    )
+  )
+(elpaca-wait)
+#+end_src
+** Evil-Mode
+:PROPERTIES:
+:CUSTOM_ID: evil-mode
+:END:
+#+begin_src emacs-lisp
+(use-package evil
+  :init
+  (setq evil-want-integration t)
+  (setq evil-want-keybinding nil)
+  (setq evil-vsplit-window-right t)
+  (setq evil-split-window-below t)
+  (evil-mode)
+  :config
+  (evil-define-key 'normal 'global (kbd "g c") 'comment-line)
+  (evil-define-key 'visual 'global (kbd "g c") 'comment-dwim)
+  (evil-define-key 'normal org-mode-map (kbd "RET") 'org-babel-execute-src-block)
+  (evil-define-key 'normal org-mode-map (kbd "C-M-<down>") 'org-promote-subtree)
+  (evil-set-leader nil (kbd "SPC"))
+  (evil-define-key 'normal org-mode-map (kbd "C-M-<up>") 'org-demote-subtree)
+  (evil-set-undo-system 'undo-redo)
+  )
+(elpaca-wait)
+(use-package evil-collection :ensure t :demand t
+  :after evil
+  :config
+  (setq evil-collection-mode-lis '(dashboard dired ibuffer magit vterm bufler corfu consult dashboard elpaca imenu imenu-list org org-roam python typescript-mode))
+  (evil-collection-init))
+(use-package evil-tutor :ensure t :demand t)
+(elpaca-wait)
+
+(after! 'evil-maps
+  (define-key evil-motion-state-map (kbd "SPC") nil)
+  (define-key evil-motion-state-map (kbd "RET") nil)
+  (define-key evil-motion-state-map (kbd "TAB") nil)
+  (define-key evil-motion-state-map (kbd "C-o") nil)
+  )
+;; Setting RETURN key in org-mode to follow links
+(setq org-return-follows-link  t)
+
+#+end_src
+*** Smartparens
+:PROPERTIES:
+:CUSTOM_ID: smartparens-0
+:END:
+#+begin_src emacs-lisp
+(use-package evil-smartparens
+  :after smartparens-mode
+  :config
+  (add-hook 'smartparens-enabled-hook #'evil-smartparens-mode)
+  )
+#+end_src
+*** Surround
+:PROPERTIES:
+:CUSTOM_ID: surround
+:END:
+#+begin_src emacs-lisp
+(use-package evil-surround
+  :commands (global-evil-surround-mode
+             evil-surround-edit
+             evil-Surround-edit
+             evil-surround-region)
+  :config (global-evil-surround-mode 1))
+
+#+end_src
+*** Evil-Embrace
+:PROPERTIES:
+:CUSTOM_ID: evil-embrace
+:END:
+#+begin_src emacs-lisp
+
+(use-package embrace
+
+  :ensure (:depth nil)
+  )
+(elpaca-wait)
+
+
+(use-package evil-embrace
+  :commands embrace-add-pair embrace-add-pair-regexp
+  :hook (LaTeX-mode . embrace-LaTeX-mode-hook)
+  :hook (org-mode . embrace-org-mode-hook)
+  :hook (ruby-mode . embrace-ruby-mode-hook)
+  :hook (emacs-lisp-mode . embrace-emacs-lisp-mode-hook)
+  ;; :hook ((c++-mode c++-ts-mode rustic-mode csharp-mode java-mode swift-mode typescript-mode)
+  ;;        . +evil-embrace-angle-bracket-modes-hook-h)
+  ;; :hook (scala-mode . +evil-embrace-scala-mode-hook-h)
+  :init
+  (after! evil-surround
+    (evil-embrace-enable-evil-surround-integration))
+  )
+(elpaca-wait)
+#+end_src
+*** Diff
+:PROPERTIES:
+:CUSTOM_ID: diff
+:END:
+#+begin_src emacs-lisp
+;; (use-package evil-quick-diff
+;;   :commands (evil-quick-diff evil-quick-diff-cancel))
+#+end_src
+*** Nerd-Commenter
+:PROPERTIES:
+:CUSTOM_ID: nerd-commenter
+:END:
+#+begin_src emacs-lisp
+(use-package evil-nerd-commenter
+  :commands (evilnc-comment-operator
+             evilnc-inner-comment
+             evilnc-outer-commenter)
+  ;; :general ([remap comment-line] #'evilnc-comment-or-uncomment-lines)
+)
+#+end_src
+*** Visulstar
+:PROPERTIES:
+:CUSTOM_ID: visulstar
+:END:
+#+begin_src emacs-lisp
+(use-package evil-visualstar
+  :commands (evil-visualstar/begin-search
+             evil-visualstar/begin-search-forward
+             evil-visualstar/begin-search-backward)
+  :init
+  (evil-define-key* 'visual 'global
+    "*" #'evil-visualstar/begin-search-forward
+    "#" #'evil-visualstar/begin-search-backward))
+#+end_src
+*** Раскладка
+:PROPERTIES:
+:CUSTOM_ID: раскладка
+:END:
+#+begin_src emacs-lisp
+
+#+end_src
+** Diminish 
+:PROPERTIES:
+:CUSTOM_ID: diminish
+:END:
+#+begin_src emacs-lisp
+(use-package diminish)
+#+end_src
 ** Exec-path-from-shell 
 :PROPERTIES:
 :CUSTOM_ID: exec-path-from-shell
@@ -430,19 +463,6 @@
 (use-package exec-path-from-shell
   :config
   (exec-path-from-shell-initialize))
-#+end_src
-** Expand-region
-:PROPERTIES:
-:CUSTOM_ID: expand-region
-:END:
-#+begin_src emacs-lisp
-(use-package expand-region
-  :config
-  (leader-key
-    "=" '(er/expand-region :wk "Expand region")
-    "-" '(er/contract-region :wk "Contract region")
-    )
-  )
 #+end_src
 ** Editor-Config 
 :PROPERTIES:
@@ -723,6 +743,7 @@
 :END:
 #+begin_src emacs-lisp
 (use-package hl-todo
+  :ensure (:depth nil)
   :hook ((org-mode . hl-todo-mode)
          (prog-mode . hl-todo-mode))
   :config
