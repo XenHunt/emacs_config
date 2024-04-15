@@ -16,7 +16,9 @@
   - [[#smartparens][Smartparens]]
   - [[#general-keybindigs][General Keybindigs]]
   - [[#expand-region][Expand-region]]
+  - [[#aggresive-indent][Aggresive Indent]]
   - [[#evil-mode][Evil-Mode]]
+    - [[#collection][Collection]]
     - [[#smartparens-0][Smartparens]]
     - [[#surround][Surround]]
     - [[#evil-embrace][Evil-Embrace]]
@@ -315,6 +317,17 @@
   )
 (elpaca-wait)
 #+end_src
+** Aggresive Indent
+:PROPERTIES:
+:CUSTOM_ID: aggresive-indent
+:END:
+#+begin_src emacs-lisp
+(use-package aggressive-indent
+  ;; :hook (prog-mode . aggresive-indent)
+  :config
+  (add-hook 'prog-mode-hook #'aggressive-indent-mode)
+  )
+  #+end_src
 ** Evil-Mode
 :PROPERTIES:
 :CUSTOM_ID: evil-mode
@@ -336,14 +349,25 @@
   (evil-define-key 'normal org-mode-map (kbd "C-M-<up>") 'org-demote-subtree)
   (evil-set-undo-system 'undo-redo)
   )
+(use-package evil-tutor :ensure t :demand t)
 (elpaca-wait)
+
+;; Setting RETURN key in org-mode to follow links
+(setq org-return-follows-link  t)
+
+#+end_src
+*** Collection
+:PROPERTIES:
+:CUSTOM_ID: collection
+:END:
+#+begin_src emacs-lisp
 (use-package evil-collection :ensure t :demand t
   :after evil
   :config
   (setq evil-collection-mode-lis '(dashboard dired ibuffer magit vterm bufler corfu consult dashboard elpaca imenu imenu-list org org-roam python typescript-mode))
   (evil-collection-init))
-(use-package evil-tutor :ensure t :demand t)
 (elpaca-wait)
+
 
 (after! 'evil-maps
   (define-key evil-motion-state-map (kbd "SPC") nil)
@@ -351,8 +375,6 @@
   (define-key evil-motion-state-map (kbd "TAB") nil)
   (define-key evil-motion-state-map (kbd "C-o") nil)
   )
-;; Setting RETURN key in org-mode to follow links
-(setq org-return-follows-link  t)
 
 #+end_src
 *** Smartparens
