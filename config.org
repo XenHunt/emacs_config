@@ -73,6 +73,9 @@
   - [[#dired-open][Dired-open]]
   - [[#peep-dired][Peep-Dired]]
 - [[#projectile][Projectile]]
+- [[#pdf-tools][PDF-Tools]]
+- [[#nov-mode][Nov-mode]]
+- [[#elfeed][Elfeed]]
 - [[#imenu][Imenu]]
   - [[#imenu-list][Imenu-List]]
 - [[#ibuffer][IBuffer]]
@@ -169,6 +172,14 @@
 			   (setq-local electric-pair-inhibit-predicate
 				       `(lambda (c)
 					  (if (char-equal c ?<) t (,electric-pair-inhibit-predicate c))))))
+;; (defun my-scroll-precision-mode ()
+
+;;   (unless (memq major-mode '(pdf-view-mode)) ; замените mode1 и mode2 на режимы, в которых не нужно включать display-line-numbers-mode
+;;     (pixel-scroll-precision-mode)))
+
+;; (add-hook 'prog-mode-hook 'my-scroll-precision-mode)
+;; (add-hook 'text-mode-hook 'my-scroll-precision-mode)
+(setq pixel-scroll-precision-mode 1)
 #+end_src
 ** Smartparens 
 :PROPERTIES:
@@ -463,7 +474,7 @@
     "*" #'evil-visualstar/begin-search-forward
     "#" #'evil-visualstar/begin-search-backward))
 #+end_src
-*** Раскладка
+*** TODO Раскладка
 :PROPERTIES:
 :CUSTOM_ID: раскладка
 :END:
@@ -585,9 +596,15 @@
 :END:
 
 #+begin_src emacs-lisp
-  (global-display-line-numbers-mode 1)
-  (global-visual-line-mode 1)
-  (setq display-line-numbers-type 'relative) 
+(defun my-enable-line-numbers ()
+  (unless (memq major-mode '(pdf-view-mode)) ; замените mode1 и mode2 на режимы, в которых не нужно включать display-line-numbers-mode
+    (display-line-numbers-mode)))
+(add-hook 'prog-mode-hook 'my-enable-line-numbers)
+(add-hook 'text-mode-hook 'my-enable-line-numbers)
+
+;; (global-display-line-numbers-mode 1)
+(global-visual-line-mode 1)
+(setq display-line-numbers-type 'relative) 
 #+end_src
 
 ** Nerd-Icons 
@@ -1174,6 +1191,108 @@
   ;; (pushnew! projectile-globally-ignored-directories "^node_modules$" "^flow-typed$")
   (projectile-mode 1))
 #+end_src
+* PDF-Tools
+:PROPERTIES:
+:CUSTOM_ID: pdf-tools
+:END:
+#+begin_src emacs-lisp
+(use-package pdf-tools
+  :mode ("\\.pdf\\'" . pdf-view-mode)
+  :magic ("%PDF" . pdf-view-mode)
+  :config
+  (pdf-tools-install)  ; Standard activation command
+  (pdf-loader-install) ; On demand loading, leads to faster startup time
+  )
+#+end_src
+* Nov-mode
+:PROPERTIES:
+:CUSTOM_ID: nov-mode
+:END:
+#+begin_src emacs-lisp
+(use-package nov
+  :ensure t
+  :mode ("\\.epub\\'" . nov-mode) 
+  )
+;; (use-package nov-xwidget
+;;   :ensure (:host github :repo "chenyanming/nov-xwidget"
+;; 		 :files (:defaults "*.el"))
+;;   :demand t
+;;   :after nov
+;;   :config
+;;   (define-key nov-mode-map (kbd "o") 'nov-xwidget-view)
+;;   (add-hook 'nov-mode-hook 'nov-xwidget-inject-all-files))
+#+end_src
+* Elfeed
+:PROPERTIES:
+:CUSTOM_ID: elfeed
+:END:
+#+begin_src emacs-lisp
+(use-package elfeed
+  :commands elfeed
+  :init
+  (setq elfeed-db-directory (concat user-emacs-directory "elfeed/db/")
+        elfeed-enclosure-default-dir (concat user-emacs-directory "elfeed/enclosures/"))
+  :config
+  (add-hook 'elfeed-search-mode-hook #'elfeed-update)
+  (make-directory elfeed-db-directory t)
+
+  (setq elfeed-search-filter "@2-week-ago "
+        elfeed-show-entry-switch #'pop-to-buffer
+        ;; elfeed-show-entry-delete #'+rss/delete-pane
+        shr-max-image-proportion 0.8)
+
+  (setq elfeed-search-feed-face ":foreground #ffffff :weight bold"
+	elfeed-feeds 
+        '(
+	  ("https://www.reddit.com/r/linux.rss" eng reddit linux)
+	  ;; ("https://www.reddit.com/r/commandline.rss" reddit commandline)
+	  ;; ("https://www.reddit.com/r/distrotube.rss" reddit distrotube)
+	  ("https://www.reddit.com/r/emacs.rss" eng reddit emacs)
+
+	  ("https://www.reddit.com/r/org-mode.rss" eng reddit emacs org-mode)
+	  ;; ("https://www.gamingonlinux.com/article_rss.php" gaming linux)
+	  ;; ("https://hackaday.com/blog/feed/" hackaday linux)
+	  ;; ("https://opensource.com/feed" opensource linux)
+	  ;; ("https://linux.softpedia.com/backend.xml" softpedia linux)
+	  ;; ("https://itsfoss.com/feed/" itsfoss linux)
+	  ;; ("https://www.zdnet.com/topic/linux/rss.xml" zdnet linux)
+	  ;; ("https://www.phoronix.com/rss.php" phoronix linux)
+	  ;; ("http://feeds.feedburner.com/d0od" omgubuntu linux)
+	  ;; ("https://www.computerworld.com/index.rss" computerworld linux)
+	  ;; ("https://www.networkworld.com/category/linux/index.rss" networkworld linux)
+	  ;; ("https://www.techrepublic.com/rssfeeds/topic/open-source/" techrepublic linux)
+	  ;; ("https://betanews.com/feed" betanews linux)
+	  ;; ("http://lxer.com/module/newswire/headlines.rss" lxer linux)
+	  ;; ("https://distrowatch.com/news/dwd.xml" distrowatch linux)
+	  ;; ("habrahabr.ru/rss/hubs/webdev/articles/all" habr web-development)
+	  ;; ("habrahabr.ru/rss/hubs/all" habr test)
+	  ;; ("habrahabr.ru/rss/hubs/open_source/articles/rated25" habr opensource)
+	  ("https://habr.com/ru/rss/hubs/python/articles/rated25/?fl=ru" rus habr python)
+	  ("https://habr.com/ru/rss/hubs/open_source/articles/rated25/?fl=ru" rus habr open_source)
+	  ("https://habr.com/ru/rss/hubs/machine_learning/articles/rated25/?fl=ru" rus habr machine_learning)
+	  ("https://habr.com/ru/rss/hubs/artificial_intelligence/articles/rated25/?fl=ru" rus habr ai)
+	  ("https://habr.com/ru/rss/hubs/linux/articles/rated25/?fl=ru" rus habr linux)
+	  ("https://habr.com/ru/rss/hubs/algorithms/articles/rated25/?fl=ru" rus habr algorithms)
+	  ("https://habr.com/ru/rss/hubs/linux_dev/articles/rated25/?fl=ru" rus habr linux)
+	  ("https://habr.com/ru/rss/hubs/webdev/articles/rated25/?fl=ru" rus habr web_development)
+	  ("https://habr.com/ru/rss/hubs/reactjs/articles/rated25/?fl=ru" rus habr web_development react)
+	  ("https://habr.com/ru/rss/hubs/angular/articles/rated25/?fl=ru" rus habr web_development angular)
+	  ("https://habr.com/ru/rss/hubs/vuejs/articles/rated25/?fl=ru" rus habr web_development vuejs)
+	  ("https://habr.com/ru/rss/hubs/javascript/articles/rated25/?fl=ru" rus habr web_development javascript)
+	  ("https://habr.com/ru/rss/hubs/typescript/articles/rated25/?fl=ru" rus habr web_development typescript)
+	  ))
+  )
+
+
+(use-package elfeed-goodies
+  :init
+  (elfeed-goodies/setup)
+  :config
+  (setq elfeed-goodies/entry-pane-size 0.5))
+#+end_src
+
+#+RESULTS:
+
 * Imenu 
 :PROPERTIES:
 :CUSTOM_ID: imenu
@@ -2176,4 +2295,5 @@ import pandas
     (add-to-list 'completion-at-point-functions 'codeium-completion-at-point)
     (message "Codeium auto complete on")))
 #+end_src
+
 
