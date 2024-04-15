@@ -1,8 +1,7 @@
-
 #+TITLE:XenHunt Config
 #+AUTHOR: Evgeny Berlizov (XenHunt)
 #+DESCRIPTION: XenHunt personal config for Emacs
-#+STARTUP: showeverything
+#+STARTUP: content
 
 * Содержание 
 :PROPERTIES:
@@ -13,10 +12,22 @@
   - [[#fast-loading][Fast Loading]]
   - [[#scripts][Scripts]]
   - [[#load-scripts][Load Scripts]]
+  - [[#defaults][Defaults]]
+  - [[#smartparens][Smartparens]]
   - [[#evil-mode][Evil-Mode]]
+    - [[#evil-embrace][Evil-Embrace]]
+    - [[#surround][Surround]]
+    - [[#diff][Diff]]
+    - [[#nerd-commenter][Nerd-Commenter]]
+    - [[#visulstar][Visulstar]]
+    - [[#раскладка][Раскладка]]
   - [[#diminish][Diminish]]
   - [[#general-keybindigs][General Keybindigs]]
+  - [[#exec-path-from-shell][Exec-path-from-shell]]
+  - [[#expand-region][Expand-region]]
+  - [[#editor-config][Editor-Config]]
   - [[#emacs][Emacs]]
+  - [[#bufler][Bufler]]
 - [[#graphical-beauty][Graphical Beauty]]
   - [[#fonts][Fonts]]
   - [[#removing-bars][Removing Bars]]
@@ -28,7 +39,12 @@
   - [[#dashboard][Dashboard]]
   - [[#rainbow-mode][Rainbow-mode]]
   - [[#rainbow-delimiters][Rainbow Delimiters]]
+  - [[#rainbow-identifiers][Rainbow Identifiers]]
+  - [[#prismel][Prism.el]]
+  - [[#ligatures][Ligatures]]
 - [[#org-mode][Org-Mode]]
+  - [[#hover-links][Hover Links]]
+  - [[#org-appear][Org-Appear]]
   - [[#toc][Toc]]
   - [[#highlight-todo][Highlight TODO]]
   - [[#org-bullets][Org-Bullets]]
@@ -40,10 +56,13 @@
   - [[#org-fragtog][Org-Fragtog]]
   - [[#ob-async][OB-Async]]
   - [[#org-babel-load-languages][ORG-Babel-Load-Languages]]
+  - [[#org-download][Org-Download]]
+  - [[#org-ref][Org-Ref]]
+  - [[#раскладка-0][Раскладка]]
 - [[#git-packages][Git Packages]]
   - [[#git-time-machine][Git-Time Machine]]
   - [[#magit][Magit]]
-- [[#defaults][Defaults]]
+  - [[#magit-todos][Magit-TODOS]]
 - [[#sudo-edit][SUDO EDIT]]
 - [[#which-key][Which-key]]
 - [[#dired][Dired]]
@@ -57,7 +76,6 @@
   - [[#nerd-icons-ibuffer][Nerd-Icons-IBuffer]]
 - [[#completion][Completion]]
   - [[#flycheck][Flycheck]]
-  - [[#lsp][LSP]]
   - [[#corfu][Corfu]]
     - [[#nerd-icons-0][Nerd-Icons]]
   - [[#dabbrev][Dabbrev]]
@@ -66,14 +84,38 @@
   - [[#vertico][Vertico]]
   - [[#marginalia][Marginalia]]
   - [[#consult][Consult]]
+  - [[#yasnippet][Yasnippet]]
 - [[#shell][Shell]]
   - [[#vterm][VTerm]]
 - [[#direnv][Direnv]]
 - [[#programming-language][Programming Language]]
   - [[#lsp-mode][LSP-Mode]]
   - [[#dap-mode][DAP-Mode]]
+  - [[#formater][Formater]]
   - [[#python][Python]]
+    - [[#blacken][Blacken]]
+    - [[#py-isort][Py-Isort]]
+    - [[#lsp-pyright][LSP-Pyright]]
+    - [[#pip-env][Pip-env]]
+    - [[#раскладка-1][Раскладка]]
   - [[#jupyter][Jupyter]]
+  - [[#web][WEB]]
+    - [[#add-node-modules-path][add-node-modules-path]]
+    - [[#web-mode][WEB-Mode]]
+    - [[#npm-mode][NPM-Mode]]
+    - [[#prettier-js][Prettier-JS]]
+    - [[#js2-mode][JS2-Mode]]
+    - [[#typescript][Typescript]]
+      - [[#раскладка-2][Раскладка]]
+    - [[#skewer][Skewer]]
+    - [[#tide][Tide]]
+    - [[#multi-web-mode][Multi-Web-Mode]]
+    - [[#json][JSON]]
+    - [[#yaml][Yaml]]
+    - [[#treesitter][Treesitter]]
+      - [[#treesitter-auto][Treesitter-auto]]
+      - [[#treesitter-0][Treesitter]]
+- [[#codeium][Codeium]]
 :END:
 
 * Base
@@ -105,41 +147,157 @@
 (require 'buffer-move)
 (require 'macros)
 #+end_src
+
+#+RESULTS:
+: macros
+
+** Defaults 
+:PROPERTIES:
+:CUSTOM_ID: defaults
+:END:
+#+begin_src emacs-lisp
+(delete-selection-mode 1)    ;; You can select text and delete it by typing.
+;; (electric-indent-mode -1)    ;; Turn off the weird indenting that Emacs does by default.
+(electric-pair-mode 1)       ;; Turns on automatic parens pairing
+(global-auto-revert-mode t)  ;; Automatically show changes if the file has changed
+(setq org-edit-src-content-indentation 0) ;; Set src block automatic indent to 0 instead of 2.
+(setq confirm-kill-emacs 'y-or-n-p)
+(add-hook 'org-mode-hook (lambda ()
+			   (setq-local electric-pair-inhibit-predicate
+				       `(lambda (c)
+					  (if (char-equal c ?<) t (,electric-pair-inhibit-predicate c))))))
+#+end_src
+** Smartparens 
+:PROPERTIES:
+:CUSTOM_ID: smartparens
+:END:
+#+begin_src emacs-lisp
+;; (use-package smartparens-config)
+(use-package smartparens-mode
+  :ensure smartparens  ;; install the package
+  :hook (prog-mode text-mode markdown-mode) ;; add `smartparens-mode` to these hooks
+  :config
+  ;; load default config
+  (require 'smartparens-config))
+
+(use-package evil-smartparens
+  :after smartparens-mode
+  :config
+  (add-hook 'smartparens-enabled-hook #'evil-smartparens-mode)
+  )
+
+#+end_src
 ** Evil-Mode
 :PROPERTIES:
 :CUSTOM_ID: evil-mode
 :END:
 #+begin_src emacs-lisp
-    (use-package evil
-      :init
-      (setq evil-want-integration t)
-      (setq evil-want-keybinding nil)
-      (setq evil-vsplit-window-right t)
-      (setq evil-split-window-below t)
-      (evil-mode)
-      :config
-      (evil-define-key 'normal 'global (kbd "g c") 'comment-line)
-      (evil-define-key 'visual 'global (kbd "g c") 'comment-dwim)
-      )
-    (elpaca-wait)
-    (use-package evil-collection :ensure t :demand t
-      :after evil
-      :config
-      (setq evil-collection-mode-lis '(dashboard dired ibuffer))
-      (evil-collection-init))
-    (use-package evil-tutor :ensure t :demand t)
-    (elpaca-wait)
+(use-package evil
+  :init
+  (setq evil-want-integration t)
+  (setq evil-want-keybinding nil)
+  (setq evil-vsplit-window-right t)
+  (setq evil-split-window-below t)
+  (evil-mode)
+  :config
+  (evil-define-key 'normal 'global (kbd "g c") 'comment-line)
+  (evil-define-key 'visual 'global (kbd "g c") 'comment-dwim)
+  (evil-define-key 'normal org-mode-map (kbd "RET") 'org-babel-execute-src-block)
+  (evil-define-key 'normal org-mode-map (kbd "C-M-<down>") 'org-promote-subtree)
+  (evil-set-leader nil (kbd "SPC"))
+  (evil-define-key 'normal org-mode-map (kbd "C-M-<up>") 'org-demote-subtree)
+  (evil-set-undo-system 'undo-redo)
+  )
+(elpaca-wait)
+(use-package evil-collection :ensure t :demand t
+  :after evil
+  :config
+  (setq evil-collection-mode-lis '(dashboard dired ibuffer))
+  (evil-collection-init))
+(use-package evil-tutor :ensure t :demand t)
+(elpaca-wait)
 
-  (after! 'evil-maps
-    (define-key evil-motion-state-map (kbd "SPC") nil)
-    (define-key evil-motion-state-map (kbd "RET") nil)
-    (define-key evil-motion-state-map (kbd "TAB") nil))
-  ;; Setting RETURN key in org-mode to follow links
-    (setq org-return-follows-link  t)
+(after! 'evil-maps
+  (define-key evil-motion-state-map (kbd "SPC") nil)
+  (define-key evil-motion-state-map (kbd "RET") nil)
+  (define-key evil-motion-state-map (kbd "TAB") nil)
+  (define-key evil-motion-state-map (kbd "C-o") nil)
+  )
+;; Setting RETURN key in org-mode to follow links
+(setq org-return-follows-link  t)
 
 
 #+end_src
-**  Diminish 
+*** Evil-Embrace
+:PROPERTIES:
+:CUSTOM_ID: evil-embrace
+:END:
+#+begin_src emacs-lisp
+(use-package evil-embrace
+  :commands embrace-add-pair embrace-add-pair-regexp
+  :hook (LaTeX-mode . embrace-LaTeX-mode-hook)
+  :hook (org-mode . embrace-org-mode-hook)
+  :hook (ruby-mode . embrace-ruby-mode-hook)
+  :hook (emacs-lisp-mode . embrace-emacs-lisp-mode-hook)
+  ;; :hook ((c++-mode c++-ts-mode rustic-mode csharp-mode java-mode swift-mode typescript-mode)
+  ;;        . +evil-embrace-angle-bracket-modes-hook-h)
+  ;; :hook (scala-mode . +evil-embrace-scala-mode-hook-h)
+  :init
+  (after! evil-surround
+    (evil-embrace-enable-evil-surround-integration))
+)
+#+end_src
+*** Surround
+:PROPERTIES:
+:CUSTOM_ID: surround
+:END:
+#+begin_src emacs-lisp
+(use-package evil-surround
+  :commands (global-evil-surround-mode
+             evil-surround-edit
+             evil-Surround-edit
+             evil-surround-region)
+  :config (global-evil-surround-mode 1))
+
+#+end_src
+*** Diff
+:PROPERTIES:
+:CUSTOM_ID: diff
+:END:
+#+begin_src emacs-lisp
+(use-package evil-quick-diff
+  :commands (evil-quick-diff evil-quick-diff-cancel))
+#+end_src
+*** Nerd-Commenter
+:PROPERTIES:
+:CUSTOM_ID: nerd-commenter
+:END:
+#+begin_src emacs-lisp
+(use-package evil-nerd-commenter
+  :commands (evilnc-comment-operator
+             evilnc-inner-comment
+             evilnc-outer-commenter)
+  :general ([remap comment-line] #'evilnc-comment-or-uncomment-lines))
+#+end_src
+*** Visulstar
+:PROPERTIES:
+:CUSTOM_ID: visulstar
+:END:
+#+begin_src emacs-lisp
+(use-package evil-visualstar
+  :commands (evil-visualstar/begin-search
+             evil-visualstar/begin-search-forward
+             evil-visualstar/begin-search-backward)
+  :init
+  (evil-define-key* 'visual 'global
+    "*" #'evil-visualstar/begin-search-forward
+    "#" #'evil-visualstar/begin-search-backward))
+#+end_src
+*** Раскладка
+:PROPERTIES:
+:CUSTOM_ID: раскладка
+:END:
+** Diminish 
 :PROPERTIES:
 :CUSTOM_ID: diminish
 :END:
@@ -160,6 +318,8 @@
     :keymaps 'override
     :prefix "SPC"
     :global-prefix "M-SPC")
+
+
   (leader-key
     "b" '(:ignore t :wk "Buffers/Bookmarks")
     "b b" '(switch-to-buffer :wk "Switch buffer")
@@ -173,6 +333,7 @@
     "b k" '(kill-buffer :wk "Kill Buffer")
     "b K" '(kill-some-buffers :wk "Kill multiple Buffers")
     )
+
   (leader-key
     "g" '(:ignore t :wk "Git")
     "g g" '(magit :wk "Start Magit")
@@ -180,12 +341,30 @@
     "g d" '(magit-diff :wk "Diff")
     "g t" '(git-timemachine :wk "Timemachine")
     )
+
+  (leader-key
+    "i" '(:ingore t :wk "Insert")
+    "i e" '(emoji-insert :wk "Insert")
+    "i c" '(insert-char :wk "Character")
+    "i t" '(table-insert :wk "Table")
+    )
+
   (leader-key
     "f" '(:ignore t :wk "Files")
     "." '(find-file :wk "Find File")
     "f C" '((lambda () (interactive) (find-file "~/.emacs.d/")) :wk "Find files in config folder")
     "f c" '((lambda () (interactive) (find-file "~/.emacs.d/config.org")) :wk "Edit config file")
     )
+
+  (leader-key
+    "c" '(:ignore t :wk "Code")
+    "c c" '(compile :wk "Compile code")
+    "c r" '(lsp-rename :wk "Rename object")
+    "c d" '(lsp-find-definition :wk "Find definition")
+    "c x" '(flycheck-list-errors :wk "List errors")
+    "c r" '(lsp-restart :wk "Restart LSP")
+    )
+
   (leader-key
     "p" '(projectile-command-map :wk "Projectile"))
 
@@ -235,9 +414,45 @@
     "w K" '(buf-move-up :wk "Buffer move up")
     "w L" '(buf-move-right :wk "Buffer move right"))
 
+  (leader-key
+    "C-c" '(:ignore t :wk "Codeium")
+    "C-c t" '(my/toggle-codeium :wk "Toggle Codeium")
+    )
 
   )
 (elpaca-wait)
+#+end_src
+** Exec-path-from-shell 
+:PROPERTIES:
+:CUSTOM_ID: exec-path-from-shell
+:END:
+#+begin_src emacs-lisp
+(use-package exec-path-from-shell
+  :config
+  (exec-path-from-shell-initialize))
+#+end_src
+** Expand-region
+:PROPERTIES:
+:CUSTOM_ID: expand-region
+:END:
+#+begin_src emacs-lisp
+(use-package expand-region
+  :config
+  (leader-key
+    "=" '(er/expand-region :wk "Expand region")
+    "-" '(er/contract-region :wk "Contract region")
+    )
+  )
+#+end_src
+** Editor-Config 
+:PROPERTIES:
+:CUSTOM_ID: editor-config
+:END:
+#+begin_src emacs-lisp
+(use-package editorconfig
+  :ensure t
+  :config
+  (editorconfig-mode 1))
 #+end_src
 ** Emacs 
 :PROPERTIES:
@@ -246,14 +461,34 @@
 #+begin_src emacs-lisp
 (use-package emacs :ensure nil
   :config
+  (setq gc-cons-threshold 100000000)
   (setq ring-bel-functuin #'ignore)  
   (setq text-mode-ispell-word-completion nil)
   (setq tab-always-indent 'complete)
   (setq backup-directory-alist '((".*" . "~/.local/share/Trash/files/")))
-  (setq read-process-output-max 4000)
-)
+  (setq read-process-output-max (* 1024 1024 10))
+  )
 (elpaca-wait)
 
+#+end_src
+** Bufler 
+:PROPERTIES:
+:CUSTOM_ID: bufler
+:END:
+#+begin_src emacs-lisp
+(use-package bufler
+  :ensure (bufler :fetcher github :repo "alphapapa/bufler.el"
+                  :files (:defaults (:exclude "helm-bufler.el")))
+  :config
+  (bufler-mode)
+  ;; (bufler-tabs-mode)
+  (setq bufler-face-prefix "prism-level-")
+  (leader-key
+    "TAB" '(:ignore t :wk "Tab")
+    "TAB s" '(bufler-switch-buffer :wk "Switch buffer in tabs")
+    "TAB w" '(bufler-workspace-frame-set :wk "Set frame")
+    )
+  )
 #+end_src
 * Graphical Beauty
 :PROPERTIES:
@@ -265,27 +500,28 @@
 :END:
 
 #+begin_src emacs-lisp
-  ;; Ставим стандартные фонты
-  (set-face-attribute 'default nil
-                      :font "JetBrainsMono Nerd Font"
-                      :height 110
-                      :weight 'medium)
-  (set-face-attribute 'variable-pitch nil
-                      :font "Ubuntu"
-                      :height 120
-                      :weight 'medium)
-  (set-face-attribute 'fixed-pitch nil
-                      :font "JetBrainsMono Nerd Font"
-                      :height 110
-                      :weight 'medium)
+;; Ставим стандартные фонты
+(set-face-attribute 'default nil
+                    :font "JetBrainsMono Nerd Font"
+                    :height 110
+                    :weight 'medium)
+(set-face-attribute 'variable-pitch nil
+                    :font "Ubuntu"
+                    :height 120
+                    :weight 'medium)
+(set-face-attribute 'fixed-pitch nil
+                    :font "JetBrainsMono Nerd Font"
+                    :height 110
+                    :weight 'medium)
 
-  ;; Делаем так, чтобы особые символы были italic
-  (set-face-attribute 'font-lock-comment-face nil
-                      :slant 'italic)
-  (set-face-attribute 'font-lock-keyword-face nil
-                      :slant 'italic)
-  ;; Делаем так, чтобы у нас для графики был Nerd Font
-  (add-to-list 'default-frame-alist '(font . "JetBrainsMono Nerd Font"))
+;; Делаем так, чтобы особые символы были italic
+(set-face-attribute 'font-lock-comment-face nil
+                    :slant 'italic)
+(set-face-attribute 'font-lock-keyword-face nil
+                    :slant 'italic)
+;; Делаем так, чтобы у нас для графики был Nerd Font
+(add-to-list 'default-frame-alist '(font . "JetBrainsMono Nerd Font"))
+(setq org-hide-emphasis-markers t)
 
 
 #+end_src
@@ -387,8 +623,9 @@
 #+begin_src emacs-lisp
   (use-package rainbow-mode
     :diminish
-    :hook 
-    ((org-mode prog-mode) . rainbow-mode))
+    ;; :hook 
+    ;; ((org-mode prog-mode) . rainbow-mode)
+)
 #+end_src
 ** Rainbow Delimiters 
 :PROPERTIES:
@@ -396,13 +633,79 @@
 :END:
 #+begin_src emacs-lisp
 (use-package rainbow-delimiters
-  :hook ((emacs-lisp-mode . rainbow-delimiters-mode)
-         (prog-mode . rainbow-delimiters-mode)))
+  ;; :hook ((emacs-lisp-mode . rainbow-delimiters-mode)
+  ;;        (prog-mode . rainbow-delimiters-mode))
+)
+#+end_src
+** Rainbow Identifiers 
+:PROPERTIES:
+:CUSTOM_ID: rainbow-identifiers
+:END:
+#+begin_src emacs-lisp
+(use-package rainbow-identifiers
+  :config
+  ;; (add-hook 'prog-mode-hook 'rainbow-identifiers-mode)
+)
+#+end_src
+** Prism.el 
+:PROPERTIES:
+:CUSTOM_ID: prismel
+:END:
+#+begin_src emacs-lisp
+(use-package prism
+  :ensure (prism :fetcher github :repo "alphapapa/prism.el")
+  :hook (
+	 (python-mode . prism-whitespace-mode)
+	 ((javascript-mode css-mode typescript-mode json-mode yaml-mode markdown-mode html-mode latex-mode bash-mode web-mode emacs-lisp-mode) . prism-mode)
+	 )
+  :config
+  )
+#+end_src
+** Ligatures 
+:PROPERTIES:
+:CUSTOM_ID: ligatures
+:END:
+#+begin_src emacs-lisp
+(use-package ligature)
 #+end_src
 * Org-Mode
 :PROPERTIES:
 :CUSTOM_ID: org-mode
 :END:
+** Hover Links 
+:PROPERTIES:
+:CUSTOM_ID: hover-links
+:END:
+#+begin_src emacs-lisp
+(setq org-mouse-1-follows-link t)
+(setq org-descriptive-links t)
+#+end_src
+** Org-Appear 
+:PROPERTIES:
+:CUSTOM_ID: org-appear
+:END:
+#+begin_src emacs-lisp
+(use-package org-appear
+  :custom
+  (org-appear-autoemphasis t)
+  (org-appear-autolinks t)
+  (org-appear-autosubmarkers t)
+  (org-appear-autoentities t)
+  (org-appear-autokeywords t)
+  :config
+  (add-hook 'org-mode-hook 'org-appear-mode)
+  (setq org-appear-trigger 'manual)
+  (add-hook 'org-mode-hook (lambda ()
+                             (add-hook 'evil-insert-state-entry-hook
+                                       #'org-appear-manual-start
+                                       nil
+                                       t)
+                             (add-hook 'evil-insert-state-exit-hook
+                                       #'org-appear-manual-stop
+                                       nil
+                                       t)))
+  )
+#+end_src
 ** Toc
 :PROPERTIES:
 :CUSTOM_ID: toc
@@ -638,6 +941,49 @@
    (python . t)))
 
 #+End_src
+
+** Org-Download 
+:PROPERTIES:
+:CUSTOM_ID: org-download
+:END:
+#+begin_src emacs-lisp
+(use-package org-download
+  :config
+  (add-hook 'dired-mode-hook 'org-download-enable)
+  )
+#+end_src
+
+** Org-Ref
+:PROPERTIES:
+:CUSTOM_ID: org-ref
+:END:
+#+begin_src emacs-lisp
+(use-package org-ref)
+
+#+end_src
+** TODO Раскладка
+:PROPERTIES:
+:CUSTOM_ID: раскладка-0
+:END:
+[[https://github.com/doomemacs/doomemacs/blob/master/modules/lang/org/config.el][Doom-Config Org-Mode]]
+#+begin_src emacs-lisp
+(general-define-key
+ ;; :definer 'minor-mode
+ :states 'normal
+ :keymaps 'org-mode-map
+ :prefix "SPC"
+ "m" '(:ignore :wk "Org-Mode Commands")
+ "m #" '(org-update-statistics-cookies :wk "org-update-statistics-cookies")
+ "m '" '(org-edit-special :wk "org-edit-special")
+ "m *" '(org-ctrl-c-star :wk "org-ctrl-c-star")
+ "m +" '(org-ctrl-c-minus :wk "org-ctrl-c-minus")
+ "m ," '(org-switchb :wk "org-switchb")
+ "m ." '(org-goto :wk "org-goto")
+ "m @" '(org-cite-insert :wk "org-cite-insert")
+ "m ." '(consult-org-heading :wk "consult-org-heading")
+ "m /" '(consult-org-agenda :wk "consult-org-agenda")
+ )
+#+end_src
 * Git Packages 
 :PROPERTIES:
 :CUSTOM_ID: git-packages
@@ -661,20 +1007,14 @@
 #+begin_src emacs-lisp
   (use-package magit)
 #+end_src
-* Defaults 
+** Magit-TODOS
 :PROPERTIES:
-:CUSTOM_ID: defaults
+:CUSTOM_ID: magit-todos
 :END:
 #+begin_src emacs-lisp
-(delete-selection-mode 1)    ;; You can select text and delete it by typing.
-(electric-indent-mode -1)    ;; Turn off the weird indenting that Emacs does by default.
-(electric-pair-mode 1)       ;; Turns on automatic parens pairing
-(global-auto-revert-mode t)  ;; Automatically show changes if the file has changed
-(setq org-edit-src-content-indentation 0) ;; Set src block automatic indent to 0 instead of 2.
-(add-hook 'org-mode-hook (lambda ()
-           (setq-local electric-pair-inhibit-predicate
-                   `(lambda (c)
-                  (if (char-equal c ?<) t (,electric-pair-inhibit-predicate c))))))
+(use-package magit-todos
+  :after magit
+  :config (magit-todos-mode 1))
 #+end_src
 * SUDO EDIT 
 :PROPERTIES:
@@ -783,11 +1123,13 @@
 :CUSTOM_ID: projectile
 :END:
 #+begin_src emacs-lisp
-  (use-package projectile
-    :config
-    (leader-key
-      "p" '(:ignore t :wk "Project"))
-    (projectile-mode 1))
+(use-package projectile
+  :config
+  (leader-key
+    "p" '(:ignore t :wk "Project"))
+  ;; (pushnew! projectile-project-root-files "package.json")
+  ;; (pushnew! projectile-globally-ignored-directories "^node_modules$" "^flow-typed$")
+  (projectile-mode 1))
 #+end_src
 * Imenu 
 :PROPERTIES:
@@ -838,57 +1180,55 @@
     :config
     (add-hook 'after-init-hook #'global-flycheck-mode))
 #+end_src
-** LSP
-:PROPERTIES:
-:CUSTOM_ID: lsp
-:END:
 ** Corfu
 :PROPERTIES:
 :CUSTOM_ID: corfu
 :END:
 #+begin_src emacs-lisp
-  (use-package corfu
-    ;; Optional customizations
-    :custom
-    (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
-    (corfu-auto t)                 ;; Enable auto completion
-    (corfu-separator ?\s)          ;; Orderless field separator
-    ;; (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
-    ;; (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
-    ;; (corfu-preview-current nil)    ;; Disable current candidate preview
-    (corfu-preselect 'prompt)      ;; Preselect the prompt
-    ;; (corfu-on-exact-match nil)     ;; Configure handling of exact matches
-    (corfu-scroll-margin 5)        ;; Use scroll margin
-    ;; (corfu-auto-delay 0.8)
-    ;; Enable Corfu only for certain modes.
-    :hook ((prog-mode . corfu-mode))
-    ;;        (shell-mode . corfu-mode)
-    ;;        (eshell-mode . corfu-mode))
+(use-package corfu
+  ;; Optional customizations
+  :custom
+  (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
+  (corfu-auto t)                 ;; Enable auto completion
+  (corfu-separator ?\s)          ;; Orderless field separator
+  ;; (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
+  ;; (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
+  ;; (corfu-preview-current nil)    ;; Disable current candidate preview
+  (corfu-preselect 'prompt)      ;; Preselect the prompt
+  ;; (corfu-on-exact-match nil)     ;; Configure handling of exact matches
+  (corfu-scroll-margin 5)        ;; Use scroll margin
+  ;; (corfu-auto-delay 0.8)
+  ;; Enable Corfu only for certain modes.
+  :hook ((prog-mode . corfu-mode))
+  ;;        (shell-mode . corfu-mode)
+  ;;        (eshell-mode . corfu-mode))
 
-    ;; Recommended: Enable Corfu globally.  This is recommended since Dabbrev can
-    ;; be used globally (M-/).  See also the customization variable
-    ;; `global-corfu-modes' to exclude certain modes
-    :bind
-    (:map corfu-map
-          ("TAB" . corfu-next)
-          ([tab] . corfu-next)
-          ("S-TAB" . corfu-previous)
-          ([backtab] . corfu-previous)
-          ("C-SPC" . corfu-insert-separator))
-    :init
-    (global-corfu-mode)
+  ;; Recommended: Enable Corfu globally.  This is recommended since Dabbrev can
+  ;; be used globally (M-/).  See also the customization variable
+  ;; `global-corfu-modes' to exclude certain modes
+  :bind
+  (:map corfu-map
+        ("TAB" . corfu-next)
+        ([tab] . corfu-next)
+        ("S-TAB" . corfu-previous)
+        ([backtab] . corfu-previous)
+        ("C-SPC" . corfu-insert-separator))
+  :init
+  (global-corfu-mode)
 
-    :config
-    (defun corfu-enable-in-minibuffer ()
-      "Enable Corfu in the minibuffer."
-      (when (local-variable-p 'completion-at-point-functions)
-        ;; (setq-local corfu-auto nil) ;; Enable/disable auto completion
-        (setq-local corfu-echo-delay nil ;; Disable automatic echo and popup
-                    corfu-popupinfo-delay nil)
-        (corfu-mode 1)))
-    (add-hook 'minibuffer-setup-hook #'corfu-enable-in-minibuffer)
-    )
-  (elpaca-wait)
+  :config
+  (defun corfu-enable-in-minibuffer ()
+    "Enable Corfu in the minibuffer."
+    (when (local-variable-p 'completion-at-point-functions)
+      ;; (setq-local corfu-auto nil) ;; Enable/disable auto completion
+      (setq-local corfu-echo-delay nil ;; Disable automatic echo and popup
+                  corfu-popupinfo-delay nil)
+      (corfu-mode 1)))
+  (add-hook 'minibuffer-setup-hook #'corfu-enable-in-minibuffer)
+  (corfu-history-mode)
+  (add-to-list 'savehist-additional-variables 'corfu-history)
+  )
+(elpaca-wait)
 #+end_src
 *** Nerd-Icons
 :PROPERTIES:
@@ -926,28 +1266,36 @@
 :CUSTOM_ID: cape
 :END:
 #+begin_src emacs-lisp
-  (use-package cape
-    ;; Bind dedicated completion commands
-    ;; Alternative prefix keys: C-c p, M-p, M-+, ...
-    :init
-    ;; Add to the global default value of `completion-at-point-functions' which is
-    ;; used by `completion-at-point'.  The order of the functions matters, the
-    ;; first function returning a result wins.  Note that the list of buffer-local
-    ;; completion functions takes precedence over the global list.
-    (add-to-list 'completion-at-point-functions #'cape-dabbrev)
-    (add-to-list 'completion-at-point-functions #'cape-file)
-    (add-to-list 'completion-at-point-functions #'cape-elisp-block)
-    ;;(add-to-list 'completion-at-point-functions #'cape-history)
-    ;;(add-to-list 'completion-at-point-functions #'cape-keyword)
-    ;;(add-to-list 'completion-at-point-functions #'cape-tex)
-    ;;(add-to-list 'completion-at-point-functions #'cape-sgml)
-    ;;(add-to-list 'completion-at-point-functions #'cape-rfc1345)
-    ;;(add-to-list 'completion-at-point-functions #'cape-abbrev)
-    ;;(add-to-list 'completion-at-point-functions #'cape-dict)
-    ;;(add-to-list 'completion-at-point-functions #'cape-elisp-symbol)
-    ;;(add-to-list 'completion-at-point-functions #'cape-line)
+(use-package cape
+  ;; Bind dedicated completion commands
+  ;; Alternative prefix keys: C-c p, M-p, M-+, ...
+  :init
+  ;; Add to the global default value of `completion-at-point-functions' which is
+  ;; used by `completion-at-point'.  The order of the functions matters, the
+  ;; first function returning a result wins.  Note that the list of buffer-local
+  ;; completion functions takes precedence over the global list.
+  (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+  (add-to-list 'completion-at-point-functions #'cape-file)
+  (add-to-list 'completion-at-point-functions #'cape-elisp-block)
+  ;;(add-to-list 'completion-at-point-functions #'cape-history)
+  (add-to-list 'completion-at-point-functions #'cape-keyword)
+  ;;(add-to-list 'completion-at-point-functions #'cape-tex)
+  ;;(add-to-list 'completion-at-point-functions #'cape-sgml)
+  ;;(add-to-list 'completion-at-point-functions #'cape-rfc1345)
+  ;;(add-to-list 'completion-at-point-functions #'cape-abbrev)
+  ;;(add-to-list 'completion-at-point-functions #'cape-dict)
+  ;;(add-to-list 'completion-at-point-functions #'cape-elisp-symbol)
+  ;;(add-to-list 'completion-at-point-functions #'cape-line)
+  ;; (advice-add #'lsp-completion-at-point :around #'cape-wrap-debug)
+  (after! lsp-mode
+    (advice-add #'lsp-completion-at-point :around #'cape-wrap-noninterruptible)
+    (advice-add #'lsp-completion-at-point :around #'cape-wrap-nonexclusive)
     )
-  (elpaca-wait)
+  (advice-add #'comint-completion-at-point :around #'cape-wrap-nonexclusive)
+  (advice-add #'eglot-completion-at-point :around #'cape-wrap-nonexclusive)
+  (advice-add #'pcomplete-completions-at-point :around #'cape-wrap-nonexclusive)
+  )
+(elpaca-wait)
 #+end_src
 ** Orderless 
 :PROPERTIES:
@@ -1028,6 +1376,17 @@
       "f r" '(consult-recent-file :wk "Find recent file")))
   (elpaca-wait)
 #+end_src
+** Yasnippet 
+:PROPERTIES:
+:CUSTOM_ID: yasnippet
+:END:
+#+begin_src emacs-lisp
+(use-package yasnippet
+  :config
+  (yas-global-mode 1)
+  )
+(use-package yasnippet-snippets)
+#+end_src
 * Shell
 :PROPERTIES:
 :CUSTOM_ID: shell
@@ -1086,19 +1445,82 @@
 (add-to-list 'load-path (expand-file-name "lib/lsp-mode" user-emacs-directory))
 (add-to-list 'load-path (expand-file-name "lib/lsp-mode/clients" user-emacs-directory))
 (use-package lsp-mode
+  :commands (lsp lsp-deferred)
+  :custom
+
+  (lsp-log-io nil) ; ensure this is off when not debugging
+  (lsp-completion-provider :none)
+  (lsp-completion--enable t)
+  (lsp-restart 'auto-restart)
+
+  (lsp-diagnostics-provider :flymake)
   :init
+
+  (defun lsp-booster--advice-json-parse (old-fn &rest args)
+    "Try to parse bytecode instead of json."
+    (or
+     (when (equal (following-char) ?#)
+       (let ((bytecode (read (current-buffer))))
+	 (when (byte-code-function-p bytecode)
+           (funcall bytecode))))
+     (apply old-fn args)))
+  (advice-add (if (progn (require 'json)
+			 (fboundp 'json-parse-buffer))
+                  'json-parse-buffer
+		'json-read)
+              :around
+              #'lsp-booster--advice-json-parse)
+
+  (defun lsp-booster--advice-final-command (old-fn cmd &optional test?)
+    "Prepend emacs-lsp-booster command to lsp CMD."
+    (let ((orig-result (funcall old-fn cmd test?)))
+      (if (and (not test?)                             ;; for check lsp-server-present?
+               (not (file-remote-p default-directory)) ;; see lsp-resolve-final-command, it would add extra shell wrapper
+               lsp-use-plists
+               (not (functionp 'json-rpc-connection))  ;; native json-rpc
+               (executable-find "emacs-lsp-booster"))
+          (progn
+            (message "Using emacs-lsp-booster for %s!" orig-result)
+            (cons "emacs-lsp-booster" orig-result))
+	orig-result)))
+  (advice-add 'lsp-resolve-final-command :around #'lsp-booster--advice-final-command)
+
+  (defun my/orderless-dispatch-flex-first (_pattern index _total)
+    (and (eq index 0) 'orderless-flex))
+  (defun fv--lsp-mode-capf-setup ()
+    (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
+          '(orderless)))
+  (add-hook 'orderless-style-dispatchers #'my/orderless-dispatch-flex-first nil 'local)
+  (setq-local completion-at-point-functions (list (cape-capf-buster #'lsp-completion-at-point)))
   ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
   (setq lsp-keymap-prefix "C-c l")
-  :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
-         (python-mode . lsp)
-         ;; if you want which-key integration
-         (lsp-mode . lsp-enable-which-key-integration)
+  :hook (
+
+	 (lsp-completion-mode . fv--lsp-mode-capf-setup)
+	 ;; replace XXX-mode with concrete major-mode(e. g. python-mode)
+	 (python-mode . lsp)
+	 (json-mode . lsp)
+	 (yaml-mode . lsp)
+	 (javascript-mode . lsp)
+	 ;; (web-mode . lsp)
+	 ;; (typescript-mode . lsp)
+	 (css-mode . lsp)
+	 (lsp-completion-mode . lsp-enable-which-key-integration)
 	 ;; (emacs-lisp-mode . lsp)
 	 (lisp-interaction-mode . lsp)
 	 )
-  :commands lsp
+  ;; :commands lsp
+  :config
+  ;; (add-hook 'lsp-mode-hook #'lsp-completion-mode)
+  (setq lsp-enabled-clients '(ts-ls pyright angular-ls vue-semantic-server json-ls html-ls eslint css-ls bash-ls))
   )
 (use-package lsp-ui 
+  :custom
+  (lsp-ui-sideline-show-diagnostics t)
+  (lsp-ui-sideline-show-hover t)
+  (lsp-ui-sideline-show-code-actions t)
+  (lsp-ui-doc-enable t)
+  (lsp-ui-doc-position 'at-point)
   :after lsp-mode
   :init
   (add-hook 'lsp-mode-hook 'lsp-ui-mode)
@@ -1116,41 +1538,149 @@
   ;; (require dap-python)
 
   (setq dap-python-debugger 'debugpy)
+  (setq lsp-clients-angular-language-server-command
+	'("node"
+	  "/home/berlizoves/.nvm/versions/node/v20.10.0/lib/node_modules/@angular/language-server"
+	  "--ngProbeLocations"
+	  "/home/berlizoves/.nvm/versions/node/v20.10.0/lib/node_modules/"
+	  "--tsProbeLocations"
+	  "/home/berlizoves/.nvm/versions/node/v20.10.0/lib/node_modules/"
+	  "--stdio"))
+  (general-define-key
+   ;; :definer 'minor-mode
+   :states 'normal
+   :keymaps 'prog-mode-map
+   :prefix "SPC"
+
+   "d" '(:ignore t :wk "Debug")
+   "d d" '(dap-debug :wk "Start debug session")
+   "d b" '(dap-breakpoint-toggle :wk "Toggle breakpoint")
+   "d D" '(dap-breakpoint-delete-all :wk "Delete all breakpoints")
+   "d c" '(dap-continue :wk "Continue")
+   "d n" '(dap-next :wk "Step Over")
+   "d i" '(dap-step-in :wk "Step Into")
+   "d o" '(dap-step-out :wk "Step Out")
+   "d s" '(dap-delete-session :wk "Stop")
+   )
+  ;; (leader-key
+  ;;   "d" '(:ignore t :wk "Debug")
+  ;;   "d d" '(dap-debug :wk "Start debug session")
+  ;;   "d b" '(dap-breakpoint-toggle :wk "Toggle breakpoint")
+  ;;   "d D" '(dap-breakpoint-delete-all :wk "Delete all breakpoints")
+  ;;   "d c" '(dap-continue :wk "Continue")
+  ;;   "d n" '(dap-next :wk "Step Over")
+  ;;   "d i" '(dap-step-in :wk "Step Into")
+  ;;   "d o" '(dap-step-out :wk "Step Out")
+  ;;   "d s" '(dap-delete-session :wk "Stop")
+  ;;   )
   )
+#+end_src
+** Formater 
+:PROPERTIES:
+:CUSTOM_ID: formater
+:END:
+#+begin_src emacs-lisp
+;; (use-package apheleia
+;;   :ensure t
+;;   :config
+;;   (apheleia-global-mode +1))
+
 #+end_src
 ** Python 
 :PROPERTIES:
 :CUSTOM_ID: python
 :END:
 #+begin_src emacs-lisp
-;; (org-babel-do-load-languages
-;;  'org-babel-load-languages
-;;  '((emacs-lisp . t)
-;;    (python . t)
-;;    (jupyter . t)))
-
 (setq python-indent-offset 4)
 (setq org-startup-indented t)
+(after! tree-sitter
+  (add-hook 'python-mode-local-vars-hook #'tree-sitter! 'append)
+  )
+
+#+end_src
+
+#+RESULTS:
+*** Blacken 
+:PROPERTIES:
+:CUSTOM_ID: blacken
+:END:
+#+begin_src emacs-lisp
 (use-package blacken
   :after python
   :ensure t
   :hook (python-mode . blacken-mode))
-
+#+end_src
+*** Py-Isort
+:PROPERTIES:
+:CUSTOM_ID: py-isort
+:END:
+#+begin_src emacs-lisp
 (use-package py-isort
   :after python
   :ensure t
   ;; :hook (python-mode . py-isort-enable-on-save)
   )
-
+#+end_src
+*** LSP-Pyright
+:PROPERTIES:
+:CUSTOM_ID: lsp-pyright
+:END:
+#+begin_src emacs-lisp
 (use-package lsp-pyright
   :ensure t
   :hook (python-mode . (lambda ()
 			 (require 'lsp-pyright)
 			 (lsp))))
+#+end_src
+*** Pip-env
+:PROPERTIES:
+:CUSTOM_ID: pip-env
+:END:
+#+begin_src emacs-lisp
+(use-package pipenv
+  :hook (python-mode . pipenv-mode)
+  :init
+  (setq
+   pipenv-projectile-after-switch-function
+   #'pipenv-projectile-after-switch-extended))
+#+end_src
+*** Раскладка
+:PROPERTIES:
+:CUSTOM_ID: раскладка-1
+:END:
+#+begin_src emacs-lisp
+(general-define-key
+ ;; :definer 'minor-mode
+ :states 'normal
+ :keymaps 'python-mode-map
+ :prefix "SPC"
+ "m" '(:ignore t :wk "Python commands")
+ "m i" '(:ignore t :wk "Imports")
+ "m i f" '(python-fix-imports :wk "Fix Imports")
+ "m i s" '(py-isort-buffer :wk "Sort Imports")
+ "m s" '(:ignore t :wk "Shell")
+ "m s s" '(python-shell-restart :wk "Start/Restart")
+ "m s b" '(python-shell-send-buffer :wk "Send buffer")
+ "m s r" '(python-shell-send-region :wk "Send region")
+ "m l" '(pipenv-lock :wk "Lock pipfile")
+ "m g" '(pipenv-graph :wk "Show graph")
+ "m u" '(pipenv-update :wk "Update all libraries")
+ "m U" '(pipenv-uninstall :wk "Uninstall packages")
+ "m i" '(pipenv-install :wk "Install packages")
+ "m a" '(pipenv-activate :wk "Activate venv")
+ "m d" '(pipenv-deactivate :wk "Deactivate venv")
+ )
 
+(general-define-key
+ ;; :definer 'minor-mode
+ :states 'normal
+ :mode 'org-mode
+ "SPC l" '(org-table-insert-row :wk "Test")
+)
 #+end_src
 
 #+RESULTS:
+
 ** Jupyter 
 :PROPERTIES:
 :CUSTOM_ID: jupyter
@@ -1220,10 +1750,387 @@
 
 
 
-#+begin_src jupyter-python
+#+begin_src python
 import os
 import numpy 
 import pandas
 #+end_src
 
 #+RESULTS:
+: /tmp/babel-DPIUyG/python-8r6Ls3
+** WEB
+:PROPERTIES:
+:CUSTOM_ID: web
+:END:
+*** add-node-modules-path
+:PROPERTIES:
+:CUSTOM_ID: add-node-modules-path
+:END:
+#+begin_src emacs-lisp
+(use-package add-node-modules-path
+  :ensure t)
+#+end_src
+*** WEB-Mode
+:PROPERTIES:
+:CUSTOM_ID: web-mode
+:END:
+#+begin_src emacs-lisp
+(use-package web-mode
+  :mode (
+	 ("\\.html\\'" . web-mode)
+         ("\\.css\\'" . web-mode)
+         ("\\.js\\'" . web-mode)
+	 ;; ("\\.ts\\'" . web-mode)
+	 )
+  :hook ((web-mode . lsp-mode))
+  :config
+  (setq web-mode-markup-indent-offset 2) ; Отступ для HTML и XML
+  (setq web-mode-css-indent-offset 2)    ; Отступ для CSS
+  (setq web-mode-code-indent-offset 2)   ; Отступ для JavaScript
+  (setq web-mode-enable-auto-pairing t)   ; Автоподстановка скобок
+  (setq web-mode-enable-css-colorization t) ; Подсветка цветов в CSS
+  (setq web-mode-enable-current-element-highlight t) ; Выделение текущего элемента
+  (setf (alist-get "javascript" web-mode-comment-formats nil nil #'equal)
+	"//")
+  )
+
+;; 1. Remove web-mode auto pairs whose end pair starts with a latter
+;;    (truncated autopairs like <?p and hp ?>). Smartparens handles these
+;;    better.
+;; 2. Strips out extra closing pairs to prevent redundant characters
+;;    inserted by smartparens.
+;; Use // instead of /* as the default comment delimited in JS
+
+
+
+;;
+;; (add-hook '(html-mode-local-vars-hook
+;;             web-mode-local-vars-hook
+;;             nxml-mode-local-vars-hook)
+;;           :append #'lsp!)
+
+#+end_src
+*** NPM-Mode 
+:PROPERTIES:
+:CUSTOM_ID: npm-mode
+:END:
+#+begin_src emacs-lisp
+(use-package npm-mode
+  :ensure t
+  :config
+  (npm-global-mode))
+#+end_src
+*** Prettier-JS 
+:PROPERTIES:
+:CUSTOM_ID: prettier-js
+:END:
+#+begin_src emacs-lisp
+(use-package prettier-js
+  :config
+  (add-hook 'web-mode-hook #'add-node-modules-path)
+  (defun enable-minor-mode (my-pair)
+    (if (buffer-file-name)
+	(if (string-match (car my-pair) buffer-file-name)
+	    (funcall (cdr my-pair)))
+      )
+    )
+  (add-hook 'web-mode-hook #'(lambda ()
+			       (enable-minor-mode
+				'("\\.jsx?\\'" . prettier-js-mode))
+			       (enable-minor-mode
+				'("\\.tsx?\\'" . prettier-js-mode))
+			       ))
+  )
+#+end_src
+*** JS2-Mode 
+:PROPERTIES:
+:CUSTOM_ID: js2-mode
+:END:
+#+begin_src emacs-lisp
+(use-package js2-mode
+  :mode (
+         ("\\.js\\'" . js2-mode))
+  :hook ((js2-mode . lsp-mode))
+  :config
+  (setq js-indent-level 2)
+  )
+
+(use-package js2-refactor
+:hook ((js2-mode . js2-refactor))
+)
+#+end_src
+*** Typescript 
+:PROPERTIES:
+:CUSTOM_ID: typescript
+:END:
+#+begin_src emacs-lisp
+(use-package typescript-mode
+  :mode ("\.ts$")
+  :hook (typescript-mode . lsp)
+  :config
+  ;; we choose this instead of tsx-mode so that eglot can automatically figure out language for server
+  ;; see https://github.com/joaotavora/eglot/issues/624 and https://github.com/joaotavora/eglot#handling-quirky-servers
+
+  (setq typescript-indent-level 2)
+  (define-derived-mode typescriptreact-mode typescript-mode
+    "TypeScript TSX")
+
+  ;; use our derived mode for tsx files
+  (add-to-list 'auto-mode-alist '("\\.tsx?\\'" . typescriptreact-mode))
+  ;; by default, typescript-mode is mapped to the treesitter typescript parser
+  ;; use our derived mode to map both .tsx AND .ts -> typescriptreact-mode -> treesitter tsx
+  (add-to-list 'tree-sitter-major-mode-language-alist '(typescriptreact-mode . tsx))
+  )
+
+#+end_src
+**** Раскладка 
+:PROPERTIES:
+:CUSTOM_ID: раскладка-2
+:END:
+*** Skewer 
+:PROPERTIES:
+:CUSTOM_ID: skewer
+:END:
+#+begin_src emacs-lisp
+(use-package skewer-mode
+  :hook (((js2-mode css-mode html-mode) . skewer-mode))
+
+  )
+#+end_src
+*** Tide 
+:PROPERTIES:
+:CUSTOM_ID: tide
+:END:
+#+begin_src emacs-lisp
+;; (defun setup-tide-mode ()
+;;   (interactive)
+;;   (tide-setup)
+;;   (flycheck-mode +1)
+;;   (setq flycheck-check-syntax-automatically '(save mode-enabled))
+;;   (eldoc-mode +1)
+;;   (tide-hl-identifier-mode +1)
+;;   (setq tide-completion-ignore-case t)
+;;   (eldoc-mode +1)
+;;   (tide-hl-identifier-mode +1)
+;;   (message "setup-tide-mode"))
+
+;; (use-package tide
+;;   :ensure t
+;;   :after 
+;;   (rjsx-mode flycheck)
+;;   (typescript-mode  flycheck)
+;;   (web-mode  flycheck)
+;;   :hook  (
+;; 	  (typescript-mode . setup-tide-mode)
+;; 	  (js-mode . setup-tide-mode)
+;; 	  (rjsx-mode . setup-tide-mode)
+;; 	  (typescript-mode . tide-setup)
+;;           (typescript-mode . tide-hl-identifier-mode)
+;; 	  (js2-mode . tide-setup)
+;;           (before-save . tide-format-before-save))
+;;   :config
+;;   (after! web-mode
+;;     (add-to-list 'auto-mode-alist '("\\.jsx\\'" . web-mode))
+;;     (add-hook 'web-mode-hook
+;;               (lambda ()
+;; 		(when (string-equal "jsx" (file-name-extension buffer-file-name))
+;; 		  (setup-tide-mode))))
+;;     ;; configure jsx-tide checker to run after your default jsx checker
+;;     (flycheck-add-mode 'javascript-eslint 'web-mode)
+;;     (flycheck-add-next-checker 'javascript-eslint 'jsx-tide 'append)
+;;     )
+;;   )
+;; (defun trigger-tide-setup ()
+;;   (interactive)
+;;   (enable-minor-mode
+;;    '("\\.ts[x]?" . setup-tide-mode)))
+;; (eval-after-web-mode-load 'trigger-tide-setup)
+#+end_src
+*** Multi-Web-Mode 
+:PROPERTIES:
+:CUSTOM_ID: multi-web-mode
+:END:
+#+begin_src emacs-lisp
+;; (use-package multi-web-mode
+;; :after web-mode
+;; :config
+;; (setq mweb-default-major-mode 'html-mode) ; Задаём режим HTML как основной.
+;; (setq mweb-tags '((php-mode "<\\?php\\|<\\? \\|<\\?=" "\\?>")
+;;                   (js2-mode "<script +\\(type=\"text/javascript\"\\|language=\"javascript\"\\)[^>]*>" "</script>")
+;;                   (css-mode "<style +type=\"text/css\"[^>]*>" "</style>"))) ; Задаём правила для PHP, JavaScript и CSS.
+;; (setq mweb-filename-extensions '("htm" "html" "ctp" "php" "phtml" "tpl")) ; Указываем список расширений файлов.
+;; (multi-web-global-mode 1) ; Активируем multi-web-mode глобально.
+;; )
+#+end_src
+*** JSON 
+:PROPERTIES:
+:CUSTOM_ID: json
+:END:
+#+begin_src emacs-lisp
+(use-package json-mode
+  :init
+  (add-to-list 'auto-mode-alist '("\\.json\\'" . json-mode))
+  )
+#+end_src
+*** Yaml
+:PROPERTIES:
+:CUSTOM_ID: yaml
+:END:
+#+begin_src emacs-lisp
+(use-package yaml-mode
+  :init
+  (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode))
+  )
+#+end_src
+*** Treesitter
+:PROPERTIES:
+:CUSTOM_ID: treesitter
+:END:
+#+begin_src emacs-lisp
+(after! tree-sitter
+  (setq treesit-language-source-alist
+	'((bash . ("https://github.com/tree-sitter/tree-sitter-bash"))
+	  (c . ("https://github.com/tree-sitter/tree-sitter-c"))
+	  (cpp . ("https://github.com/tree-sitter/tree-sitter-cpp"))
+	  (css . ("https://github.com/tree-sitter/tree-sitter-css"))
+	  (cmake . ("https://github.com/uyha/tree-sitter-cmake"))
+	  (go . ("https://github.com/tree-sitter/tree-sitter-go"))
+	  (html . ("https://github.com/tree-sitter/tree-sitter-html"))
+	  (javascript . ("https://github.com/tree-sitter/tree-sitter-javascript"))
+	  (json . ("https://github.com/tree-sitter/tree-sitter-json"))
+	  (julia . ("https://github.com/tree-sitter/tree-sitter-julia"))
+	  (lua . ("https://github.com/Azganoth/tree-sitter-lua"))
+	  (make . ("https://github.com/alemuller/tree-sitter-make"))
+	  (ocaml . ("https://github.com/tree-sitter/tree-sitter-ocaml" "master" "ocaml/src"))
+     (python "https://github.com/tree-sitter/tree-sitter-python")
+	  (php . ("https://github.com/tree-sitter/tree-sitter-php"))
+	  (typescript . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src"))
+	  (tsx . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src"))
+	  (ruby . ("https://github.com/tree-sitter/tree-sitter-ruby"))
+	  (rust . ("https://github.com/tree-sitter/tree-sitter-rust"))
+	  (sql . ("https://github.com/m-novikov/tree-sitter-sql"))
+	  (toml . ("https://github.com/tree-sitter/tree-sitter-toml"))
+	  (zig . ("https://github.com/GrayJack/tree-sitter-zig"))))
+  )
+#+end_src
+**** Treesitter-auto
+:PROPERTIES:
+:CUSTOM_ID: treesitter-auto
+:END:
+#+begin_src emacs-lisp
+;; (use-package treesit-auto
+;;   :config
+;;   (global-treesit-auto-mode))
+#+end_src
+**** Treesitter
+:PROPERTIES:
+:CUSTOM_ID: treesitter-0
+:END:
+#+begin_src emacs-lisp
+(setq tsc-dyn-get-from'(:compilation))
+(use-package tree-sitter
+  :config
+  (require 'tree-sitter-langs)
+  (global-tree-sitter-mode)
+  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
+  )
+(use-package tree-sitter-langs)
+#+end_src
+* Codeium 
+:PROPERTIES:
+:CUSTOM_ID: codeium
+:END:
+#+begin_src emacs-lisp
+(use-package codeium
+  :ensure (codeium :host github :repo "Exafunction/codeium.el")
+
+  ;; if you use straight
+  ;; :straight '(:type git :host github :repo "Exafunction/codeium.el")
+  ;; otherwise, make sure that the codeium.el file is on load-path
+
+  :init
+  ;; use globally
+  ;; (add-to-list 'completion-at-point-functions 'codeium-completion-at-point) ;; ПОЧЕМУ-ТО не работает нормально
+  ;; or on a hook
+  ;; (add-hook 'python-mode-hook
+  ;;     (lambda ()
+  ;;         (setq-local completion-at-point-functions '(codeium-completion-at-point))))
+
+  ;; if you want multiple completion backends, use cape (https://github.com/minad/cape):
+  ;; (add-hook 'python-mode-hook
+  ;;     (lambda ()
+  ;;         (setq-local completion-at-point-functions
+  ;;             (list (cape-super-capf #'codeium-completion-at-point #'lsp-completion-at-point)))))
+  ;; an async company-backend is coming soon!
+
+  ;; codeium-completion-at-point is autoloaded, but you can
+  ;; optionally set a timer, which might speed up things as the
+  ;; codeium local language server takes ~0.2s to start up
+  (add-hook 'emacs-startup-hook
+            (lambda () (run-with-timer 0.4 nil #'codeium-init)))
+
+  ;; :defer t ;; lazy loading, if you want
+  :config
+  ;;(setq use-dialog-box nil) ;; do not use popup boxes
+
+  ;; if you don't want to use customize to save the api-key
+  ;; (setq codeium/metadata/api_key "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")
+
+  ;; get codeium status in the modeline
+  ;;(setq codeium-mode-line-enable
+  ;;      (lambda (api) (not (memq api '(CancelRequest Heartbeat AcceptCompletion)))))
+  ;;(add-to-list 'mode-line-format '(:eval (car-safe codeium-mode-line)) t)
+  ;; alternatively for a more extensive mode-line
+  (add-to-list 'mode-line-format '(-50 "" codeium-mode-line) t)
+
+  ;; use M-x codeium-diagnose to see apis/fields that would be sent to the local language server
+  (setq codeium-api-enabled
+	(lambda (api)
+          (memq api '(GetCompletions Heartbeat CancelRequest GetAuthToken RegisterUser auth-redirect AcceptCompletion))))
+  ;; you can also set a config for a single buffer like this:
+  ;; (add-hook 'python-mode-hook
+  ;;     (lambda ()
+  ;;         (setq-local codeium/editor_options/tab_size 4)))
+
+  ;; You can overwrite all the codeium configs!
+  ;; for example, we recommend limiting the string sent to codeium for better performance
+  (defun my-codeium/document/text ()
+    (buffer-substring-no-properties (max (- (point) 3000) (point-min)) (min (+ (point) 1000) (point-max))))
+  ;; if you change the text, you should also change the cursor_offset
+  ;; warning: this is measured by UTF-8 encoded bytes
+  (defun my-codeium/document/cursor_offset ()
+    (codeium-utf8-byte-length
+     (buffer-substring-no-properties (max (- (point) 3000) (point-min)) (point))))
+  (setq codeium/document/text 'my-codeium/document/text)
+  (setq codeium/document/cursor_offset 'my-codeium/document/cursor_offset))
+
+(defun my/complete-codeium ()
+  "Manual codeium running"
+  (interactive)
+  (when (not (member 'codeium-completion-at-point completion-at-point-functions))
+    (setq capb completion-at-point-functions) ; Резервируем в переменную capb текущее состояние
+    (setq completion-at-point-functions '(codeium-completion-at-point t)) ; Подключаем Codeium
+    (call-interactively 'corfu-complete) ; Вызываем Company
+    (setq completion-at-point-functions capb)
+    (kill-local-variable 'capb))) ; Возвращаем все на свои места
+
+(defun my/strict-complete-codeium ()
+  "Manual codeium running, but works even when auto completion is on"
+  (interactive)
+  (setq capb completion-at-point-functions) ; Резервируем в переменную capb текущее состояние
+  (setq completion-at-point-functions '(codeium-completion-at-point t)) ; Подключаем Codeium
+  (call-interactively 'corfu-complete) ; Вызываем Company
+  (setq completion-at-point-functions capb)
+  (kill-local-variable 'capb)) ; Возвращаем все на свои места
+
+(defun my/toggle-codeium ()
+  "Manually toggle codeium auto completion"
+  (interactive)
+  (if (member 'codeium-completion-at-point completion-at-point-functions)
+      (progn
+	(setq completion-at-point-functions (delq 'codeium-completion-at-point completion-at-point-functions))
+	(message "Codeium auto complete off"))
+    (add-to-list 'completion-at-point-functions 'codeium-completion-at-point)
+    (message "Codeium auto complete on")))
+#+end_src
+
