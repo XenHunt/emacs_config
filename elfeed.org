@@ -1,0 +1,28 @@
+* Bloogs :elfeed:
+** Reddit :reddit:eng:
+*** https://www.reddit.com/r/linux.rss :linux:
+*** https://www.reddit.com/r/emacs.rss :emacs:
+*** https://www.reddit.com/r/org-mode.rss :emacs:org-mode:
+** Habr :habr:rus:
+
+*** [[https://habr.com/ru/rss/hubs/python/articles/rated25/?fl=ru][Habr Python]] :python: 
+
+*** [[https://habr.com/ru/rss/hubs/open_source/articles/rated25/?fl=ru][Habr OpenSource]] :open_source: 
+
+*** [[https://habr.com/ru/rss/hubs/machine_learning/articles/rated25/?fl=ru][Habr Machine Learning]] :machine_learning: 
+
+*** [[https://habr.com/ru/rss/hubs/artificial_intelligence/articles/rated25/?fl=ru][Habr AI]] :ai:
+
+*** [[https://habr.com/ru/rss/hubs/algorithms/articles/rated25/?fl=ru][Habr Algorithms]] :algorithms:
+
+
+*** Web-Development :web_development:
+**** [[https://habr.com/ru/rss/hubs/webdev/articles/rated25/?fl=ru][Habr Web-Development]]
+**** [[https://habr.com/ru/rss/hubs/reactjs/articles/rated25/?fl=ru][Habr React]] :react:
+**** [[https://habr.com/ru/rss/hubs/angular/articles/rated25/?fl=ru][Habr Angular]] :angular:
+**** [[https://habr.com/ru/rss/hubs/vuejs/articles/rated25/?fl=ru][Habr VueJS]] :vuejs:
+**** [[https://habr.com/ru/rss/hubs/javascript/articles/rated25/?fl=ru][Habr Javascript]] :javascript:
+**** [[https://habr.com/ru/rss/hubs/typescript/articles/rated25/?fl=ru][Habr Typescript]] :typescript:
+*** Linux :linux:
+**** [[https://habr.com/ru/rss/hubs/linux/articles/rated25/?fl=ru][Habr Linux]]
+**** [[https://habr.com/ru/rss/hubs/linux_dev/articles/rated25/?fl=ru][Habr Linux]]

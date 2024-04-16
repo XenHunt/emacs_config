@@ -13,6 +13,7 @@
   - [[#scripts][Scripts]]
   - [[#load-scripts][Load Scripts]]
   - [[#defaults][Defaults]]
+  - [[#wgrep][Wgrep]]
   - [[#smartparens][Smartparens]]
   - [[#general-keybindigs][General Keybindigs]]
   - [[#expand-region][Expand-region]]
@@ -89,6 +90,7 @@
   - [[#orderless][Orderless]]
   - [[#vertico][Vertico]]
   - [[#marginalia][Marginalia]]
+  - [[#embark][Embark]]
   - [[#consult][Consult]]
   - [[#yasnippet][Yasnippet]]
 - [[#shell][Shell]]
@@ -181,6 +183,14 @@
 ;; (add-hook 'text-mode-hook 'my-scroll-precision-mode)
 (setq pixel-scroll-precision-mode 1)
 #+end_src
+
+** Wgrep
+:PROPERTIES:
+:CUSTOM_ID: wgrep
+:END:
+#+begin_src emacs-lisp
+(use-package wgrep)
+#+end_src
 ** Smartparens 
 :PROPERTIES:
 :CUSTOM_ID: smartparens
@@ -210,106 +220,128 @@
     :prefix "SPC"
     :global-prefix "M-SPC")
 
+  (after! evil-collection
+    (leader-key
+      "b" '(:ignore t :wk "Buffers/Bookmarks")
+      "b b" '(switch-to-buffer :wk "Switch buffer")
+      "b i" '(ibuffer :wk "IBuffer")
+      "b k" '(kill-this-buffer :wk "Kill this buffer")
+      "b n" '(next-buffer :wk "Next buffer")
+      "b p" '(previous-buffer :wk "Previous buffer")
+      "b r" '(revert-buffer :wk "Reload buffer")
+      "b m" '(bookmark-set :wk "Set Bookmark")
+      "b l" '(list-bookmarks :wk "List Bookmarks")
+      "b k" '(kill-buffer :wk "Kill Buffer")
+      "b K" '(kill-some-buffers :wk "Kill multiple Buffers")
+      )
 
-  (leader-key
-    "b" '(:ignore t :wk "Buffers/Bookmarks")
-    "b b" '(switch-to-buffer :wk "Switch buffer")
-    "b i" '(ibuffer :wk "IBuffer")
-    "b k" '(kill-this-buffer :wk "Kill this buffer")
-    "b n" '(next-buffer :wk "Next buffer")
-    "b p" '(previous-buffer :wk "Previous buffer")
-    "b r" '(revert-buffer :wk "Reload buffer")
-    "b m" '(bookmark-set :wk "Set Bookmark")
-    "b l" '(list-bookmarks :wk "List Bookmarks")
-    "b k" '(kill-buffer :wk "Kill Buffer")
-    "b K" '(kill-some-buffers :wk "Kill multiple Buffers")
+    (leader-key
+      "g" '(:ignore t :wk "Git")
+      "g g" '(magit :wk "Start Magit")
+      "g s" '(magit-status :wk "Status")
+      "g d" '(magit-diff :wk "Diff")
+      "g t" '(git-timemachine :wk "Timemachine")
+      )
+
+    (leader-key
+      "i" '(:ingore t :wk "Insert")
+      "i e" '(emoji-insert :wk "Insert")
+      "i c" '(insert-char :wk "Character")
+      "i t" '(table-insert :wk "Table")
+      "i y" '(consult-yasnippet :wk "Snippet")
+
+      )
+    (leader-key
+      "s" '(:ignore t :wk "Search")
+      "s b" '(consult-buffer :wk "Buffer")
+      "s i" '(consult-imenu :wk "Imenu")
+      ;; "s "
+      )
+    (leader-key
+      "f" '(:ignore t :wk "Files")
+      "." '(find-file :wk "Find File")
+      "f C" '((lambda () (interactive) (find-file "~/.emacs.d/")) :wk "Find files in config folder")
+      "f c" '((lambda () (interactive) (find-file "~/.emacs.d/config.org")) :wk "Edit config file")
+      "f r" '(consult-recent-file :wk "Find recent file")
+      )
+
+    (leader-key
+      "c" '(:ignore t :wk "Code")
+      "c c" '(compile :wk "Compile code")
+      "c r" '(lsp-rename :wk "Rename object")
+      "c d" '(lsp-find-definition :wk "Find definition")
+      "c x" '(flycheck-list-errors :wk "List errors")
+      "c r" '(lsp-restart :wk "Restart LSP")
+      )
+
+    (general-define-key
+     :keymaps 'projectile-command-map
+     ;; :prefix "SPC p" ; Префикс для доступа к ключам projectile-command-map
+     "f" 'consult-projectile-find-file
+     "p" 'consult-projectile-switch-project
+     "d" 'consult-projectile-find-dir
+     "b" 'consult-projectile-switch-to-buffer
+     ;; "s" 'projectile-switch-project
+     ;; "g" 'projectile-ag
+     ;; Добавьте другие свои привязки клавиш здесь
+     )
+
+    (leader-key
+      "p" '(projectile-command-map :wk "Projectile"))
+
+    (leader-key
+      "e" '(:ignore t :wk "Evaluate")
+      "e b" '(eval-buffer :wk "Evaluate buffer")
+      "e d" '(eval-defun :wk "Evaluate defun or after a point")
+      "e e" '(eval-expression :wk "Evaluate expression")
+      "e l" '(eval-last-sexp :wk "Evaluate expression before point")
+      "e r" '(eval-region :wk "Evaluate region"))
+
+    (leader-key
+      "h"  '(:ignore t :wk "Help")
+      "h f" '(describe-function :wk "Describe function")
+      "h v" '(describe-variable :wk "Describe variable")
+      "h m" '(describe-mode :wk "Describe mode")
+      "h p" '(describe-package :wk "Describe package")
+      "h k" '(describe-key :wk "Describe key")
+      "h K" '(describe-keymap :wk "Describe keymap")
+      "h r r" '((lambda () (interactive) (load-file user-init-file)(ignore (elpaca-process-queues))) :wk "Reload emacs config"))
+
+    (leader-key
+      "t" '(:ignore t :wk "Toggle")
+      "t l" '(display-line-numbers-mode :wk "Toggle line numbers")
+      "t t" '(visual-line-mode :wk "Toggle truncated lines")
+      )
+
+    (leader-key
+      "w" '(:ignore t :wk "Windows")
+      ;; Window splits
+      "w c" '(evil-window-delete :wk "Close window")
+      "w n" '(evil-window-new :wk "New window")
+      "w s" '(evil-window-split :wk "Horizontal split window")
+      "w v" '(evil-window-vsplit :wk "Vertical split window")
+      ;; Window motions
+      "w h" '(evil-window-left :wk "Window left")
+      "w j" '(evil-window-down :wk "Window down")
+      "w k" '(evil-window-up :wk "Window up")
+      "w l" '(evil-window-right :wk "Window right")
+      "w <left>" '(evil-window-left :wk "Window left")
+      "w <down>" '(evil-window-down :wk "Window down")
+      "w <up>" '(evil-window-up :wk "Window up")
+      "w <right>" '(evil-window-right :wk "Window right")
+      "w w" '(evil-window-next :wk "Goto next window")
+      ;; Move Windows
+      "w H" '(buf-move-left :wk "Buffer move left")
+      "w J" '(buf-move-down :wk "Buffer move down")
+      "w K" '(buf-move-up :wk "Buffer move up")
+      "w L" '(buf-move-right :wk "Buffer move right"))
+
+    (leader-key
+      "C-c" '(:ignore t :wk "Codeium")
+      "C-c t" '(my/toggle-codeium :wk "Toggle Codeium")
+      )
+
     )
-
-  (leader-key
-    "g" '(:ignore t :wk "Git")
-    "g g" '(magit :wk "Start Magit")
-    "g s" '(magit-status :wk "Status")
-    "g d" '(magit-diff :wk "Diff")
-    "g t" '(git-timemachine :wk "Timemachine")
-    )
-
-  (leader-key
-    "i" '(:ingore t :wk "Insert")
-    "i e" '(emoji-insert :wk "Insert")
-    "i c" '(insert-char :wk "Character")
-    "i t" '(table-insert :wk "Table")
-    )
-
-  (leader-key
-    "f" '(:ignore t :wk "Files")
-    "." '(find-file :wk "Find File")
-    "f C" '((lambda () (interactive) (find-file "~/.emacs.d/")) :wk "Find files in config folder")
-    "f c" '((lambda () (interactive) (find-file "~/.emacs.d/config.org")) :wk "Edit config file")
-    )
-
-  (leader-key
-    "c" '(:ignore t :wk "Code")
-    "c c" '(compile :wk "Compile code")
-    "c r" '(lsp-rename :wk "Rename object")
-    "c d" '(lsp-find-definition :wk "Find definition")
-    "c x" '(flycheck-list-errors :wk "List errors")
-    "c r" '(lsp-restart :wk "Restart LSP")
-    )
-
-  (leader-key
-    "p" '(projectile-command-map :wk "Projectile"))
-
-  (leader-key
-    "e" '(:ignore t :wk "Evaluate")
-    "e b" '(eval-buffer :wk "Evaluate buffer")
-    "e d" '(eval-defun :wk "Evaluate defun or after a point")
-    "e e" '(eval-expression :wk "Evaluate expression")
-    "e l" '(eval-last-sexp :wk "Evaluate expression before point")
-    "e r" '(eval-region :wk "Evaluate region"))
-
-  (leader-key
-    "h"  '(:ignore t :wk "Help")
-    "h f" '(describe-function :wk "Describe function")
-    "h v" '(describe-variable :wk "Describe variable")
-    "h m" '(describe-mode :wk "Describe mode")
-    "h p" '(describe-package :wk "Describe package")
-    "h k" '(describe-key :wk "Describe key")
-    "h r r" '((lambda () (interactive) (load-file user-init-file)(ignore (elpaca-process-queues))) :wk "Reload emacs config"))
-
-  (leader-key
-    "t" '(:ignore t :wk "Toggle")
-    "t l" '(display-line-numbers-mode :wk "Toggle line numbers")
-    "t t" '(visual-line-mode :wk "Toggle truncated lines")
-    )
-
-  (leader-key
-    "w" '(:ignore t :wk "Windows")
-    ;; Window splits
-    "w c" '(evil-window-delete :wk "Close window")
-    "w n" '(evil-window-new :wk "New window")
-    "w s" '(evil-window-split :wk "Horizontal split window")
-    "w v" '(evil-window-vsplit :wk "Vertical split window")
-    ;; Window motions
-    "w h" '(evil-window-left :wk "Window left")
-    "w j" '(evil-window-down :wk "Window down")
-    "w k" '(evil-window-up :wk "Window up")
-    "w l" '(evil-window-right :wk "Window right")
-    "w <left>" '(evil-window-left :wk "Window left")
-    "w <down>" '(evil-window-down :wk "Window down")
-    "w <up>" '(evil-window-up :wk "Window up")
-    "w <right>" '(evil-window-right :wk "Window right")
-    "w w" '(evil-window-next :wk "Goto next window")
-    ;; Move Windows
-    "w H" '(buf-move-left :wk "Buffer move left")
-    "w J" '(buf-move-down :wk "Buffer move down")
-    "w K" '(buf-move-up :wk "Buffer move up")
-    "w L" '(buf-move-right :wk "Buffer move right"))
-
-  (leader-key
-    "C-c" '(:ignore t :wk "Codeium")
-    "C-c t" '(my/toggle-codeium :wk "Toggle Codeium")
-    )
-
   )
 (elpaca-wait)
 #+end_src
@@ -375,8 +407,34 @@
 (use-package evil-collection :ensure t :demand t
   :after evil
   :config
-  (setq evil-collection-mode-lis '(dashboard dired ibuffer magit vterm bufler corfu consult dashboard elpaca imenu imenu-list org org-roam python typescript-mode))
-  (evil-collection-init))
+  (setq evil-collection-mode-list '(
+				    dashboard
+				    dired
+				    dired-sidebar
+				    ibuffer
+				    magit
+				    vterm
+				    bufler
+				    corfu
+				    consult
+				    vertico
+				    embark
+				    which-key
+				    dashboard
+				    elpaca
+				    imenu
+				    imenu-list
+				    org
+				    org-roam
+				    python
+				    elisp-mode
+				    typescript-mode
+				    yaml-mode
+				    elfeed
+				    xref
+				    ))
+  (evil-collection-init)
+  )
 (elpaca-wait)
 
 
@@ -387,7 +445,10 @@
   (define-key evil-motion-state-map (kbd "C-o") nil)
   )
 
-#+end_src
+  #+end_src
+
+#+RESULTS:
+
 *** Smartparens
 :PROPERTIES:
 :CUSTOM_ID: smartparens-0
@@ -1236,51 +1297,56 @@
   (add-hook 'elfeed-search-mode-hook #'elfeed-update)
   (make-directory elfeed-db-directory t)
 
-  (setq elfeed-search-filter "@2-week-ago "
+  (setq elfeed-search-filter "@2-week-ago +habr"
         elfeed-show-entry-switch #'pop-to-buffer
         ;; elfeed-show-entry-delete #'+rss/delete-pane
         shr-max-image-proportion 0.8)
 
-  (setq elfeed-search-feed-face ":foreground #ffffff :weight bold"
-	elfeed-feeds 
-        '(
-	  ("https://www.reddit.com/r/linux.rss" eng reddit linux)
-	  ;; ("https://www.reddit.com/r/commandline.rss" reddit commandline)
-	  ;; ("https://www.reddit.com/r/distrotube.rss" reddit distrotube)
-	  ("https://www.reddit.com/r/emacs.rss" eng reddit emacs)
+  (setq elfeed-search-feed-face ":foreground #ffffff :weight bold")
+	;; elfeed-feeds 
+        ;; '(
+	;;   ("https://www.reddit.com/r/linux.rss" eng reddit linux)
+	;;   ;; ("https://www.reddit.com/r/commandline.rss" reddit commandline)
+	;;   ;; ("https://www.reddit.com/r/distrotube.rss" reddit distrotube)
+	;;   ("https://www.reddit.com/r/emacs.rss" eng reddit emacs)
 
-	  ("https://www.reddit.com/r/org-mode.rss" eng reddit emacs org-mode)
-	  ;; ("https://www.gamingonlinux.com/article_rss.php" gaming linux)
-	  ;; ("https://hackaday.com/blog/feed/" hackaday linux)
-	  ;; ("https://opensource.com/feed" opensource linux)
-	  ;; ("https://linux.softpedia.com/backend.xml" softpedia linux)
-	  ;; ("https://itsfoss.com/feed/" itsfoss linux)
-	  ;; ("https://www.zdnet.com/topic/linux/rss.xml" zdnet linux)
-	  ;; ("https://www.phoronix.com/rss.php" phoronix linux)
-	  ;; ("http://feeds.feedburner.com/d0od" omgubuntu linux)
-	  ;; ("https://www.computerworld.com/index.rss" computerworld linux)
-	  ;; ("https://www.networkworld.com/category/linux/index.rss" networkworld linux)
-	  ;; ("https://www.techrepublic.com/rssfeeds/topic/open-source/" techrepublic linux)
-	  ;; ("https://betanews.com/feed" betanews linux)
-	  ;; ("http://lxer.com/module/newswire/headlines.rss" lxer linux)
-	  ;; ("https://distrowatch.com/news/dwd.xml" distrowatch linux)
-	  ;; ("habrahabr.ru/rss/hubs/webdev/articles/all" habr web-development)
-	  ;; ("habrahabr.ru/rss/hubs/all" habr test)
-	  ;; ("habrahabr.ru/rss/hubs/open_source/articles/rated25" habr opensource)
-	  ("https://habr.com/ru/rss/hubs/python/articles/rated25/?fl=ru" rus habr python)
-	  ("https://habr.com/ru/rss/hubs/open_source/articles/rated25/?fl=ru" rus habr open_source)
-	  ("https://habr.com/ru/rss/hubs/machine_learning/articles/rated25/?fl=ru" rus habr machine_learning)
-	  ("https://habr.com/ru/rss/hubs/artificial_intelligence/articles/rated25/?fl=ru" rus habr ai)
-	  ("https://habr.com/ru/rss/hubs/linux/articles/rated25/?fl=ru" rus habr linux)
-	  ("https://habr.com/ru/rss/hubs/algorithms/articles/rated25/?fl=ru" rus habr algorithms)
-	  ("https://habr.com/ru/rss/hubs/linux_dev/articles/rated25/?fl=ru" rus habr linux)
-	  ("https://habr.com/ru/rss/hubs/webdev/articles/rated25/?fl=ru" rus habr web_development)
-	  ("https://habr.com/ru/rss/hubs/reactjs/articles/rated25/?fl=ru" rus habr web_development react)
-	  ("https://habr.com/ru/rss/hubs/angular/articles/rated25/?fl=ru" rus habr web_development angular)
-	  ("https://habr.com/ru/rss/hubs/vuejs/articles/rated25/?fl=ru" rus habr web_development vuejs)
-	  ("https://habr.com/ru/rss/hubs/javascript/articles/rated25/?fl=ru" rus habr web_development javascript)
-	  ("https://habr.com/ru/rss/hubs/typescript/articles/rated25/?fl=ru" rus habr web_development typescript)
-	  ))
+	;;   ("https://www.reddit.com/r/org-mode.rss" eng reddit emacs org-mode)
+	;;   ;; ("https://www.gamingonlinux.com/article_rss.php" gaming linux)
+	;;   ;; ("https://hackaday.com/blog/feed/" hackaday linux)
+	;;   ;; ("https://opensource.com/feed" opensource linux)
+	;;   ;; ("https://linux.softpedia.com/backend.xml" softpedia linux)
+	;;   ;; ("https://itsfoss.com/feed/" itsfoss linux)
+	;;   ;; ("https://www.zdnet.com/topic/linux/rss.xml" zdnet linux)
+	;;   ;; ("https://www.phoronix.com/rss.php" phoronix linux)
+	;;   ;; ("http://feeds.feedburner.com/d0od" omgubuntu linux)
+	;;   ;; ("https://www.computerworld.com/index.rss" computerworld linux)
+	;;   ;; ("https://www.networkworld.com/category/linux/index.rss" networkworld linux)
+	;;   ;; ("https://www.techrepublic.com/rssfeeds/topic/open-source/" techrepublic linux)
+	;;   ;; ("https://betanews.com/feed" betanews linux)
+	;;   ;; ("http://lxer.com/module/newswire/headlines.rss" lxer linux)
+	;;   ;; ("https://distrowatch.com/news/dwd.xml" distrowatch linux)
+	;;   ;; ("habrahabr.ru/rss/hubs/webdev/articles/all" habr web-development)
+	;;   ;; ("habrahabr.ru/rss/hubs/all" habr test)
+	;;   ;; ("habrahabr.ru/rss/hubs/open_source/articles/rated25" habr opensource)
+	;;   ("https://habr.com/ru/rss/hubs/python/articles/rated25/?fl=ru" rus habr python)
+	;;   ("https://habr.com/ru/rss/hubs/open_source/articles/rated25/?fl=ru" rus habr open_source)
+	;;   ("https://habr.com/ru/rss/hubs/machine_learning/articles/rated25/?fl=ru" rus habr machine_learning)
+	;;   ("https://habr.com/ru/rss/hubs/artificial_intelligence/articles/rated25/?fl=ru" rus habr ai)
+	;;   ("https://habr.com/ru/rss/hubs/linux/articles/rated25/?fl=ru" rus habr linux)
+	;;   ("https://habr.com/ru/rss/hubs/algorithms/articles/rated25/?fl=ru" rus habr algorithms)
+	;;   ("https://habr.com/ru/rss/hubs/linux_dev/articles/rated25/?fl=ru" rus habr linux)
+	;;   ("https://habr.com/ru/rss/hubs/webdev/articles/rated25/?fl=ru" rus habr web_development)
+	;;   ("https://habr.com/ru/rss/hubs/reactjs/articles/rated25/?fl=ru" rus habr web_development react)
+	;;   ("https://habr.com/ru/rss/hubs/angular/articles/rated25/?fl=ru" rus habr web_development angular)
+	;;   ("https://habr.com/ru/rss/hubs/vuejs/articles/rated25/?fl=ru" rus habr web_development vuejs)
+	;;   ("https://habr.com/ru/rss/hubs/javascript/articles/rated25/?fl=ru" rus habr web_development javascript)
+	;;   ("https://habr.com/ru/rss/hubs/typescript/articles/rated25/?fl=ru" rus habr web_development typescript)
+	;;   ))
+  (leader-key
+    "E" '(:ignore t :wk "Elfeed")
+    "E e" '(elfeed :wk "Start")
+    "E u" '(elfeed-update :wk "Update")
+    )
   )
 
 
@@ -1289,6 +1355,11 @@
   (elfeed-goodies/setup)
   :config
   (setq elfeed-goodies/entry-pane-size 0.5))
+(use-package elfeed-org
+  :config
+  (elfeed-org)
+  (setq rmh-elfeed-org-files (list "~/.emacs.d/elfeed.org"))
+  )
 #+end_src
 
 #+RESULTS:
@@ -1526,17 +1597,53 @@
   ;; package.
   (marginalia-mode))
 #+end_src
+** Embark
+:PROPERTIES:
+:CUSTOM_ID: embark
+:END:
+#+begin_src emacs-lisp
+(use-package embark
+  :bind
+  (("C-;" . embark-act)
+   ("M-." . embark-dwim)
+   ("C-h B" . embark-bindings))
+
+  :init
+  (setq prefix-help-command #'embark-prefix-help-command)
+  :config
+  ;; (leader-key
+  ;;   "T" '(embark-act :wk "Embark"))
+  (add-to-list 'display-buffer-alist
+               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                 nil
+                 (window-parameters (mode-line-format . none))))
+  )
+
+(use-package embark-consult
+  ;; :after '(em
+  :hook
+  (embark-collect-mode . consult-preview-at-point-mode)
+  )
+#+end_src
+
+#+RESULTS:
+
 ** Consult 
 :PROPERTIES:
 :CUSTOM_ID: consult
 :END:
 #+begin_src emacs-lisp
-  (use-package consult
-    :config
-    (recentf-mode)
-    (leader-key
-      "f r" '(consult-recent-file :wk "Find recent file")))
-  (elpaca-wait)
+(use-package consult
+  :config
+  (recentf-mode)
+)
+(elpaca-wait)
+
+(use-package consult-dir)
+(use-package consult-org-roam)
+(use-package consult-projectile)
+(use-package consult-yasnippet)
+
 #+end_src
 ** Yasnippet 
 :PROPERTIES:
@@ -1833,12 +1940,6 @@
  "m d" '(pipenv-deactivate :wk "Deactivate venv")
  )
 
-(general-define-key
- ;; :definer 'minor-mode
- :states 'normal
- :mode 'org-mode
- "SPC l" '(org-table-insert-row :wk "Test")
-)
 #+end_src
 
 #+RESULTS:
