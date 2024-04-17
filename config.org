@@ -225,7 +225,7 @@
 
   (leader-key
     "b" '(:ignore t :wk "Buffers/Bookmarks")
-    "b b" '(consult-projectile-switch-to-buffer :wk "Switch buffer")
+    "b b" '(switch-to-buffer :wk "Switch buffer")
     "b i" '(ibuffer :wk "IBuffer")
     "b k" '(kill-this-buffer :wk "Kill this buffer")
     "b n" '(next-buffer :wk "Next buffer")
@@ -1902,7 +1902,7 @@
   (setq dap-breakpoints-file (concat user-emacs-directory "dap-breakpoints")
         dap-utils-extension-path (concat user-emacs-directory "dap-extension/"))
   :config
-  ;; (require dap-python)
+  (require 'dap-python)
 
   (setq dap-python-debugger 'debugpy)
   (setq lsp-clients-angular-language-server-command
@@ -1942,8 +1942,8 @@
   ;;   )
   )
 (use-package dap-ui
-	      :hook (dap-mode . dap-ui-mode)
-	      :hook (dap-ui-mode . dap-ui-controls-mode))
+  :hook (dap-mode . dap-ui-mode)
+  :hook (dap-ui-mode . dap-ui-controls-mode))
 #+end_src
 ** Formater 
 :PROPERTIES:
