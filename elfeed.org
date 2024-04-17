@@ -2,7 +2,8 @@
 ** Reddit :reddit:eng:
 *** https://www.reddit.com/r/linux.rss :linux:
 *** https://www.reddit.com/r/emacs.rss :emacs:
-*** https://www.reddit.com/r/org-mode.rss :emacs:org-mode:
+*** https://www.reddit.com/r/orgmode.rss :emacs:org-mode:
+*** [[https://www.reddit.com/r/evilmode.rss]] :emacs:
 ** Habr :habr:rus:
 
 *** [[https://habr.com/ru/rss/hubs/python/articles/rated25/?fl=ru][Habr Python]] :python: 

@@ -46,6 +46,7 @@
   - [[#rainbow-identifiers][Rainbow Identifiers]]
   - [[#prismel][Prism.el]]
   - [[#ligatures][Ligatures]]
+  - [[#highlight-indent][Highlight indent]]
 - [[#org-mode][Org-Mode]]
   - [[#hover-links][Hover Links]]
   - [[#org-appear][Org-Appear]]
@@ -224,7 +225,7 @@
 
   (leader-key
     "b" '(:ignore t :wk "Buffers/Bookmarks")
-    "b b" '(switch-to-buffer :wk "Switch buffer")
+    "b b" '(consult-projectile-switch-to-buffer :wk "Switch buffer")
     "b i" '(ibuffer :wk "IBuffer")
     "b k" '(kill-this-buffer :wk "Kill this buffer")
     "b n" '(next-buffer :wk "Next buffer")
@@ -340,6 +341,7 @@
   (leader-key
     "C-c" '(:ignore t :wk "Codeium")
     "C-c t" '(my/toggle-codeium :wk "Toggle Codeium")
+"C-c c" '(my/strict-complete-codeium :wk "Call Codeium Completion")
     )
 
   )
@@ -366,9 +368,8 @@
 :END:
 #+begin_src emacs-lisp
 (use-package aggressive-indent
-  ;; :hook (prog-mode . aggresive-indent)
   :config
-  (add-hook 'prog-mode-hook #'aggressive-indent-mode)
+  (setq global-aggressive-indent-mode 1)
   )
   #+end_src
 ** Evil-Mode
@@ -413,8 +414,10 @@
 				    dired-sidebar
 				    ibuffer
 				    magit
+				    git-timemachine
 				    vterm
 				    bufler
+				    indent
 				    corfu
 				    consult
 				    vertico
@@ -660,8 +663,9 @@
   (set-face-attribute 'font-lock-comment-face nil
 		      :slant 'italic)
   (set-face-attribute 'font-lock-keyword-face nil
-		      :weight 'bold
-		      :slant 'italic)
+		      :weight 'ultra-bold
+		      ;; :slant 'italic
+		      )
   ;; Делаем так, чтобы у нас для графики был Nerd Font
   (add-to-list 'default-frame-alist '(font . "JetBrainsMono Nerd Font"))
   (setq org-hide-emphasis-markers t)
@@ -790,6 +794,15 @@
 :END:
 #+begin_src emacs-lisp
 (use-package ligature)
+#+end_src
+** Highlight indent
+:PROPERTIES:
+:CUSTOM_ID: highlight-indent
+:END:
+#+begin_src emacs-lisp
+(use-package highlight-indent-guides
+  :hook (prog-mode . highlight-indent-guides-mode)
+  )
 #+end_src
 * Org-Mode
 :PROPERTIES:
@@ -1868,8 +1881,26 @@
 :CUSTOM_ID: dap-mode
 :END:
 #+begin_src emacs-lisp
+(defvar +debugger--dap-alist
+  `(((:lang cc +lsp)         :after ccls        :require (dap-lldb dap-gdb-lldb))
+    ((:lang elixir +lsp)     :after elixir-mode :require dap-elixir)
+    ((:lang go +lsp)         :after go-mode     :require dap-dlv-go)
+    ((:lang java +lsp)       :after java-mode   :require lsp-java)
+    ((:lang php +lsp)        :after php-mode    :require dap-php)
+    ((:lang python +lsp)     :after python      :require dap-python)
+    ((:lang ruby +lsp)       :after ruby-mode   :require dap-ruby)
+    ((:lang rust +lsp)       :after rustic-mode :require (dap-lldb dap-cpptools))
+    ((:lang javascript +lsp)
+     :after (js2-mode typescript-mode)
+     :require (dap-node dap-chrome dap-firefox ,@(if (featurep :system 'windows) '(dap-edge)))))
+  "TODO")
+
 (use-package dap-mode
   :after lsp-mode
+  :hook (dap-mode . dap-tooltip-mode)
+  :init
+  (setq dap-breakpoints-file (concat user-emacs-directory "dap-breakpoints")
+        dap-utils-extension-path (concat user-emacs-directory "dap-extension/"))
   :config
   ;; (require dap-python)
 
@@ -1910,6 +1941,9 @@
   ;;   "d s" '(dap-delete-session :wk "Stop")
   ;;   )
   )
+(use-package dap-ui
+	      :hook (dap-mode . dap-ui-mode)
+	      :hook (dap-ui-mode . dap-ui-controls-mode))
 #+end_src
 ** Formater 
 :PROPERTIES:
@@ -1929,6 +1963,7 @@
 #+begin_src emacs-lisp
 (setq python-indent-offset 4)
 (setq org-startup-indented t)
+(setq python-indent-guess-indent-offset nil)
 (after! tree-sitter
   (add-hook 'python-mode-local-vars-hook #'tree-sitter! 'append)
   )
