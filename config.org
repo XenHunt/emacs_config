@@ -33,13 +33,13 @@
   - [[#emacs][Emacs]]
   - [[#bufler][Bufler]]
 - [[#graphical-beauty][Graphical Beauty]]
+  - [[#doom-theme][Doom Theme]]
+  - [[#doom-modeline][Doom Modeline]]
   - [[#fonts][Fonts]]
   - [[#removing-bars][Removing Bars]]
   - [[#line-numbers][Line Numbers]]
   - [[#nerd-icons][Nerd-Icons]]
   - [[#all-the-icons][ALL-THE-ICONS]]
-  - [[#doom-theme][Doom Theme]]
-  - [[#doom-modeline][Doom Modeline]]
   - [[#dashboard][Dashboard]]
   - [[#rainbow-mode][Rainbow-mode]]
   - [[#rainbow-delimiters][Rainbow Delimiters]]
@@ -93,6 +93,7 @@
   - [[#embark][Embark]]
   - [[#consult][Consult]]
   - [[#yasnippet][Yasnippet]]
+- [[#dash-docs][Dash-Docs]]
 - [[#shell][Shell]]
   - [[#vterm][VTerm]]
 - [[#direnv][Direnv]]
@@ -607,35 +608,64 @@
 :PROPERTIES:
 :CUSTOM_ID: graphical-beauty
 :END:
+** Doom Theme 
+:PROPERTIES:
+:CUSTOM_ID: doom-theme
+:END:
+#+begin_src emacs-lisp
+  (use-package doom-themes
+    :config
+    (load-theme 'doom-dracula t)
+    (setq doom-themes-enable-bold t    ; Включаем bold
+          doom-themes-enable-italic t); Включаем italic
+    (set-frame-parameter nil 'alpha-background 90) ; Set transparency to 85%
+    (add-to-list 'default-frame-alist '(alpha-background . 90)) ; Set transparency for new frames
+    (doom-themes-org-config)
+    (leader-key
+      "h t" '(load-theme :wk "Load theme"))
+    )
+#+end_src
+** Doom Modeline 
+:PROPERTIES:
+:CUSTOM_ID: doom-modeline
+:END:
+#+begin_src emacs-lisp
+  (use-package doom-modeline
+    :ensure t
+    :init (doom-modeline-mode 1))
+#+end_src
 ** Fonts
 :PROPERTIES:
 :CUSTOM_ID: fonts
 :END:
 
 #+begin_src emacs-lisp
-;; Ставим стандартные фонты
-(set-face-attribute 'default nil
-                    :font "JetBrainsMono Nerd Font"
-                    :height 110
-                    :weight 'medium)
-(set-face-attribute 'variable-pitch nil
-                    :font "Ubuntu"
-                    :height 120
-                    :weight 'medium)
-(set-face-attribute 'fixed-pitch nil
-                    :font "JetBrainsMono Nerd Font"
-                    :height 110
-                    :weight 'medium)
+;; Создаём функцию, потому-что org-make-toc перезаписывает стили фонтов
+(defun my/set-fonts ()
+  "Ставим стандартные фонты"
+  (set-face-attribute 'default nil
+		      :font "JetBrainsMono Nerd Font"
+		      :height 110
+		      :weight 'medium)
+  (set-face-attribute 'variable-pitch nil
+		      :font "Ubuntu"
+		      :height 120
+		      :weight 'medium)
+  (set-face-attribute 'fixed-pitch nil
+		      :font "JetBrainsMono Nerd Font"
+		      :height 110
+		      :weight 'medium)
 
-;; Делаем так, чтобы особые символы были italic
-(set-face-attribute 'font-lock-comment-face nil
-                    :slant 'italic)
-(set-face-attribute 'font-lock-keyword-face nil
-                    :slant 'italic)
-;; Делаем так, чтобы у нас для графики был Nerd Font
-(add-to-list 'default-frame-alist '(font . "JetBrainsMono Nerd Font"))
-(setq org-hide-emphasis-markers t)
-
+  ;; Делаем так, чтобы особые символы были italic
+  (set-face-attribute 'font-lock-comment-face nil
+		      :slant 'italic)
+  (set-face-attribute 'font-lock-keyword-face nil
+		      :weight 'bold
+		      :slant 'italic)
+  ;; Делаем так, чтобы у нас для графики был Nerd Font
+  (add-to-list 'default-frame-alist '(font . "JetBrainsMono Nerd Font"))
+  (setq org-hide-emphasis-markers t)
+  )
 
 #+end_src
 
@@ -690,32 +720,6 @@
     :if (display-graphic-p))
   (use-package all-the-icons-dired
     :hook (dired-mode . (lambda () (all-the-icons-dired-mode t))))
-#+end_src
-** Doom Theme 
-:PROPERTIES:
-:CUSTOM_ID: doom-theme
-:END:
-#+begin_src emacs-lisp
-  (use-package doom-themes
-    :config
-    (load-theme 'doom-dracula t)
-    (setq doom-themes-enable-bold t    ; Включаем bold
-          doom-themes-enable-italic t); Включаем italic
-    (set-frame-parameter nil 'alpha-background 90) ; Set transparency to 85%
-    (add-to-list 'default-frame-alist '(alpha-background . 90)) ; Set transparency for new frames
-    (doom-themes-org-config)
-    (leader-key
-      "h t" '(load-theme :wk "Load theme"))
-    )
-#+end_src
-** Doom Modeline 
-:PROPERTIES:
-:CUSTOM_ID: doom-modeline
-:END:
-#+begin_src emacs-lisp
-  (use-package doom-modeline
-    :ensure t
-    :init (doom-modeline-mode 1))
 #+end_src
 ** Dashboard 
 :PROPERTIES:
@@ -830,11 +834,13 @@
 :CUSTOM_ID: toc
 :END:
 #+begin_src emacs-lisp
-  (use-package org-make-toc
-    :config
-    (setq org-make-toc-insert-custom-ids t)
-    (add-hook 'org-mode-hook #'org-make-toc-mode))
-  (elpaca-wait)
+(use-package org-make-toc
+  :config
+  (setq org-make-toc-insert-custom-ids t)
+  (add-hook 'org-mode-hook #'org-make-toc-mode)
+  (my/set-fonts)
+  )
+(elpaca-wait)
 #+end_src
 ** Highlight TODO 
 :PROPERTIES:
@@ -1287,12 +1293,20 @@
 :CUSTOM_ID: elfeed
 :END:
 #+begin_src emacs-lisp
+
+;; (defvar my/elfeed-original-search-pattern "@2-week-ago +habr" "Original search pattern for my elfeed")
+
+;; (defvar my/elfeed-original-search-pattern "@2-week-ago +habr" "Original search pattern for my elfeed")
+
+;; (defvar my/elfeed-original-search-pattern "@2-week-ago +habr" "Original search pattern for my elfeed")
+
 (use-package elfeed
   :commands elfeed
   :init
   (setq elfeed-db-directory (concat user-emacs-directory "elfeed/db/")
         elfeed-enclosure-default-dir (concat user-emacs-directory "elfeed/enclosures/"))
   :config
+
   (add-hook 'elfeed-search-mode-hook #'elfeed-update)
   (make-directory elfeed-db-directory t)
 
@@ -1431,6 +1445,7 @@
   (corfu-scroll-margin 5)        ;; Use scroll margin
   ;; (corfu-auto-delay 0.8)
   ;; Enable Corfu only for certain modes.
+
   :hook ((prog-mode . corfu-mode))
   ;;        (shell-mode . corfu-mode)
   ;;        (eshell-mode . corfu-mode))
@@ -1447,6 +1462,8 @@
         ("C-SPC" . corfu-insert-separator))
   :init
   (global-corfu-mode)
+  (corfu-popupinfo-mode)
+  (setq corfu-popupinfo-delay (cons 1.0 1.0))
 
   :config
   (defun corfu-enable-in-minibuffer ()
@@ -1693,6 +1710,18 @@
   (yas-global-mode 1)
   )
 (use-package yasnippet-snippets)
+#+end_src
+* Dash-Docs
+:PROPERTIES:
+:CUSTOM_ID: dash-docs
+:END:
+#+begin_src emacs-lisp
+;; (use-package dash-docs)
+;; (use-package consult-dash
+;;   :bind (("M-s d" . consult-dash))
+;;   :config
+;;   ;; Use the symbol at point as initial search term
+;;   (consult-customize consult-dash :initial (thing-at-point 'symbol)))
 #+end_src
 * Shell
 :PROPERTIES:
@@ -2025,7 +2054,7 @@
       (when (executable-find "jupyter")
         (lc/org-load-jupyter))))
   (after! org-src
-    (add-to-list 'org-src-lang-modes '("jupyter-python" . python-ts))
+    ;; (add-to-list 'org-src-lang-modes '("jupyter-python" . python-ts))
     (add-to-list 'org-src-lang-modes '("jupyter-R" . R)))
   (setq org-babel-default-header-args:jupyter-python '(
                                                        (:display . "plain")
@@ -2044,21 +2073,11 @@
   (add-to-list 'org-babel-tangle-lang-exts '("ipython" . "py"))
   (add-to-list 'org-babel-tangle-lang-exts '("jupyter-python" . "py"))
   (add-hook 'jupyter-org-interaction-mode-hook (lambda ()  (corfu-mode)))
-  (org-babel-jupyter-override-src-block "python")
-  (org-babel-jupyter-override-src-block "R")
+  ;; (org-babel-jupyter-override-src-block "python")
+  ;; (org-babel-jupyter-override-src-block "R")
   )
 #+end_src
 
-
-
-#+begin_src python
-import os
-import numpy 
-import pandas
-#+end_src
-
-#+RESULTS:
-: /tmp/babel-DPIUyG/python-8r6Ls3
 ** WEB
 :PROPERTIES:
 :CUSTOM_ID: web
@@ -2081,8 +2100,12 @@ import pandas
 	 ("\\.html\\'" . web-mode)
          ("\\.css\\'" . web-mode)
          ("\\.js\\'" . web-mode)
+	 ;; ("\\.vue\\'" . web-mode) 
 	 ;; ("\\.ts\\'" . web-mode)
 	 )
+  :config
+  (add-to-list 'auto-mode-alist '("\\.vue\\'" . web-mode) 'append)
+  :mode "\\.vue\\'"
   :hook ((web-mode . lsp-mode))
   :config
   (setq web-mode-markup-indent-offset 2) ; Отступ для HTML и XML
@@ -2434,5 +2457,3 @@ import pandas
     (add-to-list 'completion-at-point-functions 'codeium-completion-at-point)
     (message "Codeium auto complete on")))
 #+end_src
-
-
