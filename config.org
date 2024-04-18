@@ -183,7 +183,9 @@
 
 ;; (add-hook 'prog-mode-hook 'my-scroll-precision-mode)
 ;; (add-hook 'text-mode-hook 'my-scroll-precision-mode)
+(setq echo-keystrokes 0.01)
 (setq pixel-scroll-precision-mode 1)
+(setq user-cache-dir (concat user-emacs-directory ".local/cache/"))
 #+end_src
 
 ** Wgrep
@@ -291,13 +293,13 @@
   (leader-key
     "p" '(projectile-command-map :wk "Projectile"))
 
-  (leader-key
-    "e" '(:ignore t :wk "Evaluate")
-    "e b" '(eval-buffer :wk "Evaluate buffer")
-    "e d" '(eval-defun :wk "Evaluate defun or after a point")
-    "e e" '(eval-expression :wk "Evaluate expression")
-    "e l" '(eval-last-sexp :wk "Evaluate expression before point")
-    "e r" '(eval-region :wk "Evaluate region"))
+  ;; (leader-key
+  ;;   "e" '(:ignore t :wk "Evaluate")
+  ;;   "e b" '(eval-buffer :wk "Evaluate buffer")
+  ;;   "e d" '(eval-defun :wk "Evaluate defun or after a point")
+  ;;   "e e" '(eval-expression :wk "Evaluate expression")
+  ;;   "e l" '(eval-last-sexp :wk "Evaluate expression before point")
+  ;;   "e r" '(eval-region :wk "Evaluate region"))
 
   (leader-key
     "h"  '(:ignore t :wk "Help")
@@ -341,7 +343,7 @@
   (leader-key
     "C-c" '(:ignore t :wk "Codeium")
     "C-c t" '(my/toggle-codeium :wk "Toggle Codeium")
-"C-c c" '(my/strict-complete-codeium :wk "Call Codeium Completion")
+    "C-c c" '(my/strict-complete-codeium :wk "Call Codeium Completion")
     )
 
   )
@@ -1202,9 +1204,25 @@
 :CUSTOM_ID: base-0
 :END:
 #+begin_src emacs-lisp
-  (setq delete-by-moving-to-trash 1
-        trash-directory "/home/berlizoves/.local/share/Trash/files/")
+(use-package dired
+  :ensure nil
+  :config
 
+  (setq delete-by-moving-to-trash 1
+	trash-directory "/home/berlizoves/.local/share/Trash/files/")
+  (setq insert-directory-program "ls" 
+	dired-use-ls-dired t
+	dired-listing-switches "-agho --group-directories-first" 
+	)
+  (setq  dired-use-ls-dired nil)
+  (setq  image-dired-dir (concat user-cache-dir "image-dired/")
+	 image-dired-db-file (concat image-dired-dir "db.el")
+	 image-dired-gallery-dir (concat image-dired-dir "gallery/")
+	 image-dired-temp-image-file (concat image-dired-dir "temp-image")
+	 image-dired-temp-rotate-image-file (concat image-dired-dir "temp-rotate-image")
+	 ;; Screens are larger nowadays, we can afford slightly larger thumbnails
+	 image-dired-thumb-size 150)
+  )
 #+end_src
 ** Dired-open 
 :PROPERTIES:
@@ -1212,6 +1230,7 @@
 :END:
 #+begin_src emacs-lisp
 (use-package dired-open
+  :after dired
   :config
   (setq dired-open-extensions '(("gif" . "sxiv")
                                 ("jpg" . "sxiv")
@@ -1225,37 +1244,37 @@
 :END:
 #+begin_src emacs-lisp
 
-  (use-package peep-dired
-    :after dired
-    :hook (evil-normalize-keymaps . peep-dired-hook)
-    :config
-    (evil-define-key 'normal dired-mode-map
-      (kbd "M-RET") 'dired-display-file
-      (kbd "h") 'dired-up-directory
-      (kbd "l") 'dired-open-file ; use dired-find-file instead of dired-open.
-      (kbd "m") 'dired-mark
-      (kbd "t") 'dired-toggle-marks
-      (kbd "u") 'dired-unmark
-      (kbd "D") 'dired-do-delete
-      (kbd "J") 'dired-goto-file
-      (kbd "M") 'dired-do-chmod
-      (kbd "O") 'dired-do-chown
-      (kbd "P") 'dired-do-print
-      (kbd "R") 'dired-do-rename
-      (kbd "T") 'dired-create-empty-file
-      (kbd "Y") 'dired-copy
-      (kbd "Z") 'dired-do-compress
-      (kbd "+") 'dired-create-directory
-      (kbd "-") 'dired-do-kill-lines
-      (kbd "% l") 'dired-downcase
-      (kbd "% m") 'dired-mark-files-regexp
-      (kbd "% u") 'dired-upcase
-      (kbd "* %") 'dired-mark-files-regexp
-      (kbd "* .") 'dired-mark-extension
-      (kbd "* /") 'dired-mark-directories
-      (kbd "; d") 'epa-dired-do-decrypt
-      (kbd "; e") 'epa-dired-do-encrypt)
-    )
+(use-package peep-dired
+  :after dired
+  :hook (evil-normalize-keymaps . peep-dired-hook)
+  :init
+  (evil-define-key 'normal dired-mode-map
+    (kbd "M-RET") 'dired-display-file
+    (kbd "h") 'dired-up-directory
+    (kbd "l") 'dired-open-file ; use dired-find-file instead of dired-open.
+    (kbd "m") 'dired-mark
+    (kbd "t") 'dired-toggle-marks
+    (kbd "u") 'dired-unmark
+    (kbd "D") 'dired-do-delete
+    (kbd "J") 'dired-goto-file
+    (kbd "M") 'dired-do-chmod
+    (kbd "O") 'dired-do-chown
+    (kbd "P") 'dired-do-print
+    (kbd "R") 'dired-do-rename
+    (kbd "T") 'dired-create-empty-file
+    (kbd "Y") 'dired-copy
+    (kbd "Z") 'dired-do-compress
+    (kbd "+") 'dired-create-directory
+    (kbd "-") 'dired-do-kill-lines
+    (kbd "% l") 'dired-downcase
+    (kbd "% m") 'dired-mark-files-regexp
+    (kbd "% u") 'dired-upcase
+    (kbd "* %") 'dired-mark-files-regexp
+    (kbd "* .") 'dired-mark-extension
+    (kbd "* /") 'dired-mark-directories
+    (kbd "; d") 'epa-dired-do-decrypt
+    (kbd "; e") 'epa-dired-do-encrypt)
+  )
 #+end_src
 * Projectile 
 :PROPERTIES:
@@ -1329,49 +1348,49 @@
         shr-max-image-proportion 0.8)
 
   (setq elfeed-search-feed-face ":foreground #ffffff :weight bold")
-	;; elfeed-feeds 
-        ;; '(
-	;;   ("https://www.reddit.com/r/linux.rss" eng reddit linux)
-	;;   ;; ("https://www.reddit.com/r/commandline.rss" reddit commandline)
-	;;   ;; ("https://www.reddit.com/r/distrotube.rss" reddit distrotube)
-	;;   ("https://www.reddit.com/r/emacs.rss" eng reddit emacs)
+  ;; elfeed-feeds 
+  ;; '(
+  ;;   ("https://www.reddit.com/r/linux.rss" eng reddit linux)
+  ;;   ;; ("https://www.reddit.com/r/commandline.rss" reddit commandline)
+  ;;   ;; ("https://www.reddit.com/r/distrotube.rss" reddit distrotube)
+  ;;   ("https://www.reddit.com/r/emacs.rss" eng reddit emacs)
 
-	;;   ("https://www.reddit.com/r/org-mode.rss" eng reddit emacs org-mode)
-	;;   ;; ("https://www.gamingonlinux.com/article_rss.php" gaming linux)
-	;;   ;; ("https://hackaday.com/blog/feed/" hackaday linux)
-	;;   ;; ("https://opensource.com/feed" opensource linux)
-	;;   ;; ("https://linux.softpedia.com/backend.xml" softpedia linux)
-	;;   ;; ("https://itsfoss.com/feed/" itsfoss linux)
-	;;   ;; ("https://www.zdnet.com/topic/linux/rss.xml" zdnet linux)
-	;;   ;; ("https://www.phoronix.com/rss.php" phoronix linux)
-	;;   ;; ("http://feeds.feedburner.com/d0od" omgubuntu linux)
-	;;   ;; ("https://www.computerworld.com/index.rss" computerworld linux)
-	;;   ;; ("https://www.networkworld.com/category/linux/index.rss" networkworld linux)
-	;;   ;; ("https://www.techrepublic.com/rssfeeds/topic/open-source/" techrepublic linux)
-	;;   ;; ("https://betanews.com/feed" betanews linux)
-	;;   ;; ("http://lxer.com/module/newswire/headlines.rss" lxer linux)
-	;;   ;; ("https://distrowatch.com/news/dwd.xml" distrowatch linux)
-	;;   ;; ("habrahabr.ru/rss/hubs/webdev/articles/all" habr web-development)
-	;;   ;; ("habrahabr.ru/rss/hubs/all" habr test)
-	;;   ;; ("habrahabr.ru/rss/hubs/open_source/articles/rated25" habr opensource)
-	;;   ("https://habr.com/ru/rss/hubs/python/articles/rated25/?fl=ru" rus habr python)
-	;;   ("https://habr.com/ru/rss/hubs/open_source/articles/rated25/?fl=ru" rus habr open_source)
-	;;   ("https://habr.com/ru/rss/hubs/machine_learning/articles/rated25/?fl=ru" rus habr machine_learning)
-	;;   ("https://habr.com/ru/rss/hubs/artificial_intelligence/articles/rated25/?fl=ru" rus habr ai)
-	;;   ("https://habr.com/ru/rss/hubs/linux/articles/rated25/?fl=ru" rus habr linux)
-	;;   ("https://habr.com/ru/rss/hubs/algorithms/articles/rated25/?fl=ru" rus habr algorithms)
-	;;   ("https://habr.com/ru/rss/hubs/linux_dev/articles/rated25/?fl=ru" rus habr linux)
-	;;   ("https://habr.com/ru/rss/hubs/webdev/articles/rated25/?fl=ru" rus habr web_development)
-	;;   ("https://habr.com/ru/rss/hubs/reactjs/articles/rated25/?fl=ru" rus habr web_development react)
-	;;   ("https://habr.com/ru/rss/hubs/angular/articles/rated25/?fl=ru" rus habr web_development angular)
-	;;   ("https://habr.com/ru/rss/hubs/vuejs/articles/rated25/?fl=ru" rus habr web_development vuejs)
-	;;   ("https://habr.com/ru/rss/hubs/javascript/articles/rated25/?fl=ru" rus habr web_development javascript)
-	;;   ("https://habr.com/ru/rss/hubs/typescript/articles/rated25/?fl=ru" rus habr web_development typescript)
-	;;   ))
+  ;;   ("https://www.reddit.com/r/org-mode.rss" eng reddit emacs org-mode)
+  ;;   ;; ("https://www.gamingonlinux.com/article_rss.php" gaming linux)
+  ;;   ;; ("https://hackaday.com/blog/feed/" hackaday linux)
+  ;;   ;; ("https://opensource.com/feed" opensource linux)
+  ;;   ;; ("https://linux.softpedia.com/backend.xml" softpedia linux)
+  ;;   ;; ("https://itsfoss.com/feed/" itsfoss linux)
+  ;;   ;; ("https://www.zdnet.com/topic/linux/rss.xml" zdnet linux)
+  ;;   ;; ("https://www.phoronix.com/rss.php" phoronix linux)
+  ;;   ;; ("http://feeds.feedburner.com/d0od" omgubuntu linux)
+  ;;   ;; ("https://www.computerworld.com/index.rss" computerworld linux)
+  ;;   ;; ("https://www.networkworld.com/category/linux/index.rss" networkworld linux)
+  ;;   ;; ("https://www.techrepublic.com/rssfeeds/topic/open-source/" techrepublic linux)
+  ;;   ;; ("https://betanews.com/feed" betanews linux)
+  ;;   ;; ("http://lxer.com/module/newswire/headlines.rss" lxer linux)
+  ;;   ;; ("https://distrowatch.com/news/dwd.xml" distrowatch linux)
+  ;;   ;; ("habrahabr.ru/rss/hubs/webdev/articles/all" habr web-development)
+  ;;   ;; ("habrahabr.ru/rss/hubs/all" habr test)
+  ;;   ;; ("habrahabr.ru/rss/hubs/open_source/articles/rated25" habr opensource)
+  ;;   ("https://habr.com/ru/rss/hubs/python/articles/rated25/?fl=ru" rus habr python)
+  ;;   ("https://habr.com/ru/rss/hubs/open_source/articles/rated25/?fl=ru" rus habr open_source)
+  ;;   ("https://habr.com/ru/rss/hubs/machine_learning/articles/rated25/?fl=ru" rus habr machine_learning)
+  ;;   ("https://habr.com/ru/rss/hubs/artificial_intelligence/articles/rated25/?fl=ru" rus habr ai)
+  ;;   ("https://habr.com/ru/rss/hubs/linux/articles/rated25/?fl=ru" rus habr linux)
+  ;;   ("https://habr.com/ru/rss/hubs/algorithms/articles/rated25/?fl=ru" rus habr algorithms)
+  ;;   ("https://habr.com/ru/rss/hubs/linux_dev/articles/rated25/?fl=ru" rus habr linux)
+  ;;   ("https://habr.com/ru/rss/hubs/webdev/articles/rated25/?fl=ru" rus habr web_development)
+  ;;   ("https://habr.com/ru/rss/hubs/reactjs/articles/rated25/?fl=ru" rus habr web_development react)
+  ;;   ("https://habr.com/ru/rss/hubs/angular/articles/rated25/?fl=ru" rus habr web_development angular)
+  ;;   ("https://habr.com/ru/rss/hubs/vuejs/articles/rated25/?fl=ru" rus habr web_development vuejs)
+  ;;   ("https://habr.com/ru/rss/hubs/javascript/articles/rated25/?fl=ru" rus habr web_development javascript)
+  ;;   ("https://habr.com/ru/rss/hubs/typescript/articles/rated25/?fl=ru" rus habr web_development typescript)
+  ;;   ))
   (leader-key
-    "E" '(:ignore t :wk "Elfeed")
-    "E e" '(elfeed :wk "Start")
-    "E u" '(elfeed-update :wk "Update")
+    "e" '(:ignore t :wk "Elfeed")
+    "e e" '(elfeed :wk "Start")
+    "e u" '(elfeed-update :wk "Update")
     )
   )
 
@@ -1579,30 +1598,47 @@
 :CUSTOM_ID: vertico
 :END:
 #+begin_src emacs-lisp
-  ;; Enable vertico
-  (use-package vertico
-    :init
-    (vertico-mode)
+;; Enable vertico
+(use-package vertico
+  :init
+  (vertico-mode)
+  ;; Sort directories before files
+  (defun sort-directories-first (files)
+    (setq files (vertico-sort-history-length-alpha files))
+    (nconc (seq-filter (lambda (x) (string-suffix-p "/" x)) files)
+           (seq-remove (lambda (x) (string-suffix-p "/" x)) files)))
 
-    ;; Different scroll margin
-    ;; (setq vertico-scroll-margin 0)
+  ;; Different scroll margin
+  ;; (setq vertico-scroll-margin 0)
 
-    ;; Show more candidates
-    ;; (setq vertico-count 20)
+  ;; Show more candidates
+  ;; (setq vertico-count 20)
 
-    ;; Grow and shrink the Vertico minibuffer
-    ;; (setq vertico-resize t)
+  ;; Grow and shrink the Vertico minibuffer
+  ;; (setq vertico-resize t)
 
-    ;; Optionally enable cycling for `vertico-next' and `vertico-previous'.
-    ;; (setq vertico-cycle t)
-    )
-
-  ;; Persist history over Emacs restarts. Vertico sorts by history position.
-  (use-package savehist
-    :ensure nil
-    :demand nil
-    :init
-    (savehist-mode))
+  ;; Optionally enable cycling for `vertico-next' and `vertico-previous'.
+  ;; (setq vertico-cycle t)
+  :config
+  (setq vertico-sort-function #'sort-directories-first)
+  ;; (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy)
+  )
+(use-package vertico-directory
+  :after vertico
+  :ensure nil
+  ;; More convenient directory navigation commands
+  :bind (:map vertico-map
+              ("RET" . vertico-directory-enter)
+              ("DEL" . vertico-directory-delete-char)
+              ("M-DEL" . vertico-directory-delete-word))
+  ;; Tidy shadowed file names
+  :hook (rfn-eshadow-update-overlay . vertico-directory-tidy))
+;; Persist history over Emacs restarts. Vertico sorts by history position.
+(use-package savehist
+  :ensure nil
+  :demand nil
+  :init
+  (savehist-mode))
 
 #+end_src
 ** Marginalia 
@@ -1897,7 +1933,10 @@
 
 (use-package dap-mode
   :after lsp-mode
-  :hook (dap-mode . dap-tooltip-mode)
+  :hook ((dap-mode . dap-tooltip-mode)
+	 (dap-mode . dap-ui-mode)
+	 (dap-ui-mode . dap-ui-controls-mode)
+	 )
   :init
   (setq dap-breakpoints-file (concat user-emacs-directory "dap-breakpoints")
         dap-utils-extension-path (concat user-emacs-directory "dap-extension/"))
@@ -1941,9 +1980,9 @@
   ;;   "d s" '(dap-delete-session :wk "Stop")
   ;;   )
   )
-(use-package dap-ui
-  :hook (dap-mode . dap-ui-mode)
-  :hook (dap-ui-mode . dap-ui-controls-mode))
+;; (use-package dap-ui
+;;   :hook (dap-mode . dap-ui-mode)
+;;   :hook (dap-ui-mode . dap-ui-controls-mode))
 #+end_src
 ** Formater 
 :PROPERTIES:
