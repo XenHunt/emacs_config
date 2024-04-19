@@ -1482,12 +1482,14 @@
 :END:
 #+begin_src emacs-lisp
 (use-package imenu-list
+  :custom
+  (imenu-list-focus-after-activation t)
+  (imenu-list-auto-resize t)
+  (imenu-list-size 0.3)
+  (org-imenu-depth 10)
+  (imenu-list-focus-after-activation t)                                    ; Переключение на активированный imenu-list
   :config
 
-  (setq imenu-list-focus-after-activation t)                                    ; Переключение на активированный imenu-list
-  (setq imenu-list-auto-resize t)
-  (setq imenu-list-size 0.3)
-  (setq org-imenu-depth 10)
   (leader-key
     "s RET" '(imenu-list-smart-toggle :wk "Toggle imenu-list")
     ) 
