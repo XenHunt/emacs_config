@@ -751,6 +751,7 @@
   :init
   (setq dashboard-set-file-icons t)
   (setq dashboard-set-heading-icons t)
+  (setq dashboard-display-icons-p t)
   :custom
 
   (dashboard-modify-heading-icons '((recents . "file-text")
@@ -758,7 +759,10 @@
   :config
   (add-hook 'elpaca-after-init-hook #'dashboard-insert-startupify-lists)
   (add-hook 'elpaca-after-init-hook #'dashboard-initialize)
-  (dashboard-setup-startup-hook))
+
+  (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
+  (dashboard-setup-startup-hook)
+  )
 #+end_src
 ** Rainbow-mode 
 :PROPERTIES:
@@ -800,8 +804,19 @@
   ;; :elpaca (prism :fetcher github :repo "alphapapa/prism.el")
   :hook (
 	 (python-mode . prism-whitespace-mode)
-	 ((javascript-mode css-mode typescript-mode json-mode yaml-mode html-mode markdown-mode elisp-mode latex-mode bash-mode) . prism-mode)
+	 ((javascript-mode css-mode typescript-mode json-mode yaml-mode html-mode markdown-mode  latex-mode bash-mode) . prism-mode)
 	 )
+  :init
+  ;;(message (member 'prism-mode #'emacs-lisp-mode-hook))
+  (defun my/set-elisp-prism()
+  (interactive)
+  ;; (message  (string(memq 'prism-mode emacs-lisp-mode-hook)))
+    (unless (member 'prism-mode emacs-lisp-mode-hook)
+      (add-hook 'emacs-lisp-mode-hook #'prism-mode)
+      )
+    )
+  (add-hook 'server-after-make-frame-hook 'my/set-elisp-prism)
+  ;;(my/set-elisp-prism)
   )
 #+end_src
 ** Ligatures 
