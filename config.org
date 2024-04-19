@@ -49,6 +49,7 @@
   - [[#ligatures][Ligatures]]
   - [[#highlight-indent][Highlight indent]]
 - [[#beacon][Beacon]]
+- [[#drag-stuff][Drag-stuff]]
 - [[#org-mode][Org-Mode]]
   - [[#hover-links][Hover Links]]
   - [[#org-appear][Org-Appear]]
@@ -847,6 +848,26 @@
   (beacon-mode 1)
   )
 #+end_src
+* Drag-stuff
+:PROPERTIES:
+:CUSTOM_ID: drag-stuff
+:END:
+#+begin_src emacs-lisp
+(use-package drag-stuff
+  :init
+  (drag-stuff-global-mode 1)
+  :config
+  (drag-stuff-define-keys)
+
+  (evil-define-key 'visual 'global (kbd "M-k") 'drag-stuff-up)
+  (evil-define-key 'visual 'global (kbd "M-j") 'drag-stuff-down)
+  (evil-define-key 'visual 'global (kbd "M-h") 'drag-stuff-left)
+  (evil-define-key 'visual 'global (kbd "M-l") 'drag-stuff-right)
+  )
+#+end_src
+
+#+RESULTS:
+
 * Org-Mode
 :PROPERTIES:
 :CUSTOM_ID: org-mode
