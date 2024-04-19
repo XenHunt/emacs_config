@@ -5,25 +5,103 @@
 *** https://www.reddit.com/r/orgmode.rss :emacs:org-mode:
 *** [[https://www.reddit.com/r/evilmode.rss]] :emacs:
 ** Habr :habr:rus:
-
-*** [[https://habr.com/ru/rss/hubs/python/articles/rated25/?fl=ru][Habr Python]] :python: 
-
-*** [[https://habr.com/ru/rss/hubs/open_source/articles/rated25/?fl=ru][Habr OpenSource]] :open_source: 
-
-*** [[https://habr.com/ru/rss/hubs/machine_learning/articles/rated25/?fl=ru][Habr Machine Learning]] :machine_learning: 
-
-*** [[https://habr.com/ru/rss/hubs/artificial_intelligence/articles/rated25/?fl=ru][Habr AI]] :ai:
-
-*** [[https://habr.com/ru/rss/hubs/algorithms/articles/rated25/?fl=ru][Habr Algorithms]] :algorithms:
-
-
+*** Python :python:
+**** Статьи :article:
+***** [[https://habr.com/ru/rss/hubs/python/articles/rated25/easy/?fl=ru][Habr Python Articles]] :easy:
+***** [[https://habr.com/ru/rss/hubs/python/articles/rated25/medium/?fl=ru][Habr Python Articles]] :medium:
+***** [[https://habr.com/ru/rss/hubs/python/articles/rated25/hard/?fl=ru][Habr Python Articles]] :hard:
+**** [[https://habr.com/ru/rss/hubs/python/posts/?fl=ru][Habr Python Posts]] :post:
+**** [[https://habr.com/ru/rss/hubs/python/news/rated0/?fl=ru][Habr Python News]] :news:
+*** Open-Source :open_source: 
+**** Статьи :article:
+***** [[https://habr.com/ru/rss/hubs/open_source/articles/rated25/easy/?fl=ru][Habr OpenSource Articles]] :easy:
+***** [[https://habr.com/ru/rss/hubs/open_source/articles/rated25/easy/?fl=ru][Habr OpenSource Articles]] :medium:
+***** [[https://habr.com/ru/rss/hubs/open_source/articles/rated0/hard/?fl=ru][Habr OpenSource Articles]] :hard:
+**** [[https://habr.com/ru/rss/hubs/open_source/posts/rated0/?fl=ru][Habr OpenSource Posts]] :post:
+**** [[https://habr.com/ru/rss/hubs/open_source/news/rated0/?fl=ru][Habr OpenSource News]] :news:
+*** Machine Learning :machine_learning:
+**** Статьи :article:
+***** [[https://habr.com/ru/rss/hubs/machine_learning/articles/rated25/easy/?fl=ru][Habr ML Articles]] :easy:
+***** [[https://habr.com/ru/rss/hubs/machine_learning/articles/rated25/medium/?fl=ru][Habr ML Articles]] :medium:
+***** [[https://habr.com/ru/rss/hubs/machine_learning/articles/rated25/hard/?fl=ru][Habr ML Articles]] :hard:
+**** [[https://habr.com/ru/rss/hubs/machine_learning/posts/rated0/?fl=ru][Habr ML Posts]] :post:
+**** [[https://habr.com/ru/rss/hubs/machine_learning/news/rated0/?fl=ru][Habr ML News]] :news:
+*** AI :ai:
+**** Статьи :article:
+***** [[https://habr.com/ru/rss/hubs/artificial_intelligence/articles/rated25/easy/?fl=ru][Habr AI Articles]] :easy:
+***** [[https://habr.com/ru/rss/hubs/artificial_intelligence/articles/rated25/easy/?fl=ru][Habr AI Articles]] :medium:
+***** [[https://habr.com/ru/rss/hubs/artificial_intelligence/articles/rated25/hard/?fl=ru][Habr AI Articles]] :hard:
+**** [[https://habr.com/ru/rss/hubs/artificial_intelligence/articles/rated25/easy/?fl=ru][Habr AI Posts]] :post:
+**** [[https://habr.com/ru/rss/hubs/artificial_intelligence/news/rated0/?fl=ru][Habr AI News]] :news:
+*** Algorithms :algorithms:
+**** Статьи :article:
+***** [[https://habr.com/ru/rss/hubs/algorithms/articles/rated25/easy/?fl=ru][Habr Algo Articles]] :easy:
+***** [[https://habr.com/ru/rss/hubs/algorithms/articles/rated25/medium/?fl=ru][Habr Algo Articles]] :medium:
+***** [[https://habr.com/ru/rss/hubs/algorithms/articles/rated25/hard/?fl=ru][Habr Algo Articles]] :hard:
+**** [[https://habr.com/ru/rss/hubs/algorithms/posts/rated0/?fl=ru][Habr Algo Posts]] :post:
+**** [[https://habr.com/ru/rss/hubs/algorithms/news/rated0/?fl=ru][Habr Algo News]] :news:
+*** Mathematics :mathematics:
+**** Статьи :article:
+***** [[https://habr.com/ru/rss/hubs/maths/articles/rated25/easy/?fl=ru][Habr Math Articles]] :easy:
+***** [[https://habr.com/ru/rss/hubs/maths/articles/rated25/medium/?fl=ru][Habr Math Articles]] :medium:
+***** [[https://habr.com/ru/rss/hubs/maths/articles/rated25/hard/?fl=ru][Habr Math Articles]] :hard:
+**** [[https://habr.com/ru/rss/hubs/maths/posts/rated0/?fl=ru][Habr Math Posts]] :post:
+**** [[https://habr.com/ru/rss/hubs/maths/news/rated0/?fl=ru][Habr Math News]] :news:
 *** Web-Development :web_development:
-**** [[https://habr.com/ru/rss/hubs/webdev/articles/rated25/?fl=ru][Habr Web-Development]]
-**** [[https://habr.com/ru/rss/hubs/reactjs/articles/rated25/?fl=ru][Habr React]] :react:
-**** [[https://habr.com/ru/rss/hubs/angular/articles/rated25/?fl=ru][Habr Angular]] :angular:
-**** [[https://habr.com/ru/rss/hubs/vuejs/articles/rated25/?fl=ru][Habr VueJS]] :vuejs:
-**** [[https://habr.com/ru/rss/hubs/javascript/articles/rated25/?fl=ru][Habr Javascript]] :javascript:
-**** [[https://habr.com/ru/rss/hubs/typescript/articles/rated25/?fl=ru][Habr Typescript]] :typescript:
+**** Статьи :article:
+***** [[https://habr.com/ru/rss/hubs/webdev/articles/rated25/easy/?fl=ru][Habr WebDev Articles]] :easy:
+***** [[https://habr.com/ru/rss/hubs/webdev/articles/rated25/medium/?fl=ru][Habr WebDev Articles]] :medium:
+***** [[https://habr.com/ru/rss/hubs/webdev/articles/rated25/hard/?fl=ru][Habr WebDev Articles]] :hard:
+**** [[https://habr.com/ru/rss/hubs/webdev/posts/rated0/?fl=ru][Habr WebDev Posts]] :post:
+**** [[https://habr.com/ru/rss/hubs/webdev/posts/rated0/?fl=ru][Habr WebDev News]] :news:
+**** Отдельные подтемы
+***** ReactJS :reactjs:
+****** Статьи :article:
+******* [[https://habr.com/ru/rss/hubs/reactjs/articles/rated25/easy/?fl=ru][Habr ReactJS Articles]] :easy:
+******* [[https://habr.com/ru/rss/hubs/reactjs/articles/rated25/medium/?fl=ru][Habr ReactJS Articles]] :medium:
+******* [[https://habr.com/ru/rss/hubs/reactjs/articles/rated0/hard/?fl=ru][Habr ReactJS Articles]] :hard:
+****** [[https://habr.com/ru/rss/hubs/reactjs/posts/rated0/?fl=ru][Habr ReactJS Posts]] :post:
+****** [[https://habr.com/ru/rss/hubs/reactjs/posts/rated0/?fl=ru][Habr ReactJS News]] :news:
+***** Angular :angularjs:
+****** Статьи :article:
+******* [[https://habr.com/ru/rss/hubs/angular/articles/rated25/easy/?fl=ru][Habr Angular Articles]] :easy:
+******* [[https://habr.com/ru/rss/hubs/angular/articles/rated25/medium/?fl=ru][Habr Angular Articles]] :medium:
+******* [[https://habr.com/ru/rss/hubs/angular/articles/rated0/hard/?fl=ru][Habr Angular Articles]] :hard:
+****** 
+****** 
+***** VueJS :vuejs:
+****** Статьи :article:
+******* [[https://habr.com/ru/rss/hubs/vuejs/articles/rated25/easy/?fl=ru][Habr VueJS Articles]] :easy:
+******* [[https://habr.com/ru/rss/hubs/vuejs/articles/rated25/easy/?fl=ru][Habr VueJS Articles]] :medium:
+******* [[https://habr.com/ru/rss/hubs/vuejs/articles/rated0/hard/?fl=ru][Habr VueJS Articles]] :hard:
+****** [[https://habr.com/ru/rss/hubs/vuejs/posts/rated0/?fl=ru][Habr VueJS Posts]] :post:
+****** [[https://habr.com/ru/rss/hubs/vuejs/news/rated0/?fl=ru][Habr VueJS News]] :news:
+***** Javascript :javascript:
+****** Статьи :article:
+******* [[https://habr.com/ru/rss/hubs/javascript/articles/rated25/easy/?fl=ru][Habr Javascript Articles]] :easy:
+******* [[https://habr.com/ru/rss/hubs/javascript/articles/rated25/easy/?fl=ru][Habr Javascript Articles]] :medium:
+******* [[https://habr.com/ru/rss/hubs/javascript/articles/rated0/hard/?fl=ru][Habr Javascript Articles]] :hard:
+****** [[https://habr.com/ru/rss/hubs/javascript/posts/rated0/?fl=ru][Habr Javascript Posts]] :post:
+****** [[https://habr.com/ru/rss/hubs/javascript/news/rated0/?fl=ru][Habr Javascript News]] :news:
+***** Typescript :typescript:
+****** Стаьи :article:
+******* [[https://habr.com/ru/rss/hubs/typescript/articles/rated25/easy/?fl=ru][Habr Typescript Articles]] :easy:
+******* [[https://habr.com/ru/rss/hubs/typescript/articles/rated25/medium/?fl=ru][Habr Typescript Articles]] :medium:
+******* [[https://habr.com/ru/rss/hubs/typescript/articles/rated0/hard/?fl=ru][Habr Typescript Articles]] :hard:
+****** [[https://habr.com/ru/rss/hubs/typescript/posts/rated0/?fl=ru][Habr Typescript Posts]] :post:
+****** [[https://habr.com/ru/rss/hubs/typescript/news/rated0/?fl=ru][Habr Typescript News]] :news:
 *** Linux :linux:
-**** [[https://habr.com/ru/rss/hubs/linux/articles/rated25/?fl=ru][Habr Linux]]
-**** [[https://habr.com/ru/rss/hubs/linux_dev/articles/rated25/?fl=ru][Habr Linux]]
+**** Разработка :development: 
+***** Статьи :article:
+****** [[https://habr.com/ru/rss/hubs/linux_dev/articles/rated25/easy/?fl=ru][Habr Linux Articles]] :easy:
+****** [[https://habr.com/ru/rss/hubs/linux_dev/articles/rated25/medium/?fl=ru][Habr Linux Articles]] :medium:
+****** [[https://habr.com/ru/rss/hubs/linux_dev/articles/rated25/hard/?fl=ru][Habr Linux Articles]] :hard:
+***** [[https://habr.com/ru/rss/hubs/linux_dev/posts/rated0/?fl=ru][Habr Linux Posts]] :post:
+***** [[https://habr.com/ru/rss/hubs/linux_dev/news/rated0/?fl=ru][Habr Linux News]] :news:
+**** Настройка :configuration:
+***** Статьи :article:
+****** [[https://habr.com/ru/rss/hubs/linux/articles/rated25/easy/?fl=ru][Habr Linux Articles]] :easy:
+****** [[https://habr.com/ru/rss/hubs/linux/articles/rated25/medium/?fl=ru][Habr Linux Articles]] :medium: 
+****** [[https://habr.com/ru/rss/hubs/linux/articles/rated25/hard/?fl=ru][Habr Linux Articles]] :hard:
+***** [[https://habr.com/ru/rss/hubs/linux/posts/rated0/?fl=ru][Habr Linux Posts]] :post:
+***** [[https://habr.com/ru/rss/hubs/linux/news/rated0/?fl=ru][Habr Linux News]] :news:
