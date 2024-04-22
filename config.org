@@ -232,7 +232,7 @@
 
   (leader-key
     "b" '(:ignore t :wk "Buffers/Bookmarks")
-    "b b" '(switch-to-buffer :wk "Switch buffer")
+    "b b" '(consult-buffer :wk "Switch buffer")
     "b i" '(ibuffer :wk "IBuffer")
     "b k" '(kill-this-buffer :wk "Kill this buffer")
     "b n" '(next-buffer :wk "Next buffer")
@@ -421,7 +421,12 @@
 				    dired-sidebar
 				    ibuffer
 				    minibuffer
+				    sh-script
+				    compile
+				    bookmark
 				    magit
+				    magit-todos
+				    forge
 				    git-timemachine
 				    vterm
 				    bufler
@@ -432,6 +437,7 @@
 				    embark
 				    which-key
 				    dashboard
+				    pdf
 				    elpaca
 				    imenu
 				    imenu-list
@@ -440,8 +446,13 @@
 				    python
 				    elisp-mode
 				    typescript-mode
+				    evil-mc
 				    yaml-mode
+				    flycheck
+				    flymake
 				    elfeed
+				    js2-mode
+				    ;; rjsx-modre
 				    xref
 				    ))
   (evil-collection-init)
@@ -1222,6 +1233,9 @@
 (use-package magit-todos
   :after magit
   :config (magit-todos-mode 1))
+(use-package forge
+  :after magit
+  )
 #+end_src
 * SUDO EDIT 
 :PROPERTIES:
