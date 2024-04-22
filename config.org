@@ -420,6 +420,7 @@
 				    dired
 				    dired-sidebar
 				    ibuffer
+				    minibuffer
 				    magit
 				    git-timemachine
 				    vterm
@@ -1209,6 +1210,8 @@
 :CUSTOM_ID: magit
 :END:
 #+begin_src emacs-lisp
+(use-package transient)
+(elpaca-wait)
 (use-package magit)
 #+end_src
 ** Magit-TODOS
