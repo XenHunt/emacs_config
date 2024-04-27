@@ -129,6 +129,7 @@
       - [[#treesitter-auto][Treesitter-auto]]
       - [[#treesitter-0][Treesitter]]
 - [[#codeium][Codeium]]
+- [[#polymode][Polymode]]
 :END:
 
 * Base
@@ -172,6 +173,8 @@
 #+begin_src emacs-lisp
 (delete-selection-mode 1)    ;; You can select text and delete it by typing.
 ;; (electric-indent-mode -1)    ;; Turn off the weird indenting that Emacs does by default.
+(setq recentf-max-menu-items 100)
+(setq recentf-max-saved-items 150)
 (electric-pair-mode 1)       ;; Turns on automatic parens pairing
 (global-auto-revert-mode t)  ;; Automatically show changes if the file has changed
 (setq org-edit-src-content-indentation 0) ;; Set src block automatic indent to 0 instead of 2.
@@ -274,14 +277,17 @@
     "f r" '(consult-recent-file :wk "Find recent file")
     )
 
-  (leader-key
+  (general-define-key
+   :states 'normal
+   :keymaps 'prog-mode-map
+   :prefix "SPC"
     "c" '(:ignore t :wk "Code")
     "c c" '(compile :wk "Compile code")
     "c r" '(lsp-rename :wk "Rename object")
     "c d" '(lsp-find-definition :wk "Find definition")
-    "c x" '(flycheck-list-errors :wk "List errors")
+    "c x" '(consult-flymake :wk "List errors")
     "c r" '(lsp-restart :wk "Restart LSP")
-    )
+   )
 
   (general-define-key
    :keymaps 'projectile-command-map
@@ -385,26 +391,30 @@
 :END:
 #+begin_src emacs-lisp
 (use-package evil
-  :init
-  (setq evil-want-integration t)
-  (setq evil-want-keybinding nil)
-  (setq evil-vsplit-window-right t)
-  (setq evil-split-window-below t)
-  (evil-mode)
-  :config
-  (evil-define-key 'normal 'global (kbd "g c") 'comment-line)
-  (evil-define-key 'visual 'global (kbd "g c") 'comment-dwim)
-  (evil-define-key 'normal org-mode-map (kbd "RET") 'org-babel-execute-src-block)
-  (evil-define-key 'normal org-mode-map (kbd "C-M-<down>") 'org-promote-subtree)
-  (evil-set-leader nil (kbd "SPC"))
-  (evil-define-key 'normal org-mode-map (kbd "C-M-<up>") 'org-demote-subtree)
-  (evil-set-undo-system 'undo-redo)
-  )
-(use-package evil-tutor :ensure t :demand t)
-(elpaca-wait)
+   :init
+   (setq evil-want-integration t)
+   (setq evil-want-keybinding nil)
+   (setq evil-vsplit-window-right t)
+   (setq evil-split-window-below t)
+   
+   (setq evil-want-C-i-jump nil)
+   (setq evil-want-c-i-jump nil)
 
-;; Setting RETURN key in org-mode to follow links
-(setq org-return-follows-link  t)
+   :config
+   (evil-define-key 'normal 'global (kbd "g c") 'comment-line)
+   (evil-define-key 'visual 'global (kbd "g c") 'comment-dwim)
+   (evil-define-key 'normal org-mode-map (kbd "RET") 'org-babel-execute-src-block)
+   (evil-define-key 'normal org-mode-map (kbd "C-M-<down>") 'org-promote-subtree)
+   (evil-set-leader nil (kbd "SPC"))
+   (evil-define-key 'normal org-mode-map (kbd "C-M-<up>") 'org-demote-subtree)
+   (evil-set-undo-system 'undo-redo)
+   (evil-mode)
+   )
+ (use-package evil-tutor :ensure t :demand t)
+ (elpaca-wait)
+
+ ;; Setting RETURN key in org-mode to follow links
+ (setq org-return-follows-link  t)
 
 #+end_src
 *** Collection
@@ -412,32 +422,32 @@
 :CUSTOM_ID: collection
 :END:
 #+begin_src emacs-lisp
-(use-package evil-collection :ensure t :demand t
-  :after evil
-  :config
-  (setq evil-collection-mode-list '(
-				    dashboard
-				    dired
-				    dired-sidebar
-				    ibuffer
-				    minibuffer
-				    sh-script
-				    compile
-				    bookmark
-				    magit
-				    magit-todos
-				    forge
-				    git-timemachine
-				    vterm
-				    bufler
-				    indent
-				    corfu
-				    consult
-				    vertico
+ (use-package evil-collection :ensure t :demand t
+   :after evil
+   :config
+   (setq evil-collection-mode-list '(
+ 				    dashboard
+ 				    dired
+ 				    dired-sidebar
+ 				    ibuffer
+ 				    minibuffer
+ 				    sh-script
+ 				    compile
+ 				    bookmark
+ 				    magit
+ 				    magit-todos
+ 				    forge
+ 				    git-timemachine
+ 				    vterm
+ 				    bufler
+ 				    indent
+ 				    corfu
+ 				    consult
+ 				    vertico
 				    embark
 				    which-key
 				    dashboard
-				    pdf
+				    (pdf pdf-view)
 				    elpaca
 				    imenu
 				    imenu-list
@@ -454,9 +464,9 @@
 				    js2-mode
 				    ;; rjsx-modre
 				    xref
-				    ))
-  (evil-collection-init)
-  )
+ 				    ))
+   (evil-collection-init)
+   )
 (elpaca-wait)
 
 
@@ -488,6 +498,7 @@
 :END:
 #+begin_src emacs-lisp
 (use-package evil-surround
+  :after evil
   :commands (global-evil-surround-mode
              evil-surround-edit
              evil-Surround-edit
@@ -1577,7 +1588,7 @@
   :init
   (global-corfu-mode)
   (corfu-popupinfo-mode)
-  (setq corfu-popupinfo-delay (cons 1.0 1.0))
+  (setq corfu-popupinfo-delay (cons 0.7 0.7))
 
   :config
   (defun corfu-enable-in-minibuffer ()
@@ -2613,4 +2624,12 @@
     (add-to-list 'completion-at-point-functions 'codeium-completion-at-point)
     (message "Codeium auto complete on")))
 #+end_src
-
+* TODO Polymode
+:PROPERTIES:
+:CUSTOM_ID: polymode
+:END:
+#+begin_src emacs-lisp
+;; (use-package polymode)
+;; (elpaca-wait)
+;; (use-package poly-org)
+#+end_src
