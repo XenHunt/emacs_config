@@ -1867,6 +1867,8 @@
 :END:
 #+begin_src emacs-lisp
 (use-package jinx
+  :custom
+  (jinx-languages "ru_RU en_US")
   :hook ((text-mode ) . jinx-mode )
   :config
   (after! vetico-multiform
