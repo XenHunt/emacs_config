@@ -97,6 +97,7 @@
   - [[#embark][Embark]]
   - [[#consult][Consult]]
   - [[#yasnippet][Yasnippet]]
+- [[#jinx][Jinx]]
 - [[#dash-docs][Dash-Docs]]
 - [[#shell][Shell]]
   - [[#vterm][VTerm]]
@@ -1727,6 +1728,12 @@
   ;; Tidy shadowed file names
   :hook (rfn-eshadow-update-overlay . vertico-directory-tidy))
 ;; Persist history over Emacs restarts. Vertico sorts by history position.
+(use-package vertico-multiform
+  :after vertico
+  :ensure nil
+  :config
+  (vertico-multiform-mode)
+  )
 (use-package savehist
   :ensure nil
   :demand nil
@@ -1852,6 +1859,21 @@
   (yas-global-mode 1)
   )
 (use-package yasnippet-snippets)
+#+end_src
+* Jinx
+:PROPERTIES:
+:CUSTOM_ID: jinx
+:END:
+#+begin_src emacs-lisp
+(use-package jinx
+  :hook ((text-mode ) . jinx-mode )
+  :config
+  (after! vetico-multiform
+    (add-to-list 'vertico-multiform-categories
+		 '(jinx grid (vertico-grid-annotate . 20)))
+    (vertico-multiform-mode 1)
+    )
+  )
 #+end_src
 * Dash-Docs
 :PROPERTIES:
