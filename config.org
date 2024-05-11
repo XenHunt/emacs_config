@@ -288,7 +288,7 @@
     "c r" '(lsp-rename :wk "Rename object")
     "c d" '(lsp-find-definition :wk "Find definition")
     "c x" '(consult-flymake :wk "List errors")
-    "c r" '(lsp-restart :wk "Restart LSP")
+    "c R" '(lsp-restart :wk "Restart LSP")
    )
 
   (general-define-key
@@ -782,6 +782,19 @@
 
   (dashboard-modify-heading-icons '((recents . "file-text")
                                     (bookmarks . "book")))
+  (dashboard-items '(
+		     (recents . 5)
+		     (bookmarks . 5)
+		     (projects . 5)
+		     (agenda . 5)
+		     ))
+  (dashboard-item-shortcuts '(
+			      (recents   . "r")
+                              (bookmarks . "m")
+                              (projects  . "p")
+			      (agenda . "a")
+			      ))
+  (dashboard-projects-backend 'projectile)
   :config
   (add-hook 'elpaca-after-init-hook #'dashboard-insert-startupify-lists)
   (add-hook 'elpaca-after-init-hook #'dashboard-initialize)
