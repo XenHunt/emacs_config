@@ -501,10 +501,10 @@
 #+begin_src emacs-lisp
 (use-package evil-surround
   :after evil
-  :commands (global-evil-surround-mode
-             evil-surround-edit
-             evil-Surround-edit
-             evil-surround-region)
+  ;; :commands (global-evil-surround-mode
+  ;;            evil-surround-edit
+  ;;            evil-Surround-edit
+  ;;            evil-surround-region)
   :config (global-evil-surround-mode 1))
 
 #+end_src
