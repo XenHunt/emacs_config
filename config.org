@@ -1969,11 +1969,19 @@
   :commands (lsp lsp-deferred)
   :custom
 
+  (lsp-clients-angular-language-server-command
+	'("node"
+	  "/home/berlizoves/.nvm/versions/node/v20.13.1/lib/node_modules/@angular/language-server"
+	  "--ngProbeLocations"
+	  "/home/berlizoves/.nvm/versions/node/v20.13.1/lib/node_modules/"
+	  "--tsProbeLocations"
+	  "/home/berlizoves/.nvm/versions/node/v20.13.1/lib/node_modules/"
+	  "--stdio"))
   (lsp-log-io nil) ; ensure this is off when not debugging
   (lsp-completion-provider :none)
   (lsp-completion--enable t)
   (lsp-restart 'auto-restart)
-
+  (lsp-enable-snippet t)
   (lsp-diagnostics-provider :flymake)
   :init
 
@@ -2033,6 +2041,7 @@
   ;; :commands lsp
   :config
   ;; (add-hook 'lsp-mode-hook #'lsp-completion-mode)
+
   (setq lsp-enabled-clients '(ts-ls pyright angular-ls vue-semantic-server json-ls html-ls eslint css-ls bash-ls))
   )
 (use-package lsp-ui 
@@ -2080,14 +2089,6 @@
   (require 'dap-python)
 
   (setq dap-python-debugger 'debugpy)
-  (setq lsp-clients-angular-language-server-command
-	'("node"
-	  "/home/berlizoves/.nvm/versions/node/v20.10.0/lib/node_modules/@angular/language-server"
-	  "--ngProbeLocations"
-	  "/home/berlizoves/.nvm/versions/node/v20.10.0/lib/node_modules/"
-	  "--tsProbeLocations"
-	  "/home/berlizoves/.nvm/versions/node/v20.10.0/lib/node_modules/"
-	  "--stdio"))
   (general-define-key
    ;; :definer 'minor-mode
    :states 'normal
