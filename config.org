@@ -121,14 +121,15 @@
     - [[#js2-mode][JS2-Mode]]
     - [[#typescript][Typescript]]
       - [[#раскладка-2][Раскладка]]
+    - [[#aangit][aangit]]
     - [[#skewer][Skewer]]
     - [[#tide][Tide]]
     - [[#multi-web-mode][Multi-Web-Mode]]
     - [[#json][JSON]]
     - [[#yaml][Yaml]]
-    - [[#treesitter][Treesitter]]
-      - [[#treesitter-auto][Treesitter-auto]]
-      - [[#treesitter-0][Treesitter]]
+  - [[#treesitter][Treesitter]]
+    - [[#treesitter-auto][Treesitter-auto]]
+    - [[#treesitter-0][Treesitter]]
 - [[#codeium][Codeium]]
 - [[#polymode][Polymode]]
 :END:
@@ -227,6 +228,7 @@
 #+begin_src emacs-lisp
 (use-package general :ensure t :demand t
   :config
+  (general-def :states '(normal motion emacs) "SPC" nil "" '(nil :wl "Main Prefix"))
   (general-evil-setup)
   (general-create-definer leader-key
     :states '(normal insert visual emacs)
@@ -1379,7 +1381,8 @@
     (kbd "* .") 'dired-mark-extension
     (kbd "* /") 'dired-mark-directories
     (kbd "; d") 'epa-dired-do-decrypt
-    (kbd "; e") 'epa-dired-do-encrypt)
+    (kbd "; e") 'epa-dired-do-encrypt
+    )
   )
 #+end_src
 * Projectile 
@@ -2418,6 +2421,23 @@
 :PROPERTIES:
 :CUSTOM_ID: раскладка-2
 :END:
+*** aangit
+:PROPERTIES:
+:CUSTOM_ID: aangit
+:END:
+#+begin_src emacs-lisp
+(use-package aangit
+  :after magit
+  :config
+  (general-define-key
+   :states 'normal
+   :keymaps 'dired-mode-map
+   :prefix "SPC"
+   "m a" '(aangit-menu :wk "Aangit")
+   )
+  )
+
+#+end_src
 *** Skewer 
 :PROPERTIES:
 :CUSTOM_ID: skewer
@@ -2513,7 +2533,7 @@
   (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode))
   )
 #+end_src
-*** Treesitter
+** Treesitter
 :PROPERTIES:
 :CUSTOM_ID: treesitter
 :END:
