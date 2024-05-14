@@ -228,7 +228,7 @@
 #+begin_src emacs-lisp
 (use-package general :ensure t :demand t
   :config
-  (general-def :states '(normal motion emacs) "SPC" nil "" '(nil :wl "Main Prefix"))
+  (general-auto-unbind-keys)
   (general-evil-setup)
   (general-create-definer leader-key
     :states '(normal insert visual emacs)
@@ -2131,10 +2131,10 @@
 :CUSTOM_ID: formater
 :END:
 #+begin_src emacs-lisp
-;; (use-package apheleia
-;;   :ensure t
-;;   :config
-;;   (apheleia-global-mode +1))
+(use-package apheleia
+  :ensure t
+  :config
+  (apheleia-global-mode +1))
 
 #+end_src
 ** Python 
@@ -2157,10 +2157,10 @@
 :CUSTOM_ID: blacken
 :END:
 #+begin_src emacs-lisp
-(use-package blacken
-  :after python
-  :ensure t
-  :hook (python-mode . blacken-mode))
+;; (use-package blacken
+;;   :after python
+;;   :ensure t
+;;   :hook (python-mode . blacken-mode))
 #+end_src
 *** Py-Isort
 :PROPERTIES:
@@ -2369,22 +2369,22 @@
 :CUSTOM_ID: prettier-js
 :END:
 #+begin_src emacs-lisp
-(use-package prettier-js
-  :config
-  (add-hook 'web-mode-hook #'add-node-modules-path)
-  (defun enable-minor-mode (my-pair)
-    (if (buffer-file-name)
-	(if (string-match (car my-pair) buffer-file-name)
-	    (funcall (cdr my-pair)))
-      )
-    )
-  (add-hook 'web-mode-hook #'(lambda ()
-			       (enable-minor-mode
-				'("\\.jsx?\\'" . prettier-js-mode))
-			       (enable-minor-mode
-				'("\\.tsx?\\'" . prettier-js-mode))
-			       ))
-  )
+;; (use-package prettier-js
+;;   :config
+;;   (add-hook 'web-mode-hook #'add-node-modules-path)
+;;   (defun enable-minor-mode (my-pair)
+;;     (if (buffer-file-name)
+;; 	(if (string-match (car my-pair) buffer-file-name)
+;; 	    (funcall (cdr my-pair)))
+;;       )
+;;     )
+;;   (add-hook 'web-mode-hook #'(lambda ()
+;; 			       (enable-minor-mode
+;; 				'("\\.jsx?\\'" . prettier-js-mode))
+;; 			       (enable-minor-mode
+;; 				'("\\.tsx?\\'" . prettier-js-mode))
+;; 			       ))
+;;   )
 #+end_src
 *** JS2-Mode 
 :PROPERTIES:
