@@ -104,6 +104,7 @@
 - [[#direnv][Direnv]]
 - [[#programming-language][Programming Language]]
   - [[#lsp-mode][LSP-Mode]]
+    - [[#consult-lsp][Consult-LSP]]
   - [[#dap-mode][DAP-Mode]]
   - [[#formater][Formater]]
   - [[#python][Python]]
@@ -115,6 +116,7 @@
   - [[#jupyter][Jupyter]]
   - [[#web][WEB]]
     - [[#add-node-modules-path][add-node-modules-path]]
+    - [[#js2-xref][JS2-xref]]
     - [[#web-mode][WEB-Mode]]
     - [[#npm-mode][NPM-Mode]]
     - [[#prettier-js][Prettier-JS]]
@@ -318,6 +320,7 @@
 
   (leader-key
     "h"  '(:ignore t :wk "Help")
+    "h d" '(devdocs-peruse :wk "Devdocs")
     "h f" '(describe-function :wk "Describe function")
     "h v" '(describe-variable :wk "Describe variable")
     "h m" '(describe-mode :wk "Describe mode")
@@ -433,6 +436,7 @@
  				    dashboard
  				    dired
  				    dired-sidebar
+				    devdocs
  				    ibuffer
  				    minibuffer
  				    sh-script
@@ -1910,6 +1914,11 @@
 ;;   :config
 ;;   ;; Use the symbol at point as initial search term
 ;;   (consult-customize consult-dash :initial (thing-at-point 'symbol)))
+(use-package devdocs
+  ;; (leader-key
+  ;;   "h d" '(devdocs-lookup :wk "Devdocs Lookup")
+  ;;   )
+  )
 #+end_src
 * Shell
 :PROPERTIES:
@@ -1975,14 +1984,14 @@
   :custom
 
   (lsp-clients-angular-language-server-command
-	'("node"
+	'("ngserver"
 	  "/home/berlizoves/.nvm/versions/node/v20.13.1/lib/node_modules/@angular/language-server"
 	  "--ngProbeLocations"
 	  "/home/berlizoves/.nvm/versions/node/v20.13.1/lib/node_modules/"
 	  "--tsProbeLocations"
 	  "/home/berlizoves/.nvm/versions/node/v20.13.1/lib/node_modules/"
 	  "--stdio"))
-  (lsp-log-io nil) ; ensure this is off when not debugging
+  (lsp-log-io t) ; ensure this is off when not debugging
   (lsp-completion-provider :none)
   (lsp-completion--enable t)
   (lsp-restart 'auto-restart)
@@ -2047,7 +2056,7 @@
   :config
   ;; (add-hook 'lsp-mode-hook #'lsp-completion-mode)
 
-  (setq lsp-enabled-clients '(ts-ls pyright angular-ls vue-semantic-server json-ls html-ls eslint css-ls bash-ls))
+  ;; (setq lsp-enabled-clients '(ts-ls pyright angular-ls vue-semantic-server json-ls html-ls eslint css-ls bash-ls))
   )
 (use-package lsp-ui 
   :custom
@@ -2061,6 +2070,13 @@
   (add-hook 'lsp-mode-hook 'lsp-ui-mode)
 
   )
+#+end_src
+*** Consult-LSP
+:PROPERTIES:
+:CUSTOM_ID: consult-lsp
+:END:
+#+begin_src emacs-lisp
+(use-package consult-lsp)
 #+end_src
 ** DAP-Mode 
 :PROPERTIES:
@@ -2310,6 +2326,17 @@
 
   )
 #+end_src
+*** JS2-xref
+:PROPERTIES:
+:CUSTOM_ID: js2-xref
+:END:
+#+begin_src emacs-lisp
+(use-package xref-js2
+  :config
+  (setq xref-js2-search-program 'rg)
+  (add-hook 'js2-mode-hook (lambda ()
+			     (add-hook 'xref-backend-functions #'xref-js2-xref-backend nil t))))
+#+end_src
 *** WEB-Mode
 :PROPERTIES:
 :CUSTOM_ID: web-mode
@@ -2400,7 +2427,8 @@
   )
 
 (use-package js2-refactor
-:hook ((js2-mode . js2-refactor))
+:hook ((js2-mode . js2-refactor)
+       )
 )
 #+end_src
 *** Typescript 
