@@ -292,7 +292,7 @@
     "c r" '(lsp-rename :wk "Rename object")
     "c d" '(lsp-find-definition :wk "Find definition")
     "c x" '(consult-flymake :wk "List errors")
-    "c R" '(lsp-restart :wk "Restart LSP")
+    "c R" '(lsp-workspace-restart :wk "Restart LSP")
    )
 
   (general-define-key
