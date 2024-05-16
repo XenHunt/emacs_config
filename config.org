@@ -66,6 +66,7 @@
   - [[#org-babel-load-languages][ORG-Babel-Load-Languages]]
   - [[#org-download][Org-Download]]
   - [[#org-ref][Org-Ref]]
+  - [[#restclient][Restclient]]
   - [[#раскладка-0][Раскладка]]
 - [[#git-packages][Git Packages]]
   - [[#git-time-machine][Git-Time Machine]]
@@ -1208,6 +1209,18 @@
 #+begin_src emacs-lisp
 (use-package org-ref)
 
+#+end_src
+** Restclient
+:PROPERTIES:
+:CUSTOM_ID: restclient
+:END:
+#+begin_src emacs-lisp
+(use-package restclient
+  :after org)
+
+(use-package ob-restclient
+  :after org
+  :after restclient)
 #+end_src
 ** TODO Раскладка
 :PROPERTIES:
