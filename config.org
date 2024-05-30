@@ -200,6 +200,7 @@
 (setq echo-keystrokes 0.01)
 (setq pixel-scroll-precision-mode 1)
 (setq user-cache-dir (concat user-emacs-directory ".local/cache/"))
+(setq backup-by-copying t)
 #+end_src
 
 ** Wgrep
@@ -328,6 +329,8 @@
     "h p" '(describe-package :wk "Describe package")
     "h k" '(describe-key :wk "Describe key")
     "h K" '(describe-keymap :wk "Describe keymap")
+    "h l" '(view-lossage :wk "History of key seq")
+    "h c" '(command-history :wk "History of commands")
     "h r r" '((lambda () (interactive) (load-file user-init-file)(ignore (elpaca-process-queues))) :wk "Reload emacs config"))
 
   (leader-key
@@ -357,7 +360,9 @@
     "w H" '(buf-move-left :wk "Buffer move left")
     "w J" '(buf-move-down :wk "Buffer move down")
     "w K" '(buf-move-up :wk "Buffer move up")
-    "w L" '(buf-move-right :wk "Buffer move right"))
+    "w L" '(buf-move-right :wk "Buffer move right")
+    "w q" '(kill-buffer-and-window :wk "Kill buffer with window")
+    )
 
   (leader-key
     "C-c" '(:ignore t :wk "Codeium")
@@ -1947,10 +1952,20 @@
   (vterm-always-compile-module t)
   :config
   (setq shell-file-name "/bin/zsh"
-        vterm-max-scrollback 5000))
-(leader-key
-  "o t" '(vterm-other-window :wk "Opens Vterm in other window")
-  "o T" '(vterm :wk "Open VTerm instead of this buffer")
+        vterm-max-scrollback 5000)
+  (leader-key
+    "o t" '(vterm-other-window :wk "Opens Vterm in other window")
+    "o T" '(vterm :wk "Open VTerm instead of this buffer")
+    )
+  (general-define-key
+   ;; :definer 'minor-mode
+   :states 'normal
+   :keymaps 'vterm-mode-map
+   :prefix "SPC"
+   
+   "m" '(:ignore t :wk "VTerm commands")
+   "m n" '(vterm-toggle-show :wk "Create new term")
+   )
   )
 (use-package vterm-toggle
   :after vterm
@@ -1996,20 +2011,31 @@
   :commands (lsp lsp-deferred)
   :custom
 
+  ;; (lsp-clients-angular-language-server-command
+  ;;  '("node"
+  ;;   "/home/berlizoves/.nvm/versions/node/v20.13.1/lib/node_modules/@angular/language-server"
+  ;;    "--ngProbeLocations"
+  ;;    "/home/berlizoves/.nvm/versions/node/v20.13.1/lib/node_modules/"
+  ;;    "--tsProbeLocations"
+  ;;    "/home/berlizoves/.nvm/versions/node/v20.13.1/lib/node_modules/"
+  ;;    "--stdio"))
+
   (lsp-clients-angular-language-server-command
-	'("ngserver"
-	  "/home/berlizoves/.nvm/versions/node/v20.13.1/lib/node_modules/@angular/language-server"
-	  "--ngProbeLocations"
-	  "/home/berlizoves/.nvm/versions/node/v20.13.1/lib/node_modules/"
-	  "--tsProbeLocations"
-	  "/home/berlizoves/.nvm/versions/node/v20.13.1/lib/node_modules/"
-	  "--stdio"))
-  (lsp-log-io t) ; ensure this is off when not debugging
+   '("ngserver"
+     "--stdio"
+     "--tsProbeLocations"
+     "/home/berlizoves/.nvm/versions/node/v20.13.1/lib/node_modules/"
+     "--ngProbeLocations"
+     "/home/berlizoves/.nvm/versions/node/v20.13.1/lib/node_modules/@angular/language-server/node_modules/"
+     ))
+  (lsp-log-io nil) ; ensure this is off when not debugging
   (lsp-completion-provider :none)
   (lsp-completion--enable t)
   (lsp-restart 'auto-restart)
   (lsp-enable-snippet t)
   (lsp-diagnostics-provider :flymake)
+  (lsp-disabled-clients '(eslint))
+  (lsp-auto-execute-action nil)
   :init
 
   (defun lsp-booster--advice-json-parse (old-fn &rest args)
@@ -2050,6 +2076,13 @@
   (setq-local completion-at-point-functions (list (cape-capf-buster #'lsp-completion-at-point)))
   ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
   (setq lsp-keymap-prefix "C-c l")
+
+  (advice-add 'lsp--select-action :filter-args
+              (defun get-rid-of/refactor.move (actions_args)
+		(list 
+		 (seq-remove (lambda (action)
+                               (string= "refactor.move" (plist-get action :kind)))
+                             (seq-first actions_args)))))
   :hook (
 
 	 (lsp-completion-mode . fv--lsp-mode-capf-setup)
@@ -2084,6 +2117,9 @@
 
   )
 #+end_src
+
+#+RESULTS:
+
 *** Consult-LSP
 :PROPERTIES:
 :CUSTOM_ID: consult-lsp
