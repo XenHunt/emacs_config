@@ -27,6 +27,11 @@
     - [[#nerd-commenter][Nerd-Commenter]]
     - [[#visulstar][Visulstar]]
     - [[#evil-mc][Evil-MC]]
+    - [[#evil-googles][Evil-Googles]]
+    - [[#evil-matchit][Evil-Matchit]]
+    - [[#evil-fold][Evil-Fold]]
+    - [[#evil-args][Evil-Args]]
+    - [[#evil-org][Evil-Org]]
     - [[#раскладка][Раскладка]]
   - [[#diminish][Diminish]]
   - [[#exec-path-from-shell][Exec-path-from-shell]]
@@ -72,6 +77,7 @@
   - [[#git-time-machine][Git-Time Machine]]
   - [[#magit][Magit]]
   - [[#magit-todos][Magit-TODOS]]
+  - [[#git-modes][Git-Modes]]
 - [[#sudo-edit][SUDO EDIT]]
 - [[#which-key][Which-key]]
 - [[#dired][Dired]]
@@ -404,30 +410,30 @@
 :END:
 #+begin_src emacs-lisp
 (use-package evil
-   :init
-   (setq evil-want-integration t)
-   (setq evil-want-keybinding nil)
-   (setq evil-vsplit-window-right t)
-   (setq evil-split-window-below t)
-   
-   (setq evil-want-C-i-jump nil)
-   (setq evil-want-c-i-jump nil)
+  :init
+  (setq evil-want-integration t)
+  (setq evil-want-keybinding nil)
+  (setq evil-vsplit-window-right t)
+  (setq evil-split-window-below t)
+  
+  (setq evil-want-C-i-jump nil)
+  (setq evil-want-c-i-jump nil)
 
-   :config
-   (evil-define-key 'normal 'global (kbd "g c") 'comment-line)
-   (evil-define-key 'visual 'global (kbd "g c") 'comment-dwim)
-   (evil-define-key 'normal org-mode-map (kbd "RET") 'org-babel-execute-src-block)
-   (evil-define-key 'normal org-mode-map (kbd "C-M-<down>") 'org-promote-subtree)
-   (evil-set-leader nil (kbd "SPC"))
-   (evil-define-key 'normal org-mode-map (kbd "C-M-<up>") 'org-demote-subtree)
-   (evil-set-undo-system 'undo-redo)
-   (evil-mode)
-   )
- (use-package evil-tutor :ensure t :demand t)
- (elpaca-wait)
+  :config
+  (evil-define-key 'normal 'global (kbd "g c") 'comment-line)
+  (evil-define-key 'visual 'global (kbd "g c") 'comment-dwim)
+  (evil-define-key 'normal org-mode-map (kbd "RET") 'org-babel-execute-src-block)
+  (evil-define-key 'normal org-mode-map (kbd "C-M-<down>") 'org-promote-subtree)
+  (evil-set-leader nil (kbd "SPC"))
+  (evil-define-key 'normal org-mode-map (kbd "C-M-<up>") 'org-demote-subtree)
+  (evil-set-undo-system 'undo-redo)
+  (evil-mode)
+  )
+(use-package evil-tutor :ensure t :demand t)
+(elpaca-wait)
 
- ;; Setting RETURN key in org-mode to follow links
- (setq org-return-follows-link  t)
+;; Setting RETURN key in org-mode to follow links
+(setq org-return-follows-link  t)
 
 #+end_src
 *** Collection
@@ -592,6 +598,84 @@
   :config
   (evil-mc-mode  1) ;; enable
   )
+#+end_src
+*** Evil-Googles
+:PROPERTIES:
+:CUSTOM_ID: evil-googles
+:END:
+#+begin_src emacs-lisp
+(use-package evil-goggles
+  :ensure t
+  :config
+  (evil-goggles-mode)
+
+  ;; optionally use diff-mode's faces; as a result, deleted text
+  ;; will be highlighed with `diff-removed` face which is typically
+  ;; some red color (as defined by the color theme)
+  ;; other faces such as `diff-added` will be used for other actions
+  (evil-goggles-use-diff-faces))
+#+end_src
+*** Evil-Matchit
+:PROPERTIES:
+:CUSTOM_ID: evil-matchit
+:END:
+#+begin_src emacs-lisp
+(use-package evil-matchit
+  :config
+  (global-evil-matchit-mode 1))
+#+end_src
+*** Evil-Fold
+:PROPERTIES:
+:CUSTOM_ID: evil-fold
+:END:
+#+begin_src emacs-lisp
+(use-package vimish-fold
+  ;; :ensure
+  :after evil)
+
+(use-package evil-vimish-fold
+  ;; :ensure
+  :after vimish-fold
+  :init
+  (setq evil-vimish-fold-mode-lighter " ⮒")
+  (setq evil-vimish-fold-target-modes '(prog-mode conf-mode text-mode))
+  :config
+  (global-evil-vimish-fold-mode))
+#+end_src
+*** Evil-Args
+:PROPERTIES:
+:CUSTOM_ID: evil-args
+:END:
+#+begin_src emacs-lisp
+(use-package evil-args
+  :config
+
+  ;; bind evil-args text objects
+  (define-key evil-inner-text-objects-map "a" 'evil-inner-arg)
+  (define-key evil-outer-text-objects-map "a" 'evil-outer-arg)
+
+  ;; bind evil-forward/backward-args
+  (define-key evil-normal-state-map "L" 'evil-forward-arg)
+  (define-key evil-normal-state-map "H" 'evil-backward-arg)
+  (define-key evil-motion-state-map "L" 'evil-forward-arg)
+  (define-key evil-motion-state-map "H" 'evil-backward-arg)
+
+  ;; bind evil-jump-out-args
+  (define-key evil-normal-state-map "K" 'evil-jump-out-args)
+  )
+#+end_src
+*** Evil-Org
+:PROPERTIES:
+:CUSTOM_ID: evil-org
+:END:
+#+begin_src emacs-lisp
+(use-package evil-org
+  :ensure t
+  :after org
+  :hook (org-mode . (lambda () evil-org-mode))
+  :config
+  (require 'evil-org-agenda)
+  (evil-org-agenda-set-keys))
 #+end_src
 *** TODO Раскладка
 :PROPERTIES:
@@ -791,7 +875,6 @@
   (setq dashboard-set-heading-icons t)
   (setq dashboard-display-icons-p t)
   :custom
-
   (dashboard-modify-heading-icons '((recents . "file-text")
                                     (bookmarks . "book")))
   (dashboard-items '(
@@ -812,6 +895,7 @@
   (add-hook 'elpaca-after-init-hook #'dashboard-initialize)
 
   (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
+  ;; (setq dashboard-banner-logo-png "/home/berlizoves/.emacs.d/logo.png")
   (dashboard-setup-startup-hook)
   )
 #+end_src
@@ -1286,6 +1370,13 @@
 (use-package forge
   :after magit
   )
+#+end_src
+** Git-Modes
+:PROPERTIES:
+:CUSTOM_ID: git-modes
+:END:
+#+begin_src emacs-lisp
+(use-package git-modes)
 #+end_src
 * SUDO EDIT 
 :PROPERTIES:
@@ -1876,7 +1967,7 @@
     "n s" '(consult-org-roam-search :wk "Search inside Nodes")
     "n b" '(consult-org-roam-backlinks :wk "Search back links")
     "n B" '(consult-org-roam-backlinks-recursive :wk "Search back links (recursively)")
-    "n f" '(consult-org-roam-forward-links :wk "Search forward links")
+    "n F" '(consult-org-roam-forward-links :wk "Search forward links")
     )
   ;; :bind
   ;; ;; Define some convenient keybindings as an addition
