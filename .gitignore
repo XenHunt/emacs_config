@@ -28,3 +28,6 @@
 /*.sqlite
 /dap-breakpoints
 /devdocs/
+/bookmarks
+/vimish-fold/
+/.org-id-locations

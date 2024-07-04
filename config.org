@@ -1868,6 +1868,11 @@
   :ensure nil
   :config
   (vertico-multiform-mode)
+  
+  (after! jinx
+    (add-to-list 'vertico-multiform-categories
+		 '(jinx grid (vertico-grid-annotate . 20)))
+    (vertico-multiform-mode 1))
   )
 (use-package savehist
   :ensure nil
@@ -2005,11 +2010,6 @@
   (jinx-languages "ru_RU en_US")
   :hook ((text-mode ) . jinx-mode )
   :config
-  (after! vetico-multiform
-    (add-to-list 'vertico-multiform-categories
-		 '(jinx grid (vertico-grid-annotate . 20)))
-    (vertico-multiform-mode 1)
-    )
   )
 #+end_src
 * Dash-Docs
