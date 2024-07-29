@@ -15,7 +15,7 @@
  '(indent-tabs-mode nil)
  '(org-safe-remote-resources
    '("\\`https://fniessen\\.github\\.io/org-html-themes/org/theme-readtheorg\\.setup\\'"))
- '(package-selected-packages '(evil-tutor evil-collection evil))
+ '(package-selected-packages '(geiser-guile evil-tutor evil-collection evil))
  '(prism-colors
    '(font-lock-type-face font-lock-function-name-face font-lock-keyword-face font-lock-doc-face))
  '(prism-comments-fn
