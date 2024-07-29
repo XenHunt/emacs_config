@@ -2172,9 +2172,17 @@
    gptel-model "llama3.1:8b-instruct-q8_0"
    gptel-default-mode #'org-mode
    gptel-backend (gptel-make-ollama "Ollama"
-                                    :host "localhost:11434"
-                                    :stream t
-                                    :models '("llama3.1:8b-instruct-q8_0" "deepseek-coder-v2:16b"))))
+                   :host "localhost:11434"
+                   :stream t
+                   :models '("llama3.1:8b-instruct-q8_0" "deepseek-coder-v2:16b")))
+  (leader-key
+    "e" '(:ignore t :wk "Gptel")
+    "e e" '(gptel :wk "Start/Switch")
+    "e c" '(gptel-add :wk "Add/Remove regions of buffers from context")
+    "e f" '(gptel-add-file :wk "Add file")
+    "e m" '(gptel-menu :wk "Confuguration menu")
+    "e s" '(gptel-send :wk "Send")
+    ))
 
 #+end_src
 * Programming Language 
