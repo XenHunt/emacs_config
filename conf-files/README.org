@@ -1,0 +1,121 @@
+#+TITLE:XenHunt Config (full)
+#+AUTHOR: Evgeny Berlizov (XenHunt)
+#+DESCRIPTION: XenHunt's full config loading
+#+STARTUP: content
+#+PROPERTY: header-args :tangle full.el
+* Содержание
+:PROPERTIES:
+:TOC:      :include all :depth 100 :force (nothing) :ignore (this) :local (nothing)
+:END:
+:CONTENTS:
+- [[#введение][Введение]]
+- [[#fast-loading][Fast-Loading]]
+- [[#загрузка-конфига][Загрузка конфига]]
+  - [[#base][Base]]
+  - [[#custom][Custom]]
+  - [[#org][Org]]
+  - [[#other][Other]]
+  - [[#programming][Programming]]
+  - [[#ai][AI]]
+- [[#provide][Provide]]
+:END:
+
+* Введение
+:PROPERTIES:
+:CUSTOM_ID: введение
+:END:
+
+Эта часть конфига объединяет все модули в один обший конфиг.
+
+* Fast-Loading
+:PROPERTIES:
+:CUSTOM_ID: fast-loading
+:END:
+
+Быстрая загрузка модуля.
+
+#+begin_src emacs-lisp
+;; -*- lexical-binding: t; -*-
+#+end_src
+
+* Загрузка конфига
+:PROPERTIES:
+:CUSTOM_ID: загрузка-конфига
+:END:
+
+Загрузка всего конфига.
+
+** Base
+:PROPERTIES:
+:CUSTOM_ID: base
+:END:
+
+Это базовая часть конфига, включающая в себя самые базовые вещи (evil-mode, значения по-умолчанию и некоторые другие вещи). Подробнее: [[./base/README.org][README базы]]
+#+begin_src emacs-lisp
+(add-to-list 'load-path "~/.emacs.d/conf-files/base/")
+(require 'base)
+#+end_src
+** Custom
+:PROPERTIES:
+:CUSTOM_ID: custom
+:END:
+
+Эта часть конфига посвященая всяким украшательствам (тема, фонты и другое). Подробнее: [[./custom/README.org][README кастомизации]]
+#+begin_src emacs-lisp
+(add-to-list 'load-path "~/.emacs.d/conf-files/custom/")
+(require 'beauty)
+#+end_src
+** Org
+:PROPERTIES:
+:CUSTOM_ID: org
+:END:
+
+Эта часть посвящена всем расширениям для =org-mode=. Подробнее: [[./org/README.org][README для org]]
+
+#+begin_src emacs-lisp
+(add-to-list 'load-path "~/.emacs.d/conf-files/org/")
+(require 'org-mine)
+#+end_src
+** Other
+:PROPERTIES:
+:CUSTOM_ID: other
+:END:
+
+Эта часть посвящена разнообразным вещам, которые не могут быть отнесены к другим модулям. Подробнее: [[./other/README.org][README оставшихся вещей]]
+
+#+begin_src emacs-lisp
+(add-to-list 'load-path "~/.emacs.d/conf-files/other/")
+(require 'other)
+#+end_src
+** Programming
+:PROPERTIES:
+:CUSTOM_ID: programming
+:END:
+
+Эта часть посвящена всему, что превращает =Emacs= в IDE (lsp, дебаг и т.д.). Подробнее: [[./programming/README.org][README для программирования]]
+
+#+begin_src emacs-lisp
+(add-to-list 'load-path "~/.emacs.d/conf-files/programming/")
+(require 'programming)
+#+end_src
+** AI
+:PROPERTIES:
+:CUSTOM_ID: ai
+:END:
+
+Эта часть посвящена добавлению ИИ (=Codeium= и =gptel=) в =Emacs=. Подробнее: [[./ai/README.org][README для ИИ]]
+
+#+begin_src emacs-lisp
+(add-to-list 'load-path "~/.emacs.d/conf-files/ai/")
+(require 'ai)
+#+end_src
+* Provide
+:PROPERTIES:
+:CUSTOM_ID: provide
+:END:
+
+Тут просто предоставляю =Emacs= доступ к конфигу.
+
+#+begin_src emacs-lisp
+(provide 'full)
+#+end_src

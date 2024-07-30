@@ -1,0 +1,873 @@
+#+TITLE:XenHunt Config (programming)
+#+AUTHOR: Evgeny Berlizov (XenHunt)
+#+DESCRIPTION: XenHunt's config of programming capabilities
+#+STARTUP: content
+#+PROPERTY: header-args :tangle programming.el
+* Содержание
+:PROPERTIES:
+:TOC:      :include all :depth 100 :force (nothing) :ignore (this) :local (nothing)
+:END:
+:CONTENTS:
+- [[#введение][Введение]]
+- [[#fast-loading][Fast-Loading]]
+- [[#загрузка-скриптов][Загрузка скриптов]]
+- [[#git-packages][Git Packages]]
+  - [[#git-time-machine][Git-Time Machine]]
+  - [[#magit][Magit]]
+  - [[#magit-todos][Magit-TODOS]]
+  - [[#git-modes][Git-Modes]]
+- [[#dash-docs][Dash-Docs]]
+- [[#direnv][Direnv]]
+- [[#programming-language][Programming Language]]
+  - [[#lsp-mode][LSP-Mode]]
+    - [[#consult-lsp][Consult-LSP]]
+  - [[#dap-mode][DAP-Mode]]
+  - [[#formater][Formater]]
+  - [[#python][Python]]
+    - [[#blacken][Blacken]]
+    - [[#py-isort][Py-Isort]]
+    - [[#lsp-pyright][LSP-Pyright]]
+    - [[#pip-env][Pip-env]]
+    - [[#раскладка][Раскладка]]
+  - [[#jupyter][Jupyter]]
+  - [[#web][WEB]]
+    - [[#add-node-modules-path][add-node-modules-path]]
+    - [[#js2-xref][JS2-xref]]
+    - [[#web-mode][WEB-Mode]]
+    - [[#npm-mode][NPM-Mode]]
+    - [[#prettier-js][Prettier-JS]]
+    - [[#js2-mode][JS2-Mode]]
+    - [[#typescript][Typescript]]
+      - [[#раскладка-0][Раскладка]]
+    - [[#aangit][aangit]]
+    - [[#skewer][Skewer]]
+    - [[#tide][Tide]]
+    - [[#multi-web-mode][Multi-Web-Mode]]
+    - [[#json][JSON]]
+    - [[#yaml][Yaml]]
+  - [[#lisp][Lisp]]
+    - [[#clojure][Clojure]]
+    - [[#guile][Guile]]
+  - [[#nix-mode][Nix-Mode]]
+  - [[#treesitter][Treesitter]]
+    - [[#treesitter-auto][Treesitter-auto]]
+    - [[#treesitter-0][Treesitter]]
+- [[#provide][Provide]]
+:END:
+* Введение
+:PROPERTIES:
+:CUSTOM_ID: введение
+:END:
+
+Эта часть конфига посвящена внедрению фич (дебаг, lsp и т.д.) для программирования в моём =Emacs=. 
+
+* Fast-Loading
+:PROPERTIES:
+:CUSTOM_ID: fast-loading
+:END:
+
+Быстрая загрузка модуля.
+
+#+begin_src emacs-lisp
+;; -*- lexical-binding: t; -*-
+#+end_src
+
+* Загрузка скриптов
+:PROPERTIES:
+:CUSTOM_ID: загрузка-скриптов
+:END:
+
+Загрузка базовых скриптов.
+
+#+begin_src emacs-lisp
+(add-to-list 'load-path "~/.emacs.d/scripts/")
+(require 'scripts)
+#+end_src
+
+* Git Packages 
+:PROPERTIES:
+:CUSTOM_ID: git-packages
+:END:
+** Git-Time Machine
+:PROPERTIES:
+:CUSTOM_ID: git-time-machine
+:END:
+#+begin_src emacs-lisp
+;; (us;; e-package git-timemachine
+;; ;;   :hook (evil-normalize-keymaps . git-timemachine-hook)
+;; ;;   :config
+;; ;;     (evil-define-key 'normal git-timemachine-mode-map (kbd "C-j") 'git-timemachine-show-previous-revision)
+;; ;;     (evil-define-key 'normal git-timemachine-mode-map (kbd "C-k") 'git-timemachine-show-next-revision)
+;; ;; )
+#+end_src
+** Magit
+:PROPERTIES:
+:CUSTOM_ID: magit
+:END:
+#+begin_src emacs-lisp
+(elpaca-wait)
+(use-package magit)
+#+end_src
+** Magit-TODOS
+:PROPERTIES:
+:CUSTOM_ID: magit-todos
+:END:
+#+begin_src emacs-lisp
+(use-package magit-todos
+  :after magit
+  :config (magit-todos-mode 1))
+(use-package forge
+  :after magit
+  )
+#+end_src
+** Git-Modes
+:PROPERTIES:
+:CUSTOM_ID: git-modes
+:END:
+#+begin_src emacs-lisp
+(use-package git-modes)
+#+end_src
+* Dash-Docs
+:PROPERTIES:
+:CUSTOM_ID: dash-docs
+:END:
+#+begin_src emacs-lisp
+;; (use-package dash-docs)
+;; (use-package consult-dash
+;;   :bind (("M-s d" . consult-dash))
+;;   :config
+;;   ;; Use the symbol at point as initial search term
+;;   (consult-customize consult-dash :initial (thing-at-point 'symbol)))
+(use-package devdocs
+  ;; (leader-key
+  ;;   "h d" '(devdocs-lookup :wk "Devdocs Lookup")
+  ;;   )
+  )
+#+end_src
+* Direnv
+:PROPERTIES:
+:CUSTOM_ID: direnv
+:END:
+#+begin_src emacs-lisp
+(use-package direnv
+ :config
+ (direnv-mode))
+#+end_src
+
+* Programming Language 
+:PROPERTIES:
+:CUSTOM_ID: programming-language
+:END:
+** LSP-Mode 
+:PROPERTIES:
+:CUSTOM_ID: lsp-mode
+:END:
+#+begin_src emacs-lisp
+
+(add-to-list 'load-path (expand-file-name "lib/lsp-mode" user-emacs-directory))
+(add-to-list 'load-path (expand-file-name "lib/lsp-mode/clients" user-emacs-directory))
+(use-package lsp-mode
+  :commands (lsp lsp-deferred)
+  :custom
+
+  ;; (lsp-clients-angular-language-server-command
+  ;;  '("node"
+  ;;   "/home/berlizoves/.nvm/versions/node/v20.13.1/lib/node_modules/@angular/language-server"
+  ;;    "--ngProbeLocations"
+  ;;    "/home/berlizoves/.nvm/versions/node/v20.13.1/lib/node_modules/"
+  ;;    "--tsProbeLocations"
+  ;;    "/home/berlizoves/.nvm/versions/node/v20.13.1/lib/node_modules/"
+  ;;    "--stdio"))
+
+  (lsp-clients-angular-language-server-command
+   '("ngserver"
+     "--stdio"
+     "--tsProbeLocations"
+     "/home/berlizoves/.nvm/versions/node/v20.13.1/lib/node_modules/"
+     "--ngProbeLocations"
+     "/home/berlizoves/.nvm/versions/node/v20.13.1/lib/node_modules/@angular/language-server/node_modules/"
+     ))
+  (lsp-log-io nil) ; ensure this is off when not debugging
+  (lsp-completion-provider :none)
+  (lsp-completion--enable t)
+  (lsp-restart 'auto-restart)
+  (lsp-enable-snippet t)
+  (lsp-diagnostics-provider :flymake)
+  (lsp-disabled-clients '(eslint))
+  (lsp-auto-execute-action nil)
+  :init
+
+  (defun lsp-booster--advice-json-parse (old-fn &rest args)
+    "Try to parse bytecode instead of json."
+    (or
+     (when (equal (following-char) ?#)
+       (let ((bytecode (read (current-buffer))))
+	 (when (byte-code-function-p bytecode)
+           (funcall bytecode))))
+     (apply old-fn args)))
+  (advice-add (if (progn (require 'json)
+			 (fboundp 'json-parse-buffer))
+                  'json-parse-buffer
+		'json-read)
+              :around
+              #'lsp-booster--advice-json-parse)
+
+  (defun lsp-booster--advice-final-command (old-fn cmd &optional test?)
+    "Prepend emacs-lsp-booster command to lsp CMD."
+    (let ((orig-result (funcall old-fn cmd test?)))
+      (if (and (not test?)                             ;; for check lsp-server-present?
+               (not (file-remote-p default-directory)) ;; see lsp-resolve-final-command, it would add extra shell wrapper
+               lsp-use-plists
+               (not (functionp 'json-rpc-connection))  ;; native json-rpc
+               (executable-find "emacs-lsp-booster"))
+          (progn
+            (message "Using emacs-lsp-booster for %s!" orig-result)
+            (cons "emacs-lsp-booster" orig-result))
+	orig-result)))
+  (advice-add 'lsp-resolve-final-command :around #'lsp-booster--advice-final-command)
+
+  (defun my/orderless-dispatch-flex-first (_pattern index _total)
+    (and (eq index 0) 'orderless-flex))
+  (defun fv--lsp-mode-capf-setup ()
+    (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
+          '(orderless)))
+  (add-hook 'orderless-style-dispatchers #'my/orderless-dispatch-flex-first nil 'local)
+  (setq-local completion-at-point-functions (list (cape-capf-buster #'lsp-completion-at-point)))
+  ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+  (setq lsp-keymap-prefix "C-c l")
+
+  (advice-add 'lsp--select-action :filter-args
+              (defun get-rid-of/refactor.move (actions_args)
+		(list 
+		 (seq-remove (lambda (action)
+                               (string= "refactor.move" (plist-get action :kind)))
+                             (seq-first actions_args)))))
+  :hook (
+
+	 (lsp-completion-mode . fv--lsp-mode-capf-setup)
+	 ;; replace XXX-mode with concrete major-mode(e. g. python-mode)
+	 (python-mode . lsp)
+	 (json-mode . lsp)
+	 (yaml-mode . lsp)
+	 (javascript-mode . lsp)
+	 ;; (web-mode . lsp)
+	 ;; (typescript-mode . lsp)
+	 (css-mode . lsp)
+	 (lsp-completion-mode . lsp-enable-which-key-integration)
+	 ;; (emacs-lisp-mode . lsp)
+	 (lisp-interaction-mode . lsp)
+	 )
+  ;; :commands lsp
+  :config
+  ;; (add-hook 'lsp-mode-hook #'lsp-completion-mode)
+
+  ;; (setq lsp-enabled-clients '(ts-ls pyright angular-ls vue-semantic-server json-ls html-ls eslint css-ls bash-ls))
+  )
+(use-package lsp-ui 
+  :custom
+  (lsp-ui-sideline-show-diagnostics t)
+  (lsp-ui-sideline-show-hover t)
+  (lsp-ui-sideline-show-code-actions t)
+  (lsp-ui-doc-enable t)
+  (lsp-ui-doc-position 'at-point)
+  :after lsp-mode
+  :init
+  (add-hook 'lsp-mode-hook 'lsp-ui-mode)
+
+  )
+#+end_src
+
+#+RESULTS:
+
+*** Consult-LSP
+:PROPERTIES:
+:CUSTOM_ID: consult-lsp
+:END:
+#+begin_src emacs-lisp
+(use-package consult-lsp)
+#+end_src
+** DAP-Mode 
+:PROPERTIES:
+:CUSTOM_ID: dap-mode
+:END:
+#+begin_src emacs-lisp
+(defvar +debugger--dap-alist
+  `(((:lang cc +lsp)         :after ccls        :require (dap-lldb dap-gdb-lldb))
+    ((:lang elixir +lsp)     :after elixir-mode :require dap-elixir)
+    ((:lang go +lsp)         :after go-mode     :require dap-dlv-go)
+    ((:lang java +lsp)       :after java-mode   :require lsp-java)
+    ((:lang php +lsp)        :after php-mode    :require dap-php)
+    ((:lang python +lsp)     :after python      :require dap-python)
+    ((:lang ruby +lsp)       :after ruby-mode   :require dap-ruby)
+    ((:lang rust +lsp)       :after rustic-mode :require (dap-lldb dap-cpptools))
+    ((:lang javascript +lsp)
+     :after (js2-mode typescript-mode)
+     :require (dap-node dap-chrome dap-firefox ,@(if (featurep :system 'windows) '(dap-edge)))))
+  "TODO")
+
+(use-package dap-mode
+  :after lsp-mode
+  :hook ((dap-mode . dap-tooltip-mode)
+	 (dap-mode . dap-ui-mode)
+	 (dap-ui-mode . dap-ui-controls-mode)
+	 )
+  :init
+  (setq dap-breakpoints-file (concat user-emacs-directory "dap-breakpoints")
+        dap-utils-extension-path (concat user-emacs-directory "dap-extension/"))
+  :config
+  (require 'dap-python)
+
+  (setq dap-python-debugger 'debugpy)
+  (general-define-key
+   ;; :definer 'minor-mode
+   :states 'normal
+   :keymaps 'prog-mode-map
+   :prefix "SPC"
+
+   "d" '(:ignore t :wk "Debug")
+   "d d" '(dap-debug :wk "Start debug session")
+   "d b" '(dap-breakpoint-toggle :wk "Toggle breakpoint")
+   "d D" '(dap-breakpoint-delete-all :wk "Delete all breakpoints")
+   "d c" '(dap-continue :wk "Continue")
+   "d n" '(dap-next :wk "Step Over")
+   "d i" '(dap-step-in :wk "Step Into")
+   "d o" '(dap-step-out :wk "Step Out")
+   "d s" '(dap-delete-session :wk "Stop")
+   )
+  ;; (leader-key
+  ;;   "d" '(:ignore t :wk "Debug")
+  ;;   "d d" '(dap-debug :wk "Start debug session")
+  ;;   "d b" '(dap-breakpoint-toggle :wk "Toggle breakpoint")
+  ;;   "d D" '(dap-breakpoint-delete-all :wk "Delete all breakpoints")
+  ;;   "d c" '(dap-continue :wk "Continue")
+  ;;   "d n" '(dap-next :wk "Step Over")
+  ;;   "d i" '(dap-step-in :wk "Step Into")
+  ;;   "d o" '(dap-step-out :wk "Step Out")
+  ;;   "d s" '(dap-delete-session :wk "Stop")
+  ;;   )
+  )
+;; (use-package dap-ui
+;;   :hook (dap-mode . dap-ui-mode)
+;;   :hook (dap-ui-mode . dap-ui-controls-mode))
+#+end_src
+** Formater 
+:PROPERTIES:
+:CUSTOM_ID: formater
+:END:
+#+begin_src emacs-lisp
+(use-package apheleia
+  :ensure t
+  :config
+  (apheleia-global-mode +1))
+
+#+end_src
+** Python 
+:PROPERTIES:
+:CUSTOM_ID: python
+:END:
+#+begin_src emacs-lisp
+(setq python-indent-offset 4)
+(setq org-startup-indented t)
+(setq python-indent-guess-indent-offset nil)
+(after! tree-sitter
+  (add-hook 'python-mode-local-vars-hook #'tree-sitter! 'append)
+  )
+
+#+end_src
+
+#+RESULTS:
+*** Blacken 
+:PROPERTIES:
+:CUSTOM_ID: blacken
+:END:
+#+begin_src emacs-lisp
+;; (use-package blacken
+;;   :after python
+;;   :ensure t
+;;   :hook (python-mode . blacken-mode))
+#+end_src
+*** Py-Isort
+:PROPERTIES:
+:CUSTOM_ID: py-isort
+:END:
+#+begin_src emacs-lisp
+(use-package py-isort
+  :after python
+  :ensure t
+  ;; :hook (python-mode . py-isort-enable-on-save)
+  )
+#+end_src
+*** LSP-Pyright
+:PROPERTIES:
+:CUSTOM_ID: lsp-pyright
+:END:
+#+begin_src emacs-lisp
+(use-package lsp-pyright
+  :ensure t
+  :hook (python-mode . (lambda ()
+			 (require 'lsp-pyright)
+			 (lsp))))
+#+end_src
+*** Pip-env
+:PROPERTIES:
+:CUSTOM_ID: pip-env
+:END:
+#+begin_src emacs-lisp
+(use-package pipenv
+  :hook (python-mode . pipenv-mode)
+  :init
+  (setq
+   pipenv-projectile-after-switch-function
+   #'pipenv-projectile-after-switch-extended))
+#+end_src
+*** Раскладка
+:PROPERTIES:
+:CUSTOM_ID: раскладка
+:END:
+#+begin_src emacs-lisp
+(general-define-key
+ ;; :definer 'minor-mode
+ :states 'normal
+ :keymaps 'python-mode-map
+ :prefix "SPC"
+ "m" '(:ignore t :wk "Python commands")
+ "m i" '(:ignore t :wk "Imports")
+ "m i f" '(python-fix-imports :wk "Fix Imports")
+ "m i s" '(py-isort-buffer :wk "Sort Imports")
+ "m s" '(:ignore t :wk "Shell")
+ "m s s" '(python-shell-restart :wk "Start/Restart")
+ "m s b" '(python-shell-send-buffer :wk "Send buffer")
+ "m s r" '(python-shell-send-region :wk "Send region")
+ "m l" '(pipenv-lock :wk "Lock pipfile")
+ "m g" '(pipenv-graph :wk "Show graph")
+ "m u" '(pipenv-update :wk "Update all libraries")
+ "m U" '(pipenv-uninstall :wk "Uninstall packages")
+ "m i" '(pipenv-install :wk "Install packages")
+ "m a" '(pipenv-activate :wk "Activate venv")
+ "m d" '(pipenv-deactivate :wk "Deactivate venv")
+ )
+
+#+end_src
+
+#+RESULTS:
+
+** Jupyter 
+:PROPERTIES:
+:CUSTOM_ID: jupyter
+:END:
+#+begin_src emacs-lisp
+(use-package jupyter
+  ;; :commands (jupyter-run-repl
+  ;;            jupyter-run-server-repl
+  ;;            jupyter-server-list-kernels
+  ;;            )
+  :init
+  :config
+  (setq jupyter-eval-use-overlays t)
+  (defun display-ansi-colors ()
+    "Fixes kernel output in emacs-jupyter"
+    (ansi-color-apply-on-region (point-min) (point-max)))
+
+  (add-hook 'org-mode-hook
+            (lambda ()
+              (add-hook 'org-babel-after-execute-hook #'display-ansi-colors)))
+
+  (after! ob-jupyter
+    (org-babel-jupyter-aliases-from-kernelspecs))
+
+  (defun lc/org-load-jupyter ()
+    (org-babel-do-load-languages 'org-babel-load-languages
+                                 (append org-babel-load-languages
+                                         '((jupyter . t)))))
+
+  (defun lc/load-ob-jupyter ()
+    ;; only try to load in org-mode
+    (when (derived-mode-p 'org-mode)
+      ;; skip if already loaded
+      (unless (member '(jupyter . t) org-babel-load-languages)
+        ;; only load if jupyter is available
+        (when (executable-find "jupyter")
+          (lc/org-load-jupyter)))))
+
+  (after! jupyter
+    (unless (member '(jupyter . t) org-babel-load-languages)
+      (when (executable-find "jupyter")
+        (lc/org-load-jupyter))))
+  (after! org-src
+    ;; (add-to-list 'org-src-lang-modes '("jupyter-python" . python-ts))
+    (add-to-list 'org-src-lang-modes '("jupyter-R" . R)))
+  (setq org-babel-default-header-args:jupyter-python '(
+                                                       (:display . "plain")
+                                                       (:results . "replace both")
+                                                       (:session . "jpy")
+                                                       (:async . "yes")
+                                                       (:pandoc . "t")
+                                                       (:exports . "both")
+                                                       (:cache . "no")
+                                                       (:noweb . "no")
+                                                       (:hlines . "no")
+                                                       (:tangle . "no")
+                                                       (:eval . "never-export")
+                                                       (:kernel . "python3")
+                                                       ))
+  (add-to-list 'org-babel-tangle-lang-exts '("ipython" . "py"))
+  (add-to-list 'org-babel-tangle-lang-exts '("jupyter-python" . "py"))
+  (add-hook 'jupyter-org-interaction-mode-hook (lambda ()  (corfu-mode)))
+  ;; (org-babel-jupyter-override-src-block "python")
+  ;; (org-babel-jupyter-override-src-block "R")
+  )
+#+end_src
+
+** WEB
+:PROPERTIES:
+:CUSTOM_ID: web
+:END:
+*** add-node-modules-path
+:PROPERTIES:
+:CUSTOM_ID: add-node-modules-path
+:END:
+#+begin_src emacs-lisp
+(use-package add-node-modules-path
+  :ensure t
+  :config
+(add-hook 'flycheck-mode-hook 'add-node-modules-path)
+
+  )
+#+end_src
+*** JS2-xref
+:PROPERTIES:
+:CUSTOM_ID: js2-xref
+:END:
+#+begin_src emacs-lisp
+(use-package xref-js2
+  :config
+  (setq xref-js2-search-program 'rg)
+  (add-hook 'js2-mode-hook (lambda ()
+			     (add-hook 'xref-backend-functions #'xref-js2-xref-backend nil t))))
+#+end_src
+*** WEB-Mode
+:PROPERTIES:
+:CUSTOM_ID: web-mode
+:END:
+#+begin_src emacs-lisp
+(use-package web-mode
+  :mode (
+	 ("\\.html\\'" . web-mode)
+         ("\\.css\\'" . web-mode)
+         ("\\.js\\'" . web-mode)
+	 ;; ("\\.vue\\'" . web-mode) 
+	 ;; ("\\.ts\\'" . web-mode)
+	 )
+  :config
+  (add-to-list 'auto-mode-alist '("\\.vue\\'" . web-mode) 'append)
+  :mode "\\.vue\\'"
+  :hook ((web-mode . lsp-mode))
+  :config
+  (setq web-mode-markup-indent-offset 2) ; Отступ для HTML и XML
+  (setq web-mode-css-indent-offset 2)    ; Отступ для CSS
+  (setq web-mode-code-indent-offset 2)   ; Отступ для JavaScript
+  (setq web-mode-enable-auto-pairing t)   ; Автоподстановка скобок
+  (setq web-mode-enable-css-colorization t) ; Подсветка цветов в CSS
+  (setq web-mode-enable-current-element-highlight t) ; Выделение текущего элемента
+  (setf (alist-get "javascript" web-mode-comment-formats nil nil #'equal)
+	"//")
+  )
+
+;; 1. Remove web-mode auto pairs whose end pair starts with a latter
+;;    (truncated autopairs like <?p and hp ?>). Smartparens handles these
+;;    better.
+;; 2. Strips out extra closing pairs to prevent redundant characters
+;;    inserted by smartparens.
+;; Use // instead of /* as the default comment delimited in JS
+
+
+
+;;
+;; (add-hook '(html-mode-local-vars-hook
+;;             web-mode-local-vars-hook
+;;             nxml-mode-local-vars-hook)
+;;           :append #'lsp!)
+
+#+end_src
+*** NPM-Mode 
+:PROPERTIES:
+:CUSTOM_ID: npm-mode
+:END:
+#+begin_src emacs-lisp
+(use-package npm-mode
+  :ensure t
+  :config
+  (npm-global-mode))
+#+end_src
+*** Prettier-JS 
+:PROPERTIES:
+:CUSTOM_ID: prettier-js
+:END:
+#+begin_src emacs-lisp
+;; (use-package prettier-js
+;;   :config
+;;   (add-hook 'web-mode-hook #'add-node-modules-path)
+;;   (defun enable-minor-mode (my-pair)
+;;     (if (buffer-file-name)
+;; 	(if (string-match (car my-pair) buffer-file-name)
+;; 	    (funcall (cdr my-pair)))
+;;       )
+;;     )
+;;   (add-hook 'web-mode-hook #'(lambda ()
+;; 			       (enable-minor-mode
+;; 				'("\\.jsx?\\'" . prettier-js-mode))
+;; 			       (enable-minor-mode
+;; 				'("\\.tsx?\\'" . prettier-js-mode))
+;; 			       ))
+;;   )
+#+end_src
+*** JS2-Mode 
+:PROPERTIES:
+:CUSTOM_ID: js2-mode
+:END:
+#+begin_src emacs-lisp
+(use-package js2-mode
+  :mode (
+         ("\\.js\\'" . js2-mode))
+  :hook ((js2-mode . lsp-mode))
+  :config
+  (setq js-indent-level 2)
+  )
+
+(use-package js2-refactor
+:hook ((js2-mode . js2-refactor)
+       )
+)
+#+end_src
+*** Typescript 
+:PROPERTIES:
+:CUSTOM_ID: typescript
+:END:
+#+begin_src emacs-lisp
+(use-package typescript-mode
+  :mode ("\.ts$")
+  :hook (typescript-mode . lsp)
+  :config
+  ;; we choose this instead of tsx-mode so that eglot can automatically figure out language for server
+  ;; see https://github.com/joaotavora/eglot/issues/624 and https://github.com/joaotavora/eglot#handling-quirky-servers
+
+  (setq typescript-indent-level 2)
+  (define-derived-mode typescriptreact-mode typescript-mode
+    "TypeScript TSX")
+
+  ;; use our derived mode for tsx files
+  (add-to-list 'auto-mode-alist '("\\.tsx?\\'" . typescriptreact-mode))
+  ;; by default, typescript-mode is mapped to the treesitter typescript parser
+  ;; use our derived mode to map both .tsx AND .ts -> typescriptreact-mode -> treesitter tsx
+  (add-to-list 'tree-sitter-major-mode-language-alist '(typescriptreact-mode . tsx))
+  )
+
+#+end_src
+**** Раскладка 
+:PROPERTIES:
+:CUSTOM_ID: раскладка-0
+:END:
+*** aangit
+:PROPERTIES:
+:CUSTOM_ID: aangit
+:END:
+#+begin_src emacs-lisp
+(use-package aangit
+  :after magit
+  :config
+  (general-define-key
+   :states 'normal
+   :keymaps 'dired-mode-map
+   :prefix "SPC"
+   "m a" '(aangit-menu :wk "Aangit")
+   )
+  )
+
+#+end_src
+*** Skewer 
+:PROPERTIES:
+:CUSTOM_ID: skewer
+:END:
+#+begin_src emacs-lisp
+(use-package skewer-mode
+  :hook (((js2-mode css-mode html-mode) . skewer-mode))
+)
+  
+#+end_src
+*** Tide 
+:PROPERTIES:
+:CUSTOM_ID: tide
+:END:
+#+begin_src emacs-lisp
+;; (defun setup-tide-mode ()
+;;   (interactive)
+;;   (tide-setup)
+;;   (flycheck-mode +1)
+;;   (setq flycheck-check-syntax-automatically '(save mode-enabled))
+;;   (eldoc-mode +1)
+;;   (tide-hl-identifier-mode +1)
+;;   (setq tide-completion-ignore-case t)
+;;   (eldoc-mode +1)
+;;   (tide-hl-identifier-mode +1)
+;;   (message "setup-tide-mode"))
+
+;; (use-package tide
+;;   :ensure t
+;;   :after 
+;;   (rjsx-mode flycheck)
+;;   (typescript-mode  flycheck)
+;;   (web-mode  flycheck)
+;;   :hook  (
+;; 	  (typescript-mode . setup-tide-mode)
+;; 	  (js-mode . setup-tide-mode)
+;; 	  (rjsx-mode . setup-tide-mode)
+;; 	  (typescript-mode . tide-setup)
+;;           (typescript-mode . tide-hl-identifier-mode)
+;; 	  (js2-mode . tide-setup)
+;;           (before-save . tide-format-before-save))
+;;   :config
+;;   (after! web-mode
+;;     (add-to-list 'auto-mode-alist '("\\.jsx\\'" . web-mode))
+;;     (add-hook 'web-mode-hook
+;;               (lambda ()
+;; 		(when (string-equal "jsx" (file-name-extension buffer-file-name))
+;; 		  (setup-tide-mode))))
+;;     ;; configure jsx-tide checker to run after your default jsx checker
+;;     (flycheck-add-mode 'javascript-eslint 'web-mode)
+;;     (flycheck-add-next-checker 'javascript-eslint 'jsx-tide 'append)
+;;     )
+;;   )
+;; (defun trigger-tide-setup ()
+;;   (interactive)
+;;   (enable-minor-mode
+;;    '("\\.ts[x]?" . setup-tide-mode)))
+;; (eval-after-web-mode-load 'trigger-tide-setup)
+#+end_src
+*** Multi-Web-Mode 
+:PROPERTIES:
+:CUSTOM_ID: multi-web-mode
+:END:
+#+begin_src emacs-lisp
+;; (use-package multi-web-mode
+;; :after web-mode
+;; :config
+;; (setq mweb-default-major-mode 'html-mode) ; Задаём режим HTML как основной.
+;; (setq mweb-tags '((php-mode "<\\?php\\|<\\? \\|<\\?=" "\\?>")
+;;                   (js2-mode "<script +\\(type=\"text/javascript\"\\|language=\"javascript\"\\)[^>]*>" "</script>")
+;;                   (css-mode "<style +type=\"text/css\"[^>]*>" "</style>"))) ; Задаём правила для PHP, JavaScript и CSS.
+;; (setq mweb-filename-extensions '("htm" "html" "ctp" "php" "phtml" "tpl")) ; Указываем список расширений файлов.
+;; (multi-web-global-mode 1) ; Активируем multi-web-mode глобально.
+;; )
+#+end_src
+*** JSON 
+:PROPERTIES:
+:CUSTOM_ID: json
+:END:
+#+begin_src emacs-lisp
+(use-package json-mode
+  :init
+  (add-to-list 'auto-mode-alist '("\\.json\\'" . json-mode))
+  )
+#+end_src
+*** Yaml
+:PROPERTIES:
+:CUSTOM_ID: yaml
+:END:
+#+begin_src emacs-lisp
+(use-package yaml-mode
+  :init
+  (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode))
+  )
+#+end_src
+** Lisp
+:PROPERTIES:
+:CUSTOM_ID: lisp
+:END:
+*** Clojure
+:PROPERTIES:
+:CUSTOM_ID: clojure
+:END:
+#+begin_src emacs-lisp
+(use-package cider
+  :config
+  (setq org-babel-clojure-backend 'cider))
+(use-package clojure-mode)
+#+end_src
+
+*** Guile
+:PROPERTIES:
+:CUSTOM_ID: guile
+:END:
+#+begin_src emacs-lisp
+(use-package geiser-guile)
+#+end_src
+
+** Nix-Mode
+:PROPERTIES:
+:CUSTOM_ID: nix-mode
+:END:
+#+begin_src emacs-lisp
+(use-package nix-mode
+  :mode "\\.nix\\'")
+#+end_src
+** Treesitter
+:PROPERTIES:
+:CUSTOM_ID: treesitter
+:END:
+#+begin_src emacs-lisp
+(after! tree-sitter
+  (setq treesit-language-source-alist
+	'((bash . ("https://github.com/tree-sitter/tree-sitter-bash"))
+	  (c . ("https://github.com/tree-sitter/tree-sitter-c"))
+	  (cpp . ("https://github.com/tree-sitter/tree-sitter-cpp"))
+	  (css . ("https://github.com/tree-sitter/tree-sitter-css"))
+	  (cmake . ("https://github.com/uyha/tree-sitter-cmake"))
+	  (go . ("https://github.com/tree-sitter/tree-sitter-go"))
+	  (html . ("https://github.com/tree-sitter/tree-sitter-html"))
+	  (javascript . ("https://github.com/tree-sitter/tree-sitter-javascript"))
+	  (json . ("https://github.com/tree-sitter/tree-sitter-json"))
+	  (julia . ("https://github.com/tree-sitter/tree-sitter-julia"))
+	  (lua . ("https://github.com/Azganoth/tree-sitter-lua"))
+	  (make . ("https://github.com/alemuller/tree-sitter-make"))
+	  (ocaml . ("https://github.com/tree-sitter/tree-sitter-ocaml" "master" "ocaml/src"))
+     (python "https://github.com/tree-sitter/tree-sitter-python")
+	  (php . ("https://github.com/tree-sitter/tree-sitter-php"))
+	  (typescript . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src"))
+	  (tsx . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src"))
+	  (ruby . ("https://github.com/tree-sitter/tree-sitter-ruby"))
+	  (rust . ("https://github.com/tree-sitter/tree-sitter-rust"))
+	  (sql . ("https://github.com/m-novikov/tree-sitter-sql"))
+	  (toml . ("https://github.com/tree-sitter/tree-sitter-toml"))
+	  (zig . ("https://github.com/GrayJack/tree-sitter-zig"))))
+  )
+#+end_src
+**** Treesitter-auto
+:PROPERTIES:
+:CUSTOM_ID: treesitter-auto
+:END:
+#+begin_src emacs-lisp
+;; (use-package treesit-auto
+;;   :config
+;;   (global-treesit-auto-mode))
+#+end_src
+**** Treesitter
+:PROPERTIES:
+:CUSTOM_ID: treesitter-0
+:END:
+#+begin_src emacs-lisp
+(setq tsc-dyn-get-from'(:compilation))
+(use-package tree-sitter
+  :config
+  (require 'tree-sitter-langs)
+  (global-tree-sitter-mode)
+  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
+  )
+(use-package tree-sitter-langs)
+#+end_src
+* Provide
+:PROPERTIES:
+:CUSTOM_ID: provide
+:END:
+#+begin_src emacs-lisp
+(provide 'programming)
+#+end_src

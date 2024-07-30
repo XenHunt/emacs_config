@@ -33,3 +33,12 @@
 /.org-id-locations
 /ellama-sessions/
 /gptel-sessions/
+/conf-files/*.el
+/conf-files/ai/*.el
+/conf-files/base/*.el
+/conf-files/custom/*.el
+/conf-files/org/*.el
+/conf-files/other/*.el
+/conf-files/programming/*.el
+/README.el
+/.backup_config.org

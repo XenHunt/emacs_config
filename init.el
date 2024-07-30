@@ -1,8 +1,10 @@
 (setq user-emacs-directory "~/.emacs.d/")
 
+
+
 (org-babel-load-file
-  (expand-file-name
-  "config.org"
+ (expand-file-name
+  "README.org"
   user-emacs-directory))
 (custom-set-variables
  ;; custom-set-variables was added by Custom.

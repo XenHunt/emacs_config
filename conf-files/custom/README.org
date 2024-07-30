@@ -1,0 +1,292 @@
+#+TITLE:XenHunt Config (customize)
+#+AUTHOR: Evgeny Berlizov (XenHunt)
+#+DESCRIPTION: XenHunt's config of customization
+#+STARTUP: content
+#+PROPERTY: header-args :tangle beauty.el
+* Содержание
+:PROPERTIES:
+:TOC:      :include all :depth 100 :force (nothing) :ignore (this) :local (nothing)
+:END:
+:CONTENTS:
+- [[#введение][Введение]]
+- [[#fast-loading][Fast-Loading]]
+- [[#загрузка-скриптов][Загрузка скриптов]]
+- [[#graphical-beauty][Graphical Beauty]]
+  - [[#doom-theme][Doom Theme]]
+  - [[#doom-modeline][Doom Modeline]]
+  - [[#fonts][Fonts]]
+  - [[#removing-bars][Removing Bars]]
+  - [[#line-numbers][Line Numbers]]
+  - [[#nerd-icons][Nerd-Icons]]
+  - [[#all-the-icons][ALL-THE-ICONS]]
+  - [[#dashboard][Dashboard]]
+  - [[#rainbow-mode][Rainbow-mode]]
+  - [[#rainbow-delimiters][Rainbow Delimiters]]
+  - [[#rainbow-identifiers][Rainbow Identifiers]]
+  - [[#prismel][Prism.el]]
+  - [[#ligatures][Ligatures]]
+  - [[#highlight-indent][Highlight indent]]
+- [[#provide][Provide]]
+:END:
+* Введение
+:PROPERTIES:
+:CUSTOM_ID: введение
+:END:
+
+Эта часть конфига посвящена кастомизации моего =Emacs=. 
+
+* Fast-Loading
+:PROPERTIES:
+:CUSTOM_ID: fast-loading
+:END:
+
+Быстрая загрузка модуля.
+
+#+begin_src emacs-lisp
+;; -*- lexical-binding: t; -*-
+#+end_src
+
+* Загрузка скриптов
+:PROPERTIES:
+:CUSTOM_ID: загрузка-скриптов
+:END:
+
+Загрузка базовых скриптов.
+
+#+begin_src emacs-lisp
+(add-to-list 'load-path "~/.emacs.d/scripts/")
+(require 'scripts)
+#+end_src
+
+* Graphical Beauty
+:PROPERTIES:
+:CUSTOM_ID: graphical-beauty
+:END:
+** Doom Theme 
+:PROPERTIES:
+:CUSTOM_ID: doom-theme
+:END:
+#+begin_src emacs-lisp
+(use-package doom-themes
+  :config
+  (load-theme 'doom-dracula t)
+  (setq doom-themes-enable-bold t    ; Включаем bold
+        doom-themes-enable-italic t); Включаем italic
+  (set-frame-parameter nil 'alpha-background 90) ; Set transparency to 85%
+  (add-to-list 'default-frame-alist '(alpha-background . 90)) ; Set transparency for new frames
+  (doom-themes-org-config)
+  (leader-key
+    "h t" '(load-theme :wk "Load theme"))
+  )
+#+end_src
+** Doom Modeline 
+:PROPERTIES:
+:CUSTOM_ID: doom-modeline
+:END:
+#+begin_src emacs-lisp
+(use-package doom-modeline
+  :ensure t
+  :init (doom-modeline-mode 1))
+#+end_src
+** Fonts
+:PROPERTIES:
+:CUSTOM_ID: fonts
+:END:
+
+#+begin_src emacs-lisp
+;; Создаём функцию, потому-что org-make-toc перезаписывает стили фонтов
+(defun my/set-fonts ()
+  "Ставим стандартные фонты"
+  (set-face-attribute 'default nil
+		      :font "JetBrainsMono Nerd Font"
+		      :height 110
+		      :weight 'medium)
+  (set-face-attribute 'variable-pitch nil
+		      :font "Ubuntu Nerd Font"
+		      :height 120
+		      :weight 'medium)
+  (set-face-attribute 'fixed-pitch nil
+		      :font "JetBrainsMono Nerd Font"
+		      :height 110
+		      :weight 'medium)
+
+  ;; Делаем так, чтобы особые символы были italic
+  (set-face-attribute 'font-lock-comment-face nil
+		      :slant 'italic)
+  (set-face-attribute 'font-lock-keyword-face nil
+		      :weight 'ultra-bold
+		      ;; :slant 'italic
+		      )
+  ;; Делаем так, чтобы у нас для графики был Nerd Font
+  (add-to-list 'default-frame-alist '(font . "JetBrainsMono Nerd Font"))
+  (setq org-hide-emphasis-markers t)
+  )
+
+#+end_src
+
+#+RESULTS:
+: my/set-fonts
+
+** Removing Bars
+:PROPERTIES:
+:CUSTOM_ID: removing-bars
+:END:
+
+#+begin_src emacs-lisp
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+#+end_src
+
+** Line Numbers
+:PROPERTIES:
+:CUSTOM_ID: line-numbers
+:END:
+
+#+begin_src emacs-lisp
+(defun my-enable-line-numbers ()
+  (unless (memq major-mode '(pdf-view-mode)) ; замените mode1 и mode2 на режимы, в которых не нужно включать display-line-numbers-mode
+    (display-line-numbers-mode)))
+(add-hook 'prog-mode-hook 'my-enable-line-numbers)
+(add-hook 'text-mode-hook 'my-enable-line-numbers)
+
+;; (global-display-line-numbers-mode 1)
+(global-visual-line-mode 1)
+(setq display-line-numbers-type 'relative) 
+#+end_src
+
+** Nerd-Icons 
+:PROPERTIES:
+:CUSTOM_ID: nerd-icons
+:END:
+#+begin_src emacs-lisp
+(use-package nerd-icons
+  ;; :custom
+  ;; The Nerd Font you want to use in GUI
+  ;; "Symbols Nerd Font Mono" is the default and is recommended
+  ;; but you can use any other Nerd Font if you want
+  ;; (nerd-icons-font-family "Symbols Nerd Font Mono")
+  )
+#+end_src
+** ALL-THE-ICONS 
+:PROPERTIES:
+:CUSTOM_ID: all-the-icons
+:END:
+#+begin_src emacs-lisp
+(use-package all-the-icons
+  :ensure t
+  :if (display-graphic-p))
+(use-package all-the-icons-dired
+  :hook (dired-mode . (lambda () (all-the-icons-dired-mode t))))
+#+end_src
+** Dashboard 
+:PROPERTIES:
+:CUSTOM_ID: dashboard
+:END:
+#+begin_src emacs-lisp
+(use-package dashboard
+  :init
+  (setq dashboard-set-file-icons t)
+  (setq dashboard-set-heading-icons t)
+  (setq dashboard-display-icons-p t)
+  :custom
+  (dashboard-modify-heading-icons '((recents . "file-text")
+                                    (bookmarks . "book")))
+  (dashboard-items '(
+		     (recents . 5)
+		     (bookmarks . 5)
+		     (projects . 5)
+		     (agenda . 5)))
+  (dashboard-item-shortcuts '(
+			      (recents   . "r")
+                              (bookmarks . "m")
+                              (projects  . "p")
+			      (agenda . "a")))
+  (dashboard-projects-backend 'projectile)
+  :config
+  (add-hook 'elpaca-after-init-hook #'dashboard-insert-startupify-lists)
+  (add-hook 'elpaca-after-init-hook #'dashboard-initialize)
+
+  (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
+  ;; (setq dashboard-banner-logo-png "/home/berlizoves/.emacs.d/logo.png")
+  (dashboard-setup-startup-hook)
+  )
+#+end_src
+** Rainbow-mode 
+:PROPERTIES:
+:CUSTOM_ID: rainbow-mode
+:END:
+#+begin_src emacs-lisp
+(use-package rainbow-mode
+  ;; :diminish
+  ;; :hook 
+  ;; ((org-mode prog-mode) . rainbow-mode)
+  )
+#+end_src
+** Rainbow Delimiters 
+:PROPERTIES:
+:CUSTOM_ID: rainbow-delimiters
+:END:
+#+begin_src emacs-lisp
+(use-package rainbow-delimiters
+  ;; :hook ((emacs-lisp-mode . rainbow-delimiters-mode)
+  ;;        (prog-mode . rainbow-delimiters-mode))
+  )
+#+end_src
+** Rainbow Identifiers 
+:PROPERTIES:
+:CUSTOM_ID: rainbow-identifiers
+:END:
+#+begin_src emacs-lisp
+(use-package rainbow-identifiers
+  :config
+  ;; (add-hook 'prog-mode-hook 'rainbow-identifiers-mode)
+  )
+#+end_src
+** Prism.el 
+:PROPERTIES:
+:CUSTOM_ID: prismel
+:END:
+#+begin_src emacs-lisp
+(use-package prism
+  ;; :elpaca (prism :fetcher github :repo "alphapapa/prism.el")
+  :hook (
+	 (python-mode . prism-whitespace-mode)
+	 ((javascript-mode css-mode typescript-mode json-mode yaml-mode html-mode markdown-mode  latex-mode bash-mode scheme-mode clojure-mode) . prism-mode)
+	 )
+  :init
+  ;;(message (member 'prism-mode #'emacs-lisp-mode-hook))
+  (defun my/set-elisp-prism()
+  (interactive)
+  ;; (message  (string(memq 'prism-mode emacs-lisp-mode-hook)))
+    (unless (member 'prism-mode emacs-lisp-mode-hook)
+      (add-hook 'emacs-lisp-mode-hook #'prism-mode)
+      )
+    )
+  (add-hook 'server-after-make-frame-hook 'my/set-elisp-prism)
+  ;;(my/set-elisp-prism)
+  )
+#+end_src
+** TODO Ligatures 
+:PROPERTIES:
+:CUSTOM_ID: ligatures
+:END:
+#+begin_src emacs-lisp
+;; (use-package ligature)
+#+end_src
+** Highlight indent
+:PROPERTIES:
+:CUSTOM_ID: highlight-indent
+:END:
+#+begin_src emacs-lisp
+(use-package highlight-indent-guides
+  :hook (prog-mode . highlight-indent-guides-mode)
+  )
+#+end_src
+* Provide
+:PROPERTIES:
+:CUSTOM_ID: provide
+:END:
+#+begin_src emacs-lisp
+(provide 'beauty)
+#+end_src

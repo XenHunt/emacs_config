@@ -1,0 +1,403 @@
+#+TITLE:XenHunt Config (org)
+#+AUTHOR: Evgeny Berlizov (XenHunt)
+#+DESCRIPTION: XenHunt's config of org
+#+STARTUP: content
+#+PROPERTY: header-args :tangle org-mine.el
+
+* Содержание
+:PROPERTIES:
+:TOC:      :include all :depth 100 :force (nothing) :ignore (this) :local (nothing)
+:END:
+:CONTENTS:
+- [[#введение][Введение]]
+- [[#fast-loading][Fast-Loading]]
+- [[#загрузка-скриптов][Загрузка скриптов]]
+- [[#org-mode][Org-Mode]]
+  - [[#hover-links][Hover Links]]
+  - [[#org-appear][Org-Appear]]
+  - [[#toc][Toc]]
+  - [[#highlight-todo][Highlight TODO]]
+  - [[#org-bullets][Org-Bullets]]
+  - [[#org-tempo][Org Tempo]]
+  - [[#org-headings-size][Org Headings Size]]
+  - [[#org-auto-tangle][Org-Auto-Tangle]]
+  - [[#org-roam][Org-Roam]]
+  - [[#org-ql-roam][Org-QL-Roam]]
+  - [[#org-fragtog][Org-Fragtog]]
+  - [[#ob-async][OB-Async]]
+  - [[#org-babel-load-languages][ORG-Babel-Load-Languages]]
+  - [[#org-download][Org-Download]]
+  - [[#org-ref][Org-Ref]]
+  - [[#restclient][Restclient]]
+  - [[#раскладка][Раскладка]]
+- [[#provide][Provide]]
+:END:
+
+* Введение
+:PROPERTIES:
+:CUSTOM_ID: введение
+:END:
+
+Эта часть конфига посвящена настройке =org-mode= в =Emacs=.
+
+* Fast-Loading
+:PROPERTIES:
+:CUSTOM_ID: fast-loading
+:END:
+
+Быстрая загрузка модуля.
+
+#+begin_src emacs-lisp
+;; -*- lexical-binding: t; -*-
+#+end_src
+
+* Загрузка скриптов
+:PROPERTIES:
+:CUSTOM_ID: загрузка-скриптов
+:END:
+
+Загрузка базовых скриптов.
+
+#+begin_src emacs-lisp
+(add-to-list 'load-path "~/.emacs.d/scripts/")
+(require 'scripts)
+#+end_src
+* Org-Mode
+:PROPERTIES:
+:CUSTOM_ID: org-mode
+:END:
+** Hover Links 
+:PROPERTIES:
+:CUSTOM_ID: hover-links
+:END:
+#+begin_src emacs-lisp
+(setq org-mouse-1-follows-link t)
+(setq org-descriptive-links t)
+#+end_src
+** Org-Appear 
+:PROPERTIES:
+:CUSTOM_ID: org-appear
+:END:
+#+begin_src emacs-lisp
+(use-package org-appear
+  :custom
+  (org-appear-autoemphasis t)
+  (org-appear-autolinks t)
+  (org-appear-autosubmarkers t)
+  (org-appear-autoentities t)
+  (org-appear-autokeywords t)
+  :config
+  (add-hook 'org-mode-hook 'org-appear-mode)
+  (setq org-appear-trigger 'manual)
+  (add-hook 'org-mode-hook (lambda ()
+                             (add-hook 'evil-insert-state-entry-hook
+                                       #'org-appear-manual-start
+                                       nil
+                                       t)
+                             (add-hook 'evil-insert-state-exit-hook
+                                       #'org-appear-manual-stop
+                                       nil
+                                       t)))
+  )
+#+end_src
+** Toc
+:PROPERTIES:
+:CUSTOM_ID: toc
+:END:
+#+begin_src emacs-lisp
+(use-package org-make-toc
+  :config
+  (setq org-make-toc-insert-custom-ids t)
+  (add-hook 'org-mode-hook #'org-make-toc-mode)
+  (my/set-fonts)
+  )
+(elpaca-wait)
+#+end_src
+** Highlight TODO 
+:PROPERTIES:
+:CUSTOM_ID: highlight-todo
+:END:
+#+begin_src emacs-lisp
+(use-package hl-todo
+  :ensure (:depth nil)
+  :hook ((org-mode . hl-todo-mode)
+         (prog-mode . hl-todo-mode))
+  :config
+  (setq hl-todo-highlight-punctuation ":"
+        hl-todo-keyword-faces
+        `(("TODO"       warning bold)
+          ("FIXME"      error bold)
+          ("HACK"       font-lock-constant-face bold)
+          ("REVIEW"     font-lock-keyword-face bold)
+          ("NOTE"       success bold)
+          ("DEPRECATED" font-lock-doc-face bold))))
+#+end_src
+** Org-Bullets
+:PROPERTIES:
+:CUSTOM_ID: org-bullets
+:END:
+
+#+begin_src emacs-lisp
+(add-hook 'org-mode-hook 'org-indent-mode)
+(use-package org-bullets
+  :config
+  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+(elpaca-wait)
+#+end_src
+
+** Org Tempo 
+:PROPERTIES:
+:CUSTOM_ID: org-tempo
+:END:
+
+#+begin_src emacs-lisp
+(require 'org-tempo)
+#+end_src
+
+** Org Headings Size 
+:PROPERTIES:
+:CUSTOM_ID: org-headings-size
+:END:
+#+begin_src emacs-lisp
+(custom-set-faces
+ '(org-level-1 ((t (:inherit outline-1 :height 1.7))))
+ '(org-level-2 ((t (:inherit outline-2 :height 1.6))))
+ '(org-level-3 ((t (:inherit outline-3 :height 1.5))))
+ '(org-level-4 ((t (:inherit outline-4 :height 1.4))))
+ '(org-level-5 ((t (:inherit outline-5 :height 1.3))))
+ '(org-level-6 ((t (:inherit outline-5 :height 1.2))))
+ '(org-level-7 ((t (:inherit outline-5 :height 1.1)))))
+#+end_src
+
+** Org-Auto-Tangle 
+:PROPERTIES:
+:CUSTOM_ID: org-auto-tangle
+:END:
+#+begin_src emacs-lisp
+(use-package org-auto-tangle
+  :hook (org-mode . org-auto-tangle-mode)
+  :config
+  (setq org-auto-tangle-default t))
+#+end_src
+
+** Org-Roam 
+:PROPERTIES:
+:CUSTOM_ID: org-roam
+:END:
+#+begin_src emacs-lisp
+(use-package org-roam
+  :config
+  (setq org-roam-directory "/home/berlizoves/.org/roam/")
+  (setq org-roam-node-display-template "${title:*} ${tags:45}")
+  (org-roam-db-autosync-enable)
+  ;; (map! :leader
+  ;;       (:prefix ("n r" . "org-roam")
+  ;;                :desc "Completion at point"      "c" #'completion-at-point
+  ;;                :desc "Find node"                "f" #'org-roam-node-find
+  ;;                :desc "Show graph"               "g" #'org-roam-graph
+  ;;                :desc "Insert node"              "i" #'org-roam-node-insert
+  ;;                :desc "Create id for header"     "I" #'org-id-get-create
+  ;;                :desc "Capture to node"          "n" #'org-roam-capture
+  ;;                :desc "Toggle roam buffer"       "r" #'org-roam-buffer-toggle
+  ;;                :desc "Start org-roam-ui in web" "u" #'org-roam-ui-mode
+  ;;                :desc "Reload org-roam db"       "d" #'org-roam-db-sync
+  ;;                :desc "Insert tag"               "t" #'org-roam-tag-add
+  ;;                :desc "Remove tag"               "T" #'org-roam-tag-remove
+  ;;                :desc "Add alias"                "a" #'org-roam-alias-add
+  ;;                :desc "Remove alias"             "A" #'org-roam-alias-remove)
+  ;;       (:prefix ("n j" . "org-roam-daily")
+  ;;                :desc "Add today note entry"   "a" #'org-roam-dailies-capture-today
+  ;;                :desc "Go to today note"       "A" #'org-roam-dailies-goto-today
+  ;;                :desc "Add note entry by date" "d" #'org-roam-dailies-capture-date
+  ;;                :desc "Go to note by date"     "D" #'org-roam-dailies-goto-date
+  ;;                :desc "Find note in directory" "f" #'org-roam-dailies-find-directory
+  ;;                ))
+  (leader-key
+    "n" '(:ignore t :wk "Org-Roam/Notes")
+    ;; "n f" '(org-roam-node-find :wk "Find Node")
+    "n g" '(org-roam-graph :wk "Show Graph")
+    "n i" '(org-roam-node-insert :wk "Insert Node")
+    "n I" '(org-id-get-create :wk "Create id for header")
+    "n n" '(org-roam-capture :wk "Capture to Node")
+    "n r" '(org-roam-buffer-toggle :wk "Toggle roam buffer")
+    "n u" '(org-roam-ui-mode :wk "Start org-roam-ui in web")
+    "n d" '(org-roam-db-sync :wk "Reaload org-roam db")
+    "n t" '(org-roam-tag-add :wk "Insert tag")
+    "n T" '(org-roam-tag-remove :wk "Remove tag")
+    "n a" '(org-roam-alias-add :wk "Add alias")
+    "n A" '(org-roam-alias-remove :wk "Remove alias")
+    ;; Dailies
+    "n j" '(:ignore t :wk "Org-Roam-Dailies")
+    "n j a" '(org-roam-dailies-capture-todate :wk "Add today note entry")
+    "n j A" '(org-roam-dailies-goto-today :wk "Go to today note")
+    "n j d" '(org-roam-dailies-capture-date :wk "Add note entry by date")
+    "n j D" '(org-roam-dailies-goto-date :wk "Go to note by date")
+    )
+
+  (setq org-roam-capture-templates
+        '(
+          ("d" "default" plain
+           "%?"
+           :if-new (file+head "%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
+                              "#+title: ${title}\n#+date: %U\n")
+           :unnarrowed t)
+          ("b" "book notes" plain
+           (file "~/.org/roam/templates/book_notes_template.org")
+           :if-new (file+head "%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
+                              "#+title: ${title}\n#+date: %U\n#+filetags: :Book_notes:\n#+pers_rating:\n")
+           :unnarrowed t)
+          ("m" "library or module of pr-ing language" plain
+           (file "~/.org/roam/templates/programming_module_template.org")
+           :if-new (file+head "%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
+                              "#+title: ${title}\n#+date: %U\n#+filetags: :Library:Programming:\n")
+           :unnarrowed t
+           )
+          ("l" "lecture" plain
+           (file "~/.org/roam/templates/lecture_template.org")
+           :if-new (file+head "%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
+                              "#+title: ${title}\n#+date: %U\n#+filetags: :Lecture:\n")
+           :unnarrowed t
+           )
+          ("B" "programming book notes" plain
+           (file "~/.org/roam/templates/programming_book_template.org")
+           :if-new (file+head "%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
+                              "#+title: ${title}\n#+date: %U\n#+filetags: :Book_notes:Programming:\n#+pers_rating:\n")
+           :unnarrowed t
+           )
+          ("h" "habr article" plain
+           (file "~/.org/roam/templates/habr_article_template.org")
+           :if-new (file+head "%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
+                              "#+title: ${title}\n#+date: %U\n#+filetags: :Article:Programming:Habr:\n#+pers_rating:\n")
+           :unnarrowed t
+           )
+          )
+        )
+  (setq org-roam-dailies-capture-templates
+        '(("d" "default" entry "* %<%I:%M %p>\n%?"
+           :if-new (file+head "%<%Y-%m-%d>.org" "#+title:%<%Y-%m-%d>\n#+filetags: :Dailies:"))))
+  )
+(elpaca-wait)
+;; (use-package websoket
+
+;;   :after org-roam)
+
+(use-package org-roam-ui
+  :after org-roam
+  :config
+  (setq org-roam-ui-sync-theme t
+        org-roam-ui-follow t
+        org-roam-ui-update-on-save t
+        org-roam-ui-open-on-start t))
+#+end_src
+
+** Org-QL-Roam
+:PROPERTIES:
+:CUSTOM_ID: org-ql-roam
+:END:
+#+begin_src emacs-lisp 
+(use-package org-roam-ql
+  :after (org-roam)
+  )
+#+end_src
+
+** Org-Fragtog
+:PROPERTIES:
+:CUSTOM_ID: org-fragtog
+:END:
+#+begin_src emacs-lisp 
+(use-package org-fragtog
+:after org
+:hook (org-mode . org-fragtog-mode) ; this auto-enables it when you enter an org-buffer, remove if you do not want this
+:config
+;; whatever you want
+)
+#+end_src
+
+** OB-Async
+:PROPERTIES:
+:CUSTOM_ID: ob-async
+:END:
+#+begin_src emacs-lisp
+(use-package ob-async
+  :config
+
+(setq ob-async-no-async-languages-alist '("jupyter-python" "jupyter-julia" "jupyter-R"))
+)
+#+end_src
+
+** ORG-Babel-Load-Languages 
+:PROPERTIES:
+:CUSTOM_ID: org-babel-load-languages
+:END:
+#+begin_src emacs-lisp
+(setq org-src-fontify-natively t)
+(setq org-confirm-babel-evaluate nil)
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((emacs-lisp . t)
+   (python . t)))
+
+#+End_src
+
+** Org-Download 
+:PROPERTIES:
+:CUSTOM_ID: org-download
+:END:
+#+begin_src emacs-lisp
+(use-package org-download
+  :config
+  (add-hook 'dired-mode-hook 'org-download-enable)
+  (setq org-download-image-dir "./.images")
+  )
+  #+end_src
+
+** Org-Ref
+:PROPERTIES:
+:CUSTOM_ID: org-ref
+:END:
+#+begin_src emacs-lisp
+(use-package org-ref)
+
+#+end_src
+** Restclient
+:PROPERTIES:
+:CUSTOM_ID: restclient
+:END:
+#+begin_src emacs-lisp
+(use-package restclient
+  :after org)
+
+(use-package ob-restclient
+  :after org
+  :after restclient)
+#+end_src
+** TODO Раскладка
+:PROPERTIES:
+:CUSTOM_ID: раскладка
+:END:
+[[https://github.com/doomemacs/doomemacs/blob/master/modules/lang/org/config.el][Doom-Config Org-Mode]]
+#+begin_src emacs-lisp
+(general-define-key
+ ;; :definer 'minor-mode
+ :states 'normal
+ :keymaps 'org-mode-map
+ :prefix "SPC"
+ "m" '(:ignore :wk "Org-Mode Commands")
+ "m #" '(org-update-statistics-cookies :wk "org-update-statistics-cookies")
+ "m '" '(org-edit-special :wk "org-edit-special")
+ "m *" '(org-ctrl-c-star :wk "org-ctrl-c-star")
+ "m +" '(org-ctrl-c-minus :wk "org-ctrl-c-minus")
+ "m ," '(org-switchb :wk "org-switchb")
+ "m ." '(org-goto :wk "org-goto")
+ "m @" '(org-cite-insert :wk "org-cite-insert")
+ "m ." '(consult-org-heading :wk "consult-org-heading")
+ "m /" '(consult-org-agenda :wk "consult-org-agenda")
+ )
+#+end_src
+* Provide
+:PROPERTIES:
+:CUSTOM_ID: provide
+:END:
+#+begin_src emacs-lisp
+(provide 'org-mine)
+#+end_src

@@ -1,0 +1,253 @@
+#+TITLE:XenHunt Config (AI)
+#+AUTHOR: Evgeny Berlizov (XenHunt)
+#+DESCRIPTION: XenHunt's config of AI feautures
+#+STARTUP: content
+#+PROPERTY: header-args :tangle ai.el
+* Содержание
+:PROPERTIES:
+:TOC:      :include all :depth 100 :force (nothing) :ignore (this) :local (nothing)
+:END:
+:CONTENTS:
+- [[#введение][Введение]]
+- [[#fast-loading][Fast-Loading]]
+- [[#загрузка-скриптов][Загрузка скриптов]]
+- [[#gptel][Gptel]]
+- [[#codeium][Codeium]]
+- [[#consult-omni][Consult-Omni]]
+- [[#provide][Provide]]
+:END:
+* Введение
+:PROPERTIES:
+:CUSTOM_ID: введение
+:END:
+
+Эта часть посвященна добавлению силы ИИ в мой =Emacs=.
+
+* Fast-Loading
+:PROPERTIES:
+:CUSTOM_ID: fast-loading
+:END:
+
+Быстрая загрузка модуля.
+
+#+begin_src emacs-lisp
+;; -*- lexical-binding: t; -*-
+#+end_src
+
+* Загрузка скриптов
+:PROPERTIES:
+:CUSTOM_ID: загрузка-скриптов
+:END:
+
+Загрузка базовых скриптов.
+
+#+begin_src emacs-lisp
+(add-to-list 'load-path "~/.emacs.d/scripts/")
+(require 'scripts)
+#+end_src
+
+* Gptel
+:PROPERTIES:
+:CUSTOM_ID: gptel
+:END:
+#+begin_src emacs-lisp
+;; (use-package ellama
+;;   :init
+;;   ;; setup key bindings
+;;   ;; (general-auto-unbind-keys)
+
+;;   ;; (leader-key
+;;   ;;   "e" '(:ignore t :wk "Ellama"))
+;;   ;; (setopt ellama-keymap-prefix "SPC e")
+;;   ;; language you want ellama to translate to
+;;   (setopt ellama-language "Russian")
+;;   ;; could be llm-openai for example
+;;   (require 'llm-ollama)
+;;   (setopt ellama-provider
+;; 	  (make-llm-ollama
+;; 	   ;; this model should be pulled to use it
+;; 	   ;; value should be the same as you print in terminal during pull
+;; 	   :chat-model "llama3:8b-instruct-q8_0"
+;; 	   ;; :chat-model "llama3:8b"
+;; 	   :embedding-model "nomic-embed-text"
+;; 	   :default-chat-non-standard-params '(("num_ctx" . 8192))))
+;;   ;; Predefined llm providers for interactive switching.
+;;   ;; You shouldn't add ollama providers here - it can be selected interactively
+;;   ;; without it. It is just example.
+;;   (setopt ellama-providers
+;; 	  '(("deepseek-coder" . (make-llm-ollama
+;; 				 :chat-model "deepseek-coder-v2:16b"
+;; 				 :embedding-model "deepseek-coder-v2:16b"))))
+;;   ;; Naming new sessions with llm
+;;   (setopt ellama-naming-provider
+;; 	  (make-llm-ollama
+;; 	   :chat-model "llama3:8b-instruct-q8_0"
+;; 	   :embedding-model "nomic-embed-text"
+;; 	   :default-chat-non-standard-params '(("stop" . ("\n")))))
+;;   (setopt ellama-naming-scheme 'ellama-generate-name-by-llm)
+;;   ;; Translation llm provider
+;;   (setopt ellama-translation-provider (make-llm-ollama
+;; 				       :chat-model "phi3:14b-medium-128k-instruct-q6_K"
+;; 				       :embedding-model "nomic-embed-text")))
+
+(use-package gptel
+  :config
+
+  (setq
+   gptel-model "llama3.1:8b-instruct-q8_0"
+   gptel-default-mode #'org-mode
+   gptel-backend (gptel-make-ollama "Ollama"
+                   :host "localhost:11434"
+                   :stream t
+                   :models '("llama3.1:8b-instruct-q8_0" "deepseek-coder-v2:16b")))
+  (leader-key
+    "e" '(:ignore t :wk "Gptel")
+    "e e" '(gptel :wk "Start/Switch")
+    "e c" '(gptel-add :wk "Add/Remove regions of buffers from context")
+    "e f" '(gptel-add-file :wk "Add file")
+    "e m" '(gptel-menu :wk "Confuguration menu")
+    "e s" '(gptel-send :wk "Send")
+    ))
+
+#+end_src
+
+* Codeium 
+:PROPERTIES:
+:CUSTOM_ID: codeium
+:END:
+#+begin_src emacs-lisp
+(use-package codeium
+  :ensure (codeium :host github :repo "Exafunction/codeium.el")
+
+  ;; if you use straight
+  ;; :straight '(:type git :host github :repo "Exafunction/codeium.el")
+  ;; otherwise, make sure that the codeium.el file is on load-path
+
+  :init
+  ;; use globally
+  ;; (add-to-list 'completion-at-point-functions 'codeium-completion-at-point) ;; ПОЧЕМУ-ТО не работает нормально
+  ;; or on a hook
+  ;; (add-hook 'python-mode-hook
+  ;;     (lambda ()
+  ;;         (setq-local completion-at-point-functions '(codeium-completion-at-point))))
+
+  ;; if you want multiple completion backends, use cape (https://github.com/minad/cape):
+  ;; (add-hook 'python-mode-hook
+  ;;     (lambda ()
+  ;;         (setq-local completion-at-point-functions
+  ;;             (list (cape-super-capf #'codeium-completion-at-point #'lsp-completion-at-point)))))
+  ;; an async company-backend is coming soon!
+
+  ;; codeium-completion-at-point is autoloaded, but you can
+  ;; optionally set a timer, which might speed up things as the
+  ;; codeium local language server takes ~0.2s to start up
+  (add-hook 'emacs-startup-hook
+            (lambda () (run-with-timer 0.4 nil #'codeium-init)))
+
+  ;; :defer t ;; lazy loading, if you want
+  :config
+  ;;(setq use-dialog-box nil) ;; do not use popup boxes
+
+  ;; if you don't want to use customize to save the api-key
+  ;; (setq codeium/metadata/api_key "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")
+
+  ;; get codeium status in the modeline
+  ;;(setq codeium-mode-line-enable
+  ;;      (lambda (api) (not (memq api '(CancelRequest Heartbeat AcceptCompletion)))))
+  ;;(add-to-list 'mode-line-format '(:eval (car-safe codeium-mode-line)) t)
+  ;; alternatively for a more extensive mode-line
+  (add-to-list 'mode-line-format '(-50 "" codeium-mode-line) t)
+
+  ;; use M-x codeium-diagnose to see apis/fields that would be sent to the local language server
+  (setq codeium-api-enabled
+	(lambda (api)
+          (memq api '(GetCompletions Heartbeat CancelRequest GetAuthToken RegisterUser auth-redirect AcceptCompletion))))
+  ;; you can also set a config for a single buffer like this:
+  ;; (add-hook 'python-mode-hook
+  ;;     (lambda ()
+  ;;         (setq-local codeium/editor_options/tab_size 4)))
+
+  ;; You can overwrite all the codeium configs!
+  ;; for example, we recommend limiting the string sent to codeium for better performance
+  (defun my-codeium/document/text ()
+    (buffer-substring-no-properties (max (- (point) 3000) (point-min)) (min (+ (point) 1000) (point-max))))
+  ;; if you change the text, you should also change the cursor_offset
+  ;; warning: this is measured by UTF-8 encoded bytes
+  (defun my-codeium/document/cursor_offset ()
+    (codeium-utf8-byte-length
+     (buffer-substring-no-properties (max (- (point) 3000) (point-min)) (point))))
+  (setq codeium/document/text 'my-codeium/document/text)
+  (setq codeium/document/cursor_offset 'my-codeium/document/cursor_offset))
+
+(defun my/complete-codeium ()
+  "Manual codeium running"
+  (interactive)
+  (when (not (member 'codeium-completion-at-point completion-at-point-functions))
+    (setq capb completion-at-point-functions) ; Резервируем в переменную capb текущее состояние
+    (setq completion-at-point-functions '(codeium-completion-at-point t)) ; Подключаем Codeium
+    (call-interactively 'corfu-complete) ; Вызываем Company
+    (setq completion-at-point-functions capb)
+    (kill-local-variable 'capb))) ; Возвращаем все на свои места
+
+(defun my/strict-complete-codeium ()
+  "Manual codeium running, but works even when auto completion is on"
+  (interactive)
+  (setq capb completion-at-point-functions) ; Резервируем в переменную capb текущее состояние
+  (setq completion-at-point-functions '(codeium-completion-at-point t)) ; Подключаем Codeium
+  (call-interactively 'corfu-complete) ; Вызываем Company
+  (setq completion-at-point-functions capb)
+  (kill-local-variable 'capb)) ; Возвращаем все на свои места
+
+(defun my/toggle-codeium ()
+  "Manually toggle codeium auto completion"
+  (interactive)
+  (if (member 'codeium-completion-at-point completion-at-point-functions)
+      (progn
+	(setq completion-at-point-functions (delq 'codeium-completion-at-point completion-at-point-functions))
+	(message "Codeium auto complete off"))
+    (add-to-list 'completion-at-point-functions 'codeium-completion-at-point)
+    (message "Codeium auto complete on")))
+#+end_src
+* Consult-Omni
+:PROPERTIES:
+:CUSTOM_ID: consult-omni
+:END:
+#+begin_src emacs-lisp
+(use-package consult-omni
+  :ensure (consult-omni :type git :host github :repo "armindarvish/consult-omni" :branch "main" :files (:defaults "sources/*.el"))
+  :after consult
+  :config
+  ;; Load Sources Core code
+  (require 'consult-omni-sources)
+  ;; Load Embark Actions
+  (require 'consult-omni-embark)
+  ;; Only load brave-auto-suggest source
+  ;; (require 'consult-omni-gptel)
+  ;; (require 'consult-omni-elfeed)
+  ;; (require 'consult-omni-apps)
+  ;; (require 'consult-omni-fd)
+  (setq consult-omni-sources-modules-to-load '(consult-omni-gptel consult-omni-apps consult-omni-fd consult-omni-elfeed ))
+  (consult-omni-sources-load-modules)
+  ;; (setq consult-omni-multi-sources-apps-launcher '("Apps"))
+  (setq consult-omni-multi-sources '("Apps"
+                                     "elfeed"
+                                     "gptel"
+                                     "fd"))
+
+  (setq consult-omni-embark-default-term #'vterm)
+  (setq consult-omni-show-preview t)
+  
+  ;;; Set your shorthand favorite interactive command
+  (setq consult-omni-default-interactive-command #'consult-omni-apps))
+#+end_src
+
+#+RESULTS:
+: [nil 26280 40971 7852 nil elpaca-process-queues nil nil 858000 nil]
+
+* Provide
+:PROPERTIES:
+:CUSTOM_ID: provide
+:END:
+#+begin_src emacs-lisp
+(provide 'ai)
+#+end_src

@@ -1,0 +1,631 @@
+#+TITLE:XenHunt Config (other)
+#+AUTHOR: Evgeny Berlizov (XenHunt)
+#+DESCRIPTION: XenHunt's config of other things
+#+STARTUP: content
+#+PROPERTY: header-args :tangle other.el
+* Содержание
+:PROPERTIES:
+:TOC:      :include all :depth 100 :force (nothing) :ignore (this) :local (nothing)
+:END:
+:CONTENTS:
+- [[#введение][Введение]]
+- [[#fast-loading][Fast-Loading]]
+- [[#загрузка-скриптов][Загрузка скриптов]]
+- [[#bufler][Bufler]]
+- [[#beacon][Beacon]]
+- [[#completion][Completion]]
+  - [[#flycheck][Flycheck]]
+  - [[#vertico][Vertico]]
+  - [[#corfu][Corfu]]
+    - [[#nerd-icons][Nerd-Icons]]
+  - [[#dabbrev][Dabbrev]]
+  - [[#cape][Cape]]
+  - [[#orderless][Orderless]]
+  - [[#marginalia][Marginalia]]
+  - [[#embark][Embark]]
+  - [[#consult][Consult]]
+  - [[#yasnippet][Yasnippet]]
+- [[#drag-stuff][Drag-stuff]]
+- [[#sudo-edit][SUDO EDIT]]
+- [[#pdf-tools][PDF-Tools]]
+- [[#nov-mode][Nov-mode]]
+- [[#elfeed][Elfeed]]
+- [[#imenu][Imenu]]
+  - [[#imenu-list][Imenu-List]]
+- [[#ibuffer][IBuffer]]
+  - [[#nerd-icons-ibuffer][Nerd-Icons-IBuffer]]
+- [[#jinx][Jinx]]
+- [[#provide][Provide]]
+:END:
+* Введение
+:PROPERTIES:
+:CUSTOM_ID: введение
+:END:
+
+Эта часть конфига посвящена базовой настройке моего =Emacs=. Здесь будут настроенные самые базовые вещи без которых невозможно обойтись (импорт базовых вещей, ус)
+
+* Fast-Loading
+:PROPERTIES:
+:CUSTOM_ID: fast-loading
+:END:
+
+Быстрая загрузка модуля.
+
+#+begin_src emacs-lisp
+;; -*- lexical-binding: t; -*-
+#+end_src
+
+* Загрузка скриптов
+:PROPERTIES:
+:CUSTOM_ID: загрузка-скриптов
+:END:
+
+Загрузка базовых скриптов.
+
+#+begin_src emacs-lisp
+(add-to-list 'load-path "~/.emacs.d/scripts/")
+(require 'scripts)
+#+end_src
+* Bufler 
+:PROPERTIES:
+:CUSTOM_ID: bufler
+:END:
+#+begin_src emacs-lisp
+(use-package bufler
+  :ensure (bufler :fetcher github :repo "alphapapa/bufler.el"
+                  :files (:defaults (:exclude "helm-bufler.el")))
+  :config
+  (bufler-mode)
+  ;; (bufler-tabs-mode)
+  (setq bufler-face-prefix "prism-level-")
+  (leader-key
+    "TAB" '(:ignore t :wk "Tab")
+    "TAB s" '(bufler-switch-buffer :wk "Switch buffer in tabs")
+    "TAB w" '(bufler-workspace-frame-set :wk "Set frame")
+    )
+  )
+#+end_src
+* Beacon
+:PROPERTIES:
+:CUSTOM_ID: beacon
+:END:
+#+begin_src emacs-lisp
+(use-package beacon
+  :custom
+  (beacon-blink-duration 2)
+  :config
+  (beacon-mode 1)
+  )
+#+end_src
+
+* Completion 
+:PROPERTIES:
+:CUSTOM_ID: completion
+:END:
+** Flycheck 
+:PROPERTIES:
+:CUSTOM_ID: flycheck
+:END:
+#+begin_src emacs-lisp
+(use-package flycheck
+  :diminish
+  :ensure t
+  :config
+  (setq-default flycheck-disabled-checkers
+		(append flycheck-disabled-checkers
+			'(javascript-jshint json-jsonlist)))
+  (flycheck-add-mode 'javascript-eslint 'web-mode)
+
+  (add-hook 'after-init-hook #'global-flycheck-mode))
+(use-package flycheck-guile
+  )
+
+#+end_src
+** Vertico 
+:PROPERTIES:
+:CUSTOM_ID: vertico
+:END:
+#+begin_src emacs-lisp
+;; Enable vertico
+(use-package vertico
+  :init
+  (vertico-mode)
+  ;; Sort directories before files
+  (defun sort-directories-first (files)
+    (setq files (vertico-sort-history-length-alpha files))
+    (nconc (seq-filter (lambda (x) (string-suffix-p "/" x)) files)
+           (seq-remove (lambda (x) (string-suffix-p "/" x)) files)))
+
+  ;; Different scroll margin
+  ;; (setq vertico-scroll-margin 0)
+
+  ;; Show more candidates
+  ;; (setq vertico-count 20)
+
+  ;; Grow and shrink the Vertico minibuffer
+  ;; (setq vertico-resize t)
+
+  ;; Optionally enable cycling for `vertico-next' and `vertico-previous'.
+  ;; (setq vertico-cycle t)
+  :config
+  (setq vertico-sort-function #'sort-directories-first)
+  ;; (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy)
+  )
+(use-package vertico-directory
+  :after vertico
+  :ensure nil
+  ;; More convenient directory navigation commands
+  :bind (:map vertico-map
+              ("RET" . vertico-directory-enter)
+              ("DEL" . vertico-directory-delete-char)
+              ("M-DEL" . vertico-directory-delete-word))
+  ;; Tidy shadowed file names
+  :hook (rfn-eshadow-update-overlay . vertico-directory-tidy))
+;; Persist history over Emacs restarts. Vertico sorts by history position.
+(use-package vertico-multiform
+  :after vertico
+  :ensure nil
+  :config
+  (vertico-multiform-mode)
+  
+  (after! jinx
+    (add-to-list 'vertico-multiform-categories
+		 '(jinx grid (vertico-grid-annotate . 20)))
+    (vertico-multiform-mode 1))
+  )
+(use-package savehist
+  :ensure nil
+  :demand nil
+  :init
+  (savehist-mode))
+
+#+end_src
+** Corfu
+:PROPERTIES:
+:CUSTOM_ID: corfu
+:END:
+#+begin_src emacs-lisp
+(use-package corfu
+  ;; Optional customizations
+  :custom
+  (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
+  (corfu-auto t)                 ;; Enable auto completion
+  (corfu-separator ?\s)          ;; Orderless field separator
+  ;; (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
+  ;; (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
+  ;; (corfu-preview-current nil)    ;; Disable current candidate preview
+  (corfu-preselect 'prompt)      ;; Preselect the prompt
+  ;; (corfu-on-exact-match nil)     ;; Configure handling of exact matches
+  (corfu-scroll-margin 5)        ;; Use scroll margin
+  ;; (corfu-auto-delay 0.8)
+  ;; Enable Corfu only for certain modes.
+
+  :hook ((prog-mode . corfu-mode))
+  ;;        (shell-mode . corfu-mode)
+  ;;        (eshell-mode . corfu-mode))
+
+  ;; Recommended: Enable Corfu globally.  This is recommended since Dabbrev can
+  ;; be used globally (M-/).  See also the customization variable
+  ;; `global-corfu-modes' to exclude certain modes
+  :bind
+  (:map corfu-map
+        ("TAB" . corfu-next)
+        ([tab] . corfu-next)
+        ("S-TAB" . corfu-previous)
+        ([backtab] . corfu-previous)
+        ("C-SPC" . corfu-insert-separator))
+  :init
+  (global-corfu-mode)
+  (corfu-popupinfo-mode)
+  (setq corfu-popupinfo-delay (cons 0.7 0.7))
+
+  :config
+  (defun corfu-enable-in-minibuffer ()
+    "Enable Corfu in the minibuffer."
+    (when (local-variable-p 'completion-at-point-functions)
+      ;; (setq-local corfu-auto nil) ;; Enable/disable auto completion
+      (setq-local corfu-echo-delay nil ;; Disable automatic echo and popup
+                  corfu-popupinfo-delay nil)
+      (corfu-mode 1)))
+  (add-hook 'minibuffer-setup-hook #'corfu-enable-in-minibuffer)
+  (corfu-history-mode)
+  (add-to-list 'savehist-additional-variables 'corfu-history)
+  )
+(elpaca-wait)
+#+end_src
+*** Nerd-Icons
+:PROPERTIES:
+:CUSTOM_ID: nerd-icons
+:END:
+#+begin_src emacs-lisp
+(use-package nerd-icons-corfu
+  :after corfu
+  :config
+  (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter)
+  )
+
+#+end_src
+** Dabbrev 
+:PROPERTIES:
+:CUSTOM_ID: dabbrev
+:END:
+#+begin_src emacs-lisp
+(use-package dabbrev
+  :ensure nil
+  :demand nil
+  ;; Swap M-/ and C-M-/
+  ;; :bind (("M-/" . dabbrev-completion)
+  ;;        ("C-M-/" . dabbrev-expand))
+  :config
+  (add-to-list 'dabbrev-ignored-buffer-regexps "\\` ")
+  ;; Since 29.1, use `dabbrev-ignored-buffer-regexps' on older.
+  (add-to-list 'dabbrev-ignored-buffer-modes 'doc-view-mode)
+  (add-to-list 'dabbrev-ignored-buffer-modes 'pdf-view-mode)
+  (add-to-list 'dabbrev-ignored-buffer-modes 'tags-table-mode))
+(elpaca-wait)
+#+end_src
+** Cape 
+:PROPERTIES:
+:CUSTOM_ID: cape
+:END:
+#+begin_src emacs-lisp
+(use-package cape
+  ;; Bind dedicated completion commands
+  ;; Alternative prefix keys: C-c p, M-p, M-+, ...
+  :init
+  ;; Add to the global default value of `completion-at-point-functions' which is
+  ;; used by `completion-at-point'.  The order of the functions matters, the
+  ;; first function returning a result wins.  Note that the list of buffer-local
+  ;; completion functions takes precedence over the global list.
+  (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+  (add-to-list 'completion-at-point-functions #'cape-file)
+  (add-to-list 'completion-at-point-functions #'cape-elisp-block)
+  ;;(add-to-list 'completion-at-point-functions #'cape-history)
+  (add-to-list 'completion-at-point-functions #'cape-keyword)
+  ;;(add-to-list 'completion-at-point-functions #'cape-tex)
+  ;;(add-to-list 'completion-at-point-functions #'cape-sgml)
+  ;;(add-to-list 'completion-at-point-functions #'cape-rfc1345)
+  ;;(add-to-list 'completion-at-point-functions #'cape-abbrev)
+  ;;(add-to-list 'completion-at-point-functions #'cape-dict)
+  ;;(add-to-list 'completion-at-point-functions #'cape-elisp-symbol)
+  ;;(add-to-list 'completion-at-point-functions #'cape-line)
+  ;; (advice-add #'lsp-completion-at-point :around #'cape-wrap-debug)
+  (after! lsp-mode
+    (advice-add #'lsp-completion-at-point :around #'cape-wrap-noninterruptible)
+    (advice-add #'lsp-completion-at-point :around #'cape-wrap-nonexclusive)
+    )
+  (advice-add #'comint-completion-at-point :around #'cape-wrap-nonexclusive)
+  (advice-add #'eglot-completion-at-point :around #'cape-wrap-nonexclusive)
+  (advice-add #'pcomplete-completions-at-point :around #'cape-wrap-nonexclusive)
+  )
+(elpaca-wait)
+#+end_src
+** Orderless 
+:PROPERTIES:
+:CUSTOM_ID: orderless
+:END:
+#+begin_src emacs-lisp
+
+(use-package orderless
+  :init
+  ;; Configure a custom style dispatcher (see the Consult wiki)
+  ;; (setq orderless-style-dispatchers '(+orderless-dispatch)
+  ;;       orderless-component-separator #'orderless-escapable-split-on-space)
+  (setq completion-styles '(orderless basic)
+        completion-category-defaults nil
+        completion-category-overrides '((file (styles partial-completion)))))
+#+end_src
+** Marginalia 
+:PROPERTIES:
+:CUSTOM_ID: marginalia
+:END:
+#+begin_src emacs-lisp
+;; Enable rich annotations using the Marginalia package
+(use-package marginalia
+  ;; Bind `marginalia-cycle' locally in the minibuffer.  To make the binding
+  ;; available in the *Completions* buffer, add it to the
+  ;; `completion-list-mode-map'.
+  :bind (:map minibuffer-local-map
+         ("M-A" . marginalia-cycle))
+
+  ;; The :init section is always executed.
+  :init
+
+  ;; Marginalia must be activated in the :init section of use-package such that
+  ;; the mode gets enabled right away. Note that this forces loading the
+  ;; package.
+  (marginalia-mode))
+#+end_src
+** Embark
+:PROPERTIES:
+:CUSTOM_ID: embark
+:END:
+#+begin_src emacs-lisp
+(use-package embark
+  :bind
+  (("C-;" . embark-act)
+   ("M-." . embark-dwim)
+   ("C-h B" . embark-bindings))
+
+  :init
+  (setq prefix-help-command #'embark-prefix-help-command)
+  :config
+  ;; (leader-key
+  ;;   "T" '(embark-act :wk "Embark"))
+  (add-to-list 'display-buffer-alist
+               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                 nil
+                 (window-parameters (mode-line-format . none))))
+  )
+
+(use-package embark-consult
+  ;; :after '(em
+  :hook
+  (embark-collect-mode . consult-preview-at-point-mode)
+  )
+#+end_src
+
+#+RESULTS:
+
+** Consult 
+:PROPERTIES:
+:CUSTOM_ID: consult
+:END:
+#+begin_src emacs-lisp
+(use-package consult
+  :config
+  (recentf-mode)
+  )
+(elpaca-wait)
+
+(use-package consult-dir)
+
+(use-package consult-org-roam
+  :ensure t
+  :after org-roam
+  :init
+  (require 'consult-org-roam)
+  ;; Activate the minor mode
+  (consult-org-roam-mode 1)
+  :custom
+  ;; Use `ripgrep' for searching with `consult-org-roam-search'
+  (consult-org-roam-grep-func #'consult-ripgrep)
+  ;; Configure a custom narrow key for `consult-buffer'
+  (consult-org-roam-buffer-narrow-key ?r)
+  ;; Display org-roam buffers right after non-org-roam buffers
+  ;; in consult-buffer (and not down at the bottom)
+  (consult-org-roam-buffer-after-buffers t)
+  :config
+  ;; Eventually suppress previewing for certain functions
+  (consult-customize
+   consult-org-roam-forward-links
+   :preview-key "M-.")
+
+  (leader-key
+    "n f" '(consult-org-roam-file-find :wk "Find Node")
+    "n s" '(consult-org-roam-search :wk "Search inside Nodes")
+    "n b" '(consult-org-roam-backlinks :wk "Search back links")
+    "n B" '(consult-org-roam-backlinks-recursive :wk "Search back links (recursively)")
+    "n F" '(consult-org-roam-forward-links :wk "Search forward links")
+    )
+  ;; :bind
+  ;; ;; Define some convenient keybindings as an addition
+  ;; ("C-c n e" . consult-org-roam-file-find)
+  ;; ("C-c n b" . consult-org-roam-backlinks)
+  ;; ("C-c n B" . consult-org-roam-backlinks-recursive)
+  ;; ("C-c n l" . consult-org-roam-forward-links)
+  ;; ("C-c n r" . consult-org-roam-search)
+  )
+
+(use-package consult-projectile)
+#+end_src
+
+** Yasnippet 
+:PROPERTIES:
+:CUSTOM_ID: yasnippet
+:END:
+#+begin_src emacs-lisp
+(use-package yasnippet
+  :config
+  (yas-global-mode 1)
+  )
+(use-package yasnippet-snippets)
+
+(use-package consult-yasnippet
+  :after yasnippet
+  :after consult)
+#+end_src
+* Drag-stuff
+:PROPERTIES:
+:CUSTOM_ID: drag-stuff
+:END:
+
+* SUDO EDIT 
+:PROPERTIES:
+:CUSTOM_ID: sudo-edit
+:END:
+#+begin_src emacs-lisp
+(use-package sudo-edit
+  :config
+  (leader-key
+    "f u" '(sudo-edit-find-file :wk "Sudo find file")
+    "f U" '(sudo-edit :wk "Sudo edit file"))
+  )
+(elpaca-wait)
+#+end_src
+* PDF-Tools
+:PROPERTIES:
+:CUSTOM_ID: pdf-tools
+:END:
+#+begin_src emacs-lisp
+(use-package pdf-tools
+  :mode ("\\.pdf\\'" . pdf-view-mode)
+  :magic ("%PDF" . pdf-view-mode)
+  :config
+  (pdf-tools-install)  ; Standard activation command
+  (pdf-loader-install) ; On demand loading, leads to faster startup time
+  )
+#+end_src
+* Nov-mode
+:PROPERTIES:
+:CUSTOM_ID: nov-mode
+:END:
+#+begin_src emacs-lisp
+(use-package nov
+  :ensure t
+  :mode ("\\.epub\\'" . nov-mode) 
+  )
+;; (use-package nov-xwidget
+;;   :ensure (:host github :repo "chenyanming/nov-xwidget"
+;; 		 :files (:defaults "*.el"))
+;;   :demand t
+;;   :after nov
+;;   :config
+;;   (define-key nov-mode-map (kbd "o") 'nov-xwidget-view)
+;;   (add-hook 'nov-mode-hook 'nov-xwidget-inject-all-files))
+#+end_src
+* Elfeed
+:PROPERTIES:
+:CUSTOM_ID: elfeed
+:END:
+#+begin_src emacs-lisp
+
+(defvar my/elfeed-original-search-pattern "@2-week-ago +habr" "Original search pattern for my elfeed")
+
+(defvar my/elfeed-original-search-pattern "@2-week-ago +habr" "Original search pattern for my elfeed")
+
+(defvar my/elfeed-original-search-pattern "@2-week-ago +habr" "Original search pattern for my elfeed")
+
+(use-package elfeed
+  :commands elfeed
+  :init
+  (setq elfeed-db-directory (concat user-emacs-directory "elfeed/db/")
+        elfeed-enclosure-default-dir (concat user-emacs-directory "elfeed/enclosures/"))
+  :config
+
+  (add-hook 'elfeed-search-mode-hook #'elfeed-update)
+  (make-directory elfeed-db-directory t)
+
+  (setq elfeed-search-filter "#100 +habr +article"
+        elfeed-show-entry-switch #'pop-to-buffer
+        ;; elfeed-show-entry-delete #'+rss/delete-pane
+        shr-max-image-proportion 0.8)
+
+  (setq elfeed-search-feed-face ":foreground #ffffff :weight bold")
+  ;; elfeed-feeds 
+  ;; '(
+  ;;   ("https://www.reddit.com/r/linux.rss" eng reddit linux)
+  ;;   ;; ("https://www.reddit.com/r/commandline.rss" reddit commandline)
+  ;;   ;; ("https://www.reddit.com/r/distrotube.rss" reddit distrotube)
+  ;;   ("https://www.reddit.com/r/emacs.rss" eng reddit emacs)
+
+  ;;   ("https://www.reddit.com/r/org-mode.rss" eng reddit emacs org-mode)
+  ;;   ;; ("https://www.gamingonlinux.com/article_rss.php" gaming linux)
+  ;;   ;; ("https://hackaday.com/blog/feed/" hackaday linux)
+  ;;   ;; ("https://opensource.com/feed" opensource linux)
+  ;;   ;; ("https://linux.softpedia.com/backend.xml" softpedia linux)
+  ;;   ;; ("https://itsfoss.com/feed/" itsfoss linux)
+  ;;   ;; ("https://www.zdnet.com/topic/linux/rss.xml" zdnet linux)
+  ;;   ;; ("https://www.phoronix.com/rss.php" phoronix linux)
+  ;;   ;; ("http://feeds.feedburner.com/d0od" omgubuntu linux)
+  ;;   ;; ("https://www.computerworld.com/index.rss" computerworld linux)
+  ;;   ;; ("https://www.networkworld.com/category/linux/index.rss" networkworld linux)
+  ;;   ;; ("https://www.techrepublic.com/rssfeeds/topic/open-source/" techrepublic linux)
+  ;;   ;; ("https://betanews.com/feed" betanews linux)
+  ;;   ;; ("http://lxer.com/module/newswire/headlines.rss" lxer linux)
+  ;;   ;; ("https://distrowatch.com/news/dwd.xml" distrowatch linux)
+  ;;   ;; ("habrahabr.ru/rss/hubs/webdev/articles/all" habr web-development)
+  ;;   ;; ("habrahabr.ru/rss/hubs/all" habr test)
+  ;;   ;; ("habrahabr.ru/rss/hubs/open_source/articles/rated25" habr opensource)
+  ;;   ("https://habr.com/ru/rss/hubs/python/articles/rated25/?fl=ru" rus habr python)
+  ;;   ("https://habr.com/ru/rss/hubs/open_source/articles/rated25/?fl=ru" rus habr open_source)
+  ;;   ("https://habr.com/ru/rss/hubs/machine_learning/articles/rated25/?fl=ru" rus habr machine_learning)
+  ;;   ("https://habr.com/ru/rss/hubs/artificial_intelligence/articles/rated25/?fl=ru" rus habr ai)
+  ;;   ("https://habr.com/ru/rss/hubs/linux/articles/rated25/?fl=ru" rus habr linux)
+  ;;   ("https://habr.com/ru/rss/hubs/algorithms/articles/rated25/?fl=ru" rus habr algorithms)
+  ;;   ("https://habr.com/ru/rss/hubs/linux_dev/articles/rated25/?fl=ru" rus habr linux)
+  ;;   ("https://habr.com/ru/rss/hubs/webdev/articles/rated25/?fl=ru" rus habr web_development)
+  ;;   ("https://habr.com/ru/rss/hubs/reactjs/articles/rated25/?fl=ru" rus habr web_development react)
+  ;;   ("https://habr.com/ru/rss/hubs/angular/articles/rated25/?fl=ru" rus habr web_development angular)
+  ;;   ("https://habr.com/ru/rss/hubs/vuejs/articles/rated25/?fl=ru" rus habr web_development vuejs)
+  ;;   ("https://habr.com/ru/rss/hubs/javascript/articles/rated25/?fl=ru" rus habr web_development javascript)
+  ;;   ("https://habr.com/ru/rss/hubs/typescript/articles/rated25/?fl=ru" rus habr web_development typescript)
+  ;;   ))
+  (leader-key
+    "E" '(:ignore t :wk "Elfeed")
+    "E e" '(elfeed :wk "Start")
+    "E u" '(elfeed-update :wk "Update")
+    )
+  )
+
+
+(use-package elfeed-goodies
+  :init
+  (elfeed-goodies/setup)
+  :config
+  (setq elfeed-goodies/entry-pane-size 0.5))
+(use-package elfeed-org
+  :config
+  (elfeed-org)
+  (setq rmh-elfeed-org-files (list "~/.emacs.d/elfeed.org"))
+  )
+#+end_src
+
+#+RESULTS:
+
+* Imenu 
+:PROPERTIES:
+:CUSTOM_ID: imenu
+:END:
+** Imenu-List 
+:PROPERTIES:
+:CUSTOM_ID: imenu-list
+:END:
+#+begin_src emacs-lisp
+(use-package imenu-list
+  :custom
+  (imenu-list-focus-after-activation t)
+  (imenu-list-auto-resize t)
+  (imenu-list-size 0.3)
+  (org-imenu-depth 10)
+  (imenu-list-focus-after-activation t)                                    ; Переключение на активированный imenu-list
+  :config
+
+  (leader-key
+    "s RET" '(imenu-list-smart-toggle :wk "Toggle imenu-list")
+    ) 
+  )
+#+end_src 
+* IBuffer 
+:PROPERTIES:
+:CUSTOM_ID: ibuffer
+:END:
+** Nerd-Icons-IBuffer
+:PROPERTIES:
+:CUSTOM_ID: nerd-icons-ibuffer
+:END:
+#+begin_src emacs-lisp
+(use-package nerd-icons-ibuffer
+  :ensure t
+  :hook (ibuffer-mode . nerd-icons-ibuffer-mode))
+#+end_src
+
+* Jinx
+:PROPERTIES:
+:CUSTOM_ID: jinx
+:END:
+#+begin_src emacs-lisp
+(use-package jinx
+  :custom
+  (jinx-languages "ru_RU en_US")
+  :hook ((text-mode ) . jinx-mode )
+  :config
+  )
+#+end_src
+* Provide
+:PROPERTIES:
+:CUSTOM_ID: provide
+:END:
+#+begin_src emacs-lisp
+(provide 'other)
+#+end_src

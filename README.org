@@ -1,0 +1,73 @@
+#+TITLE:README for my config.
+#+AUTHOR: Evgeny Berlizov (XenHunt)
+#+DESCRIPTION: XenHunt config README
+#+STARTUP: content
+
+* Содержание
+:PROPERTIES:
+:TOC:      :include all :depth 100 :force (nothing) :ignore (this) :local (nothing)
+:END:
+:CONTENTS:
+- [[#введение][Введение]]
+- [[#фичи][Фичи]]
+- [[#fast-loading][Fast-Loading]]
+- [[#загрузка-конфига][Загрузка конфига]]
+:END:
+* Введение
+:PROPERTIES:
+:CUSTOM_ID: введение
+:END:
+
+Это README моего конфига для =Emacs=.
+* Фичи
+:PROPERTIES:
+:CUSTOM_ID: фичи
+:END:
+Основые фичи моего конфига:
++ elpaca;
++ Evil-mode;
++ Красивые тема и фонты;
++ Org:
+  + org-roam;
+  + jupyter;
+  + Красивый org;
+  + org-ql-roam;
++ Corfu, Consult, Vertico, Orderless;
++ Embark;
++ PDF и EPUB читалки;
++ Elfeed (Habr и Reddit)
++ Jinx (авто проверка правописания);
++ LSP и другие программистские штуки:
+  + Python;
+  + Clojure;
+  + Guile Scheme;
+  + Direnv;
+  + Web:
+    + Angular;
+    + Typescript;
+    + HTML;
+    + CSS;
+  + Nix;
+  + Treesitter;
+* Fast-Loading
+:PROPERTIES:
+:CUSTOM_ID: fast-loading
+:END:
+
+Быстрая загрузка модуля.
+
+#+begin_src emacs-lisp
+;; -*- lexical-binding: t; -*-
+#+end_src
+
+* Загрузка конфига
+:PROPERTIES:
+:CUSTOM_ID: загрузка-конфига
+:END:
+
+Загрузка моего конфига. Подробнее про каждый модуль по [[./conf-files/README.org][ссылке]].
+
+#+begin_src emacs-lisp
+(add-to-list 'load-path "~/.emacs.d/conf-files/")
+(require 'full)
+#+end_src
