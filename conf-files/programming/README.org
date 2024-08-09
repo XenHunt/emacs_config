@@ -250,6 +250,9 @@
 	 (json-mode . lsp)
 	 (yaml-mode . lsp)
 	 (javascript-mode . lsp)
+     (clojure-mode . lsp)
+     (clojurescript-mode . lsp)
+     (clojurec-mode . lsp)
 	 ;; (web-mode . lsp)
 	 ;; (typescript-mode . lsp)
 	 (css-mode . lsp)
@@ -791,6 +794,7 @@
 (use-package cider
   :config
   (setq org-babel-clojure-backend 'cider))
+(use-package cider-eval-sexp-fu)
 (use-package clojure-mode)
 #+end_src
 

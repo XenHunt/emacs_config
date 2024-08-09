@@ -218,7 +218,7 @@
     "n g" '(org-roam-graph :wk "Show Graph")
     "n i" '(org-roam-node-insert :wk "Insert Node")
     "n I" '(org-id-get-create :wk "Create id for header")
-    "n n" '(org-roam-capture :wk "Capture to Node")
+    "n n" '(org-roam-node-find :wk "Find Node")
     "n r" '(org-roam-buffer-toggle :wk "Toggle roam buffer")
     "n u" '(org-roam-ui-mode :wk "Start org-roam-ui in web")
     "n d" '(org-roam-db-sync :wk "Reaload org-roam db")
@@ -228,7 +228,7 @@
     "n A" '(org-roam-alias-remove :wk "Remove alias")
     ;; Dailies
     "n j" '(:ignore t :wk "Org-Roam-Dailies")
-    "n j a" '(org-roam-dailies-capture-todate :wk "Add today note entry")
+    "n j a" '(org-roam-dailies-capture-today :wk "Add today note entry")
     "n j A" '(org-roam-dailies-goto-today :wk "Go to today note")
     "n j d" '(org-roam-dailies-capture-date :wk "Add note entry by date")
     "n j D" '(org-roam-dailies-goto-date :wk "Go to note by date")

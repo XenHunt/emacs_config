@@ -100,6 +100,8 @@
                    :host "localhost:11434"
                    :stream t
                    :models '("llama3.1:8b-instruct-q8_0" "deepseek-coder-v2:16b")))
+  (add-to-list 'gptel-directives '(clojure-teacher . "You are a professional programmer-teacher in Clojure. Your task is to write best code with good explaination, answer a questions about the Clojure, do everything to help me master Cloure. Respond concisely."))
+  (add-to-list 'gptel-directives '(org-helper . "You are a helper in writing declartive config for Emacs in Org files. Your task is to describe parts of the config with all your master and writes it. Respond concisely."))
   (leader-key
     "e" '(:ignore t :wk "Gptel")
     "e e" '(gptel :wk "Start/Switch")
@@ -107,7 +109,7 @@
     "e f" '(gptel-add-file :wk "Add file")
     "e m" '(gptel-menu :wk "Confuguration menu")
     "e s" '(gptel-send :wk "Send")
-    ))
+    "e a" '(gptel-abort :wk "Abort")))
 
 #+end_src
 
