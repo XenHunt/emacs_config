@@ -38,6 +38,7 @@
 + Elfeed (Habr и Reddit)
 + Jinx (авто проверка правописания);
 + LSP и другие программистские штуки:
+  + Treesitter;
   + Python;
   + Clojure;
   + Guile Scheme;
@@ -48,7 +49,6 @@
     + HTML;
     + CSS;
   + Nix;
-  + Treesitter;
 * Fast-Loading
 :PROPERTIES:
 :CUSTOM_ID: fast-loading

@@ -28,7 +28,10 @@
   - [[#org-babel-load-languages][ORG-Babel-Load-Languages]]
   - [[#org-download][Org-Download]]
   - [[#org-ref][Org-Ref]]
+  - [[#corg][Corg]]
+  - [[#org-modern-indent][Org-Modern-Indent]]
   - [[#restclient][Restclient]]
+  - [[#prettify][Prettify]]
   - [[#раскладка][Раскладка]]
 - [[#provide][Provide]]
 :END:
@@ -337,7 +340,7 @@
  '((emacs-lisp . t)
    (python . t)))
 
-#+End_src
+#+end_src
 
 ** Org-Download 
 :PROPERTIES:
@@ -349,7 +352,7 @@
   (add-hook 'dired-mode-hook 'org-download-enable)
   (setq org-download-image-dir "./.images")
   )
-  #+end_src
+#+end_src
 
 ** Org-Ref
 :PROPERTIES:
@@ -358,6 +361,25 @@
 #+begin_src emacs-lisp
 (use-package org-ref)
 
+#+end_src
+** Corg
+:PROPERTIES:
+:CUSTOM_ID: corg
+:END:
+#+begin_src emacs-lisp
+(use-package corg
+  :ensure (:host github :repo "isamert/corg.el"))
+#+end_src
+** Org-Modern-Indent
+:PROPERTIES:
+:CUSTOM_ID: org-modern-indent
+:END:
+#+begin_src emacs-lisp
+(use-package org-modern-indent
+  :ensure (:host github :repo "jdtsmith/org-modern-indent")
+  :config ; add late to hook
+     (add-hook 'org-mode-hook #'org-modern-indent-mode 90)
+  )
 #+end_src
 ** Restclient
 :PROPERTIES:
@@ -370,6 +392,16 @@
 (use-package ob-restclient
   :after org
   :after restclient)
+#+end_src
+** TODO Prettify
+:PROPERTIES:
+:CUSTOM_ID: prettify
+:END:
+#+begin_src emacs-lisp
+(add-hook 'org-mode-hook (lambda ()
+                           "Beautify Org Symbols"
+                           (push '("#+BEGIN_SRC" . "src") prettify-symbols-alist)
+                           ))
 #+end_src
 ** TODO Раскладка
 :PROPERTIES:

@@ -12,6 +12,11 @@
 - [[#fast-loading][Fast-Loading]]
 - [[#загрузка-скриптов][Загрузка скриптов]]
 - [[#по-умолчанию][По-умолчанию]]
+- [[#elpaca-fixes][Elpaca Fixes]]
+  - [[#closql][Closql]]
+  - [[#jsonrpc][Jsonrpc]]
+- [[#startup-time-boost][Startup time boost]]
+- [[#alias-for-yesno][Alias for yes/no]]
 - [[#wgrep][Wgrep]]
 - [[#smartparens][Smartparens]]
 - [[#general-keybindigs][General Keybindigs]]
@@ -111,7 +116,47 @@
 (setq user-cache-dir (concat user-emacs-directory ".local/cache/"))
 (setq backup-by-copying t)
 #+end_src
-
+* Elpaca Fixes
+:PROPERTIES:
+:CUSTOM_ID: elpaca-fixes
+:END:
+** Closql
+:PROPERTIES:
+:CUSTOM_ID: closql
+:END:
+#+begin_src emacs-lisp
+(use-package closql
+  :ensure (closql :depth nil)
+  :defer t)
+#+end_src
+** Jsonrpc
+:PROPERTIES:
+:CUSTOM_ID: jsonrpc
+:END:
+#+begin_src emacs-lisp
+(use-package jsonrpc
+  :ensure (jsonrpc :depth 1)
+  :defer t)
+#+end_src
+* Startup time boost
+:PROPERTIES:
+:CUSTOM_ID: startup-time-boost
+:END:
+#+begin_src emacs-lisp
+(use-package fnhh
+  :ensure (:type git :host github :repo "a13/fnhh")
+  :config
+  (fnhh-mode 1))
+#+end_src
+* Alias for yes/no
+:PROPERTIES:
+:CUSTOM_ID: alias-for-yesno
+:END:
+#+begin_src emacs-lisp
+(ignore-errors
+  (setq confirm-kill-emacs 'y-or-n-p)
+  (defalias 'yes-or-no-p 'y-or-n-p))
+#+end_src
 * Wgrep
 :PROPERTIES:
 :CUSTOM_ID: wgrep
