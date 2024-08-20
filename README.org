@@ -12,6 +12,7 @@
 - [[#фичи][Фичи]]
 - [[#fast-loading][Fast-Loading]]
 - [[#загрузка-конфига][Загрузка конфига]]
+- [[#thanks][Thanks]]
 :END:
 * Введение
 :PROPERTIES:
@@ -71,3 +72,12 @@
 (add-to-list 'load-path "~/.emacs.d/conf-files/")
 (require 'full)
 #+end_src
+
+* Thanks
+:PROPERTIES:
+:CUSTOM_ID: thanks
+:END:
+
+Особая благодарность
++ DistroTube за его прекрасные видосы посвященные не только Emacs, но Linux в целом: [[https://www.youtube.com/watch?v=d1fgypEiQkE&list=PL5--8gKSku15e8lXf7aLICFmAHQVo0KXX][ссылка]] на плейлист настройки Emacs, [[https://gitlab.com/dwt1/configuring-emacs][ссылка]] на gitlab базового конфига с плейлиста;
++ Artawower, чей конфиг позволил добавить что-то новое в мой: [[https://gitlab.com/dwt1/configuring-emacs][ссылка]] на конфиг в GitHub.
