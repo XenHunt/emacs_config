@@ -20,7 +20,6 @@
 - [[#direnv][Direnv]]
 - [[#programming-language][Programming Language]]
   - [[#lsp-mode][LSP-Mode]]
-    - [[#consult-lsp][Consult-LSP]]
   - [[#dap-mode][DAP-Mode]]
   - [[#formater][Formater]]
   - [[#python][Python]]
@@ -49,6 +48,10 @@
     - [[#clojure][Clojure]]
     - [[#guile][Guile]]
   - [[#nix-mode][Nix-Mode]]
+  - [[#docker][Docker]]
+    - [[#docker-compose][Docker-Compose]]
+    - [[#dockerfile-mode][Dockerfile-mode]]
+    - [[#docker-0][Docker]]
   - [[#treesitter][Treesitter]]
     - [[#treesitter-auto][Treesitter-auto]]
     - [[#treesitter-0][Treesitter]]
@@ -117,8 +120,7 @@
   :after magit
   :config (magit-todos-mode 1))
 (use-package forge
-  :after magit
-  )
+  :after magit)
 #+end_src
 ** Git-Modes
 :PROPERTIES:
@@ -278,17 +280,11 @@
   (add-hook 'lsp-mode-hook 'lsp-ui-mode)
 
   )
+(use-package consult-lsp)
 #+end_src
 
 #+RESULTS:
 
-*** Consult-LSP
-:PROPERTIES:
-:CUSTOM_ID: consult-lsp
-:END:
-#+begin_src emacs-lisp
-(use-package consult-lsp)
-#+end_src
 ** DAP-Mode 
 :PROPERTIES:
 :CUSTOM_ID: dap-mode
@@ -813,6 +809,31 @@
 #+begin_src emacs-lisp
 (use-package nix-mode
   :mode "\\.nix\\'")
+#+end_src
+** Docker
+:PROPERTIES:
+:CUSTOM_ID: docker
+:END:
+*** Docker-Compose
+:PROPERTIES:
+:CUSTOM_ID: docker-compose
+:END:
+#+begin_src emacs-lisp
+(use-package docker-compose-mode)
+#+end_src
+*** Dockerfile-mode
+:PROPERTIES:
+:CUSTOM_ID: dockerfile-mode
+:END:
+#+begin_src emacs-lisp
+(use-package dockerfile-mode)
+#+end_src
+*** Docker
+:PROPERTIES:
+:CUSTOM_ID: docker-0
+:END:
+#+begin_src emacs-lisp
+(use-package docker)
 #+end_src
 ** Treesitter
 :PROPERTIES:

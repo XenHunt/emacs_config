@@ -20,6 +20,7 @@
 - [[#wgrep][Wgrep]]
 - [[#smartparens][Smartparens]]
 - [[#general-keybindigs][General Keybindigs]]
+- [[#helpful][Helpful]]
 - [[#expand-region][Expand-region]]
 - [[#aggresive-indent][Aggresive Indent]]
 - [[#evil-mode][Evil-Mode]]
@@ -217,11 +218,12 @@
     )
 
   (leader-key
-    "g" '(:ignore t :wk "Git")
+    "g" '(:ignore t :wk "Git/Docker")
     "g g" '(magit :wk "Start Magit")
     "g s" '(magit-status :wk "Status")
     "g d" '(magit-diff :wk "Diff")
     "g t" '(git-timemachine :wk "Timemachine")
+    "g D" '(docker :wk "Docker")
     )
 
   (leader-key
@@ -250,12 +252,13 @@
    :states 'normal
    :keymaps 'prog-mode-map
    :prefix "SPC"
-    "c" '(:ignore t :wk "Code")
-    "c c" '(compile :wk "Compile code")
-    "c r" '(lsp-rename :wk "Rename object")
-    "c d" '(lsp-find-definition :wk "Find definition")
-    "c x" '(consult-flymake :wk "List errors")
-    "c R" '(lsp-workspace-restart :wk "Restart LSP")
+   "c" '(:ignore t :wk "Code")
+   "c c" '(compile :wk "Compile code")
+   "c r" '(lsp-rename :wk "Rename object")
+   "c d" '(lsp-find-definition :wk "Find definition")
+   "c x" '(consult-flymake :wk "List errors")
+   "c R" '(lsp-workspace-restart :wk "Restart LSP")
+   "c s" '(consult-lsp-symbols :wk "Search symbol")
    )
 
   (general-define-key
@@ -286,8 +289,9 @@
   (leader-key
     "h"  '(:ignore t :wk "Help")
     "h d" '(devdocs-peruse :wk "Devdocs")
-    "h f" '(describe-function :wk "Describe function")
-    "h v" '(describe-variable :wk "Describe variable")
+    "h f" '(helpful-function :wk "Describe function")
+    "h v" '(helpful-variable :wk "Describe variable")
+    "h ." '(helpful-at-point :wk "Help at point")
     "h m" '(describe-mode :wk "Describe mode")
     "h p" '(describe-package :wk "Describe package")
     "h k" '(describe-key :wk "Describe key")
@@ -335,6 +339,13 @@
 
   )
 (elpaca-wait)
+#+end_src
+* Helpful
+:PROPERTIES:
+:CUSTOM_ID: helpful
+:END:
+#+begin_src emacs-lisp
+(use-package helpful)
 #+end_src
 * Expand-region
 :PROPERTIES:
@@ -403,11 +414,12 @@
   :config
   (setq evil-collection-mode-list '(
  				    dashboard
+                                    docker
  				    dired
  				    dired-sidebar
 				    devdocs
-                                help
-                                scheme
+                                    help
+                                    scheme
  				    ibuffer
  				    minibuffer
  				    sh-script
@@ -430,7 +442,7 @@
 				    elpaca
 				    imenu
 				    imenu-list
-                                nov
+                                    nov
 				    org
 				    org-roam
 				    python
@@ -853,6 +865,7 @@
   :config
   (leader-key
     "p" '(:ignore t :wk "Project"))
+  (add-to-list 'projectile-globally-ignored-directories "node_modules")
   ;; (pushnew! projectile-project-root-files "package.json")
   ;; (pushnew! projectile-globally-ignored-directories "^node_modules$" "^flow-typed$")
   (projectile-mode 1))

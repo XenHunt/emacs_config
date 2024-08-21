@@ -81,6 +81,9 @@
 :PROPERTIES:
 :CUSTOM_ID: org-appear
 :END:
+
+=org-appear= - это пакет, позволяющий динамически скрывать/показывать специальные конструкции, такие как *выделение*, /курсив/, =хорошее выделение=, _подчеркивание_, [[ссылки]].
+
 #+begin_src emacs-lisp
 (use-package org-appear
   :custom
@@ -107,6 +110,9 @@
 :PROPERTIES:
 :CUSTOM_ID: toc
 :END:
+
+=org-make-toc= - пакет для удобного добавления TOC - Table Of Content, оглавления в =org= файлах.
+
 #+begin_src emacs-lisp
 (use-package org-make-toc
   :config
@@ -120,6 +126,9 @@
 :PROPERTIES:
 :CUSTOM_ID: highlight-todo
 :END:
+
+=hl-todo= - подсветка TODO и иже подобные вещи в =org=.
+
 #+begin_src emacs-lisp
 (use-package hl-todo
   :ensure (:depth nil)
@@ -139,6 +148,8 @@
 :PROPERTIES:
 :CUSTOM_ID: org-bullets
 :END:
+
+=org-bullets= - это пакет, меняющий заголовки и превращающий их в нечто более красивое.
 
 #+begin_src emacs-lisp
 (add-hook 'org-mode-hook 'org-indent-mode)
@@ -176,6 +187,9 @@
 :PROPERTIES:
 :CUSTOM_ID: org-auto-tangle
 :END:
+
+=org-auto-tangle= - это пакет, позволяющий автоматически при сохранении =org= файла импортировать весь код из блоков в файлы.
+
 #+begin_src emacs-lisp
 (use-package org-auto-tangle
   :hook (org-mode . org-auto-tangle-mode)
@@ -187,9 +201,14 @@
 :PROPERTIES:
 :CUSTOM_ID: org-roam
 :END:
+
+=org-roam= - это пакет, позволяющий создать полноценную систему заметок согласно методу =Zettelkasten=, использую лишь =org= файлы.
+
 #+begin_src emacs-lisp
 (use-package org-roam
   :config
+  (if (not (file-directory-p (file-truename "~/.org/roam")))
+      (make-directory (file-truename "~/.org/roam")))
   (setq org-roam-directory "/home/berlizoves/.org/roam/")
   (setq org-roam-node-display-template "${title:*} ${tags:45}")
   (org-roam-db-autosync-enable)
@@ -297,6 +316,9 @@
 :PROPERTIES:
 :CUSTOM_ID: org-ql-roam
 :END:
+
+=org-ql-roam= - просто обычный пакет, для обращения к =org-roam= при помощи =SQL=.
+
 #+begin_src emacs-lisp 
 (use-package org-roam-ql
   :after (org-roam)
@@ -307,6 +329,9 @@
 :PROPERTIES:
 :CUSTOM_ID: org-fragtog
 :END:
+
+=org-fragtog= - это пакет похожий на =org-appear=, но для =LaTex= функций и конструкций. 
+
 #+begin_src emacs-lisp 
 (use-package org-fragtog
 :after org
@@ -320,6 +345,9 @@
 :PROPERTIES:
 :CUSTOM_ID: ob-async
 :END:
+
+=ob-async= - асинхронное выполнение src блоков в =org=.
+
 #+begin_src emacs-lisp
 (use-package ob-async
   :config
@@ -346,6 +374,9 @@
 :PROPERTIES:
 :CUSTOM_ID: org-download
 :END:
+
+=org-download= - drag-and-drop для =org=.
+
 #+begin_src emacs-lisp
 (use-package org-download
   :config
@@ -358,6 +389,12 @@
 :PROPERTIES:
 :CUSTOM_ID: org-ref
 :END:
+
+=org-ref= позволяет создавать цитаты, кросреференсы, индексы и глоссарии как ссылку в =org=.
+
+:PROPERTIES:
+:CUSTOM_ID: org-ref
+:END:
 #+begin_src emacs-lisp
 (use-package org-ref)
 
@@ -366,6 +403,9 @@
 :PROPERTIES:
 :CUSTOM_ID: corg
 :END:
+
+=corg= добавляет автоподстановку в src блоки и им подобные.
+
 #+begin_src emacs-lisp
 (use-package corg
   :ensure (:host github :repo "isamert/corg.el"))
@@ -374,6 +414,9 @@
 :PROPERTIES:
 :CUSTOM_ID: org-modern-indent
 :END:
+
+=org-modern-indent= добавляет красивое выделение для блоков в =org=.
+
 #+begin_src emacs-lisp
 (use-package org-modern-indent
   :ensure (:host github :repo "jdtsmith/org-modern-indent")
@@ -385,6 +428,9 @@
 :PROPERTIES:
 :CUSTOM_ID: restclient
 :END:
+
+Обычный REST клиент при помощи =org=.
+
 #+begin_src emacs-lisp
 (use-package restclient
   :after org)
@@ -400,8 +446,21 @@
 #+begin_src emacs-lisp
 (add-hook 'org-mode-hook (lambda ()
                            "Beautify Org Symbols"
-                           (push '("#+BEGIN_SRC" . "src") prettify-symbols-alist)
-                           ))
+                           ;; (mapc (lambda (symb) (push symb prettify-symbols-alist))
+                           ;;       '(("#+BEGIN_SRC" . "src")
+                           ;;         ("#+END_SRC" . "src" )
+                           ;;         ("#+BEGIN_EXAMPLE" . "example")
+                           ;;         ("#+END_EXAMPLE" . "example")
+                           ;;         ("#+BEGIN_QUOTE" . "quote")
+                           ;;         ("#+END_QUOTE" . "quote")
+                           ;;         ("#+begin_quote" . "quote")
+                           ;;         ("#+end_quote" . "quote")
+                           ;;         ("#+begin_example" . "example")
+                           ;;         ("#+end_example" . "example")
+                           ;;         ("#+begin_src" . "F")
+                           ;;         ("#+end_src" . "F")))
+
+                           (prettify-symbols-mode)))
 #+end_src
 ** TODO Раскладка
 :PROPERTIES:
