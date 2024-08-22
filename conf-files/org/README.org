@@ -13,6 +13,7 @@
 - [[#fast-loading][Fast-Loading]]
 - [[#загрузка-скриптов][Загрузка скриптов]]
 - [[#org-mode][Org-Mode]]
+  - [[#org-agenda][Org-Agenda]]
   - [[#hover-links][Hover Links]]
   - [[#org-appear][Org-Appear]]
   - [[#toc][Toc]]
@@ -69,6 +70,13 @@
 :PROPERTIES:
 :CUSTOM_ID: org-mode
 :END:
+** Org-Agenda
+:PROPERTIES:
+:CUSTOM_ID: org-agenda
+:END:
+#+begin_src emacs-lisp
+(setq org-agenda-files (list "~/.org/" "~/.org/roam/"))
+#+end_src
 ** Hover Links 
 :PROPERTIES:
 :CUSTOM_ID: hover-links
@@ -206,6 +214,8 @@
 
 #+begin_src emacs-lisp
 (use-package org-roam
+  :custom
+  (org-roam-complete-everywhere t)
   :config
   (if (not (file-directory-p (file-truename "~/.org/roam")))
       (make-directory (file-truename "~/.org/roam")))
@@ -256,6 +266,7 @@
     "n j D" '(org-roam-dailies-goto-date :wk "Go to note by date")
     )
 
+  
   (setq org-roam-capture-templates
         '(
           ("d" "default" plain
@@ -467,6 +478,7 @@
 :CUSTOM_ID: раскладка
 :END:
 [[https://github.com/doomemacs/doomemacs/blob/master/modules/lang/org/config.el][Doom-Config Org-Mode]]
+Команда для быстрой вставки =:wk "<группа_1>"= - =%s/\("[^"]*"\) '(\([^):]*\))/\1 '(\2 :wk "\2")=
 #+begin_src emacs-lisp
 (general-define-key
  ;; :definer 'minor-mode
@@ -483,8 +495,66 @@
  "m @" '(org-cite-insert :wk "org-cite-insert")
  "m ." '(consult-org-heading :wk "consult-org-heading")
  "m /" '(consult-org-agenda :wk "consult-org-agenda")
+ "m A" '(org-archive-subtree-default :wk "org-archive-subtree-default")
+ "m e" '(org-export-dispatch :wk "org-export-dispatch")
+ "m f" '(org-footnote-action :wk "org-footnote-action")
+ "m h" '(org-toggle-heading :wk "org-toggle-heading")
+ "m i" '(org-toggle-item :wk "org-toggle-item")
+ "m I" '(org-id-get-create :wk "org-id-get-create")
+ "m k" '(org-babel-remove-result :wk "org-babel-remove-result")
+ "m n" '(org-store-link :wk "org-store-link")
+ "m o" '(org-set-property :wk "org-set-property")
+ "m q" '(org-set-tags-command :wk "org-set-tags-command")
+ "m t" '(org-todo :wk "org-todo")
+ "m T" '(org-todo-list :wk "org-todo-list")
+ "m x" '(org-toggle-checkbox :wk "org-toggle-checkbox")
+ 
+ ;; Attachments
+ "m a" '(:ignore :wk "Attachments")
+ "m a a" '(org-attach :wk "org-attach")
+ "m a d" '(org-attach-delete-one :wk "org-attach-delete-one")
+ "m a D" '(org-attach-delete-all :wk "org-attach-delete-all")
+ "m a n" '(org-attach-new :wk "org-attach-new")
+ "m a o" '(org-attach-open :wk "org-attach-open")
+ "m a O" '(org-attach-open-in-emacs :wk "org-attach-open-in-emacs")
+ "m a r" '(org-attach-reveal :wk "org-attach-reveal")
+ "m a R" '(org-attach-reveal-in-emacs :wk "org-attach-reveal-in-emacs")
+ "m a u" '(org-attach-url :wk "org-attach-url")
+ "m a s" '(org-attach-set-directory :wk "org-attach-set-directory")
+ "m a S" '(org-attach-sync :wk "org-attach-sync")
+ "m a c" '(org-download-screenshot :wk "org-download-screenshot")
+ "m a p" '(org-download-clipboard :wk "org-download-clipboard")
+ "m a P" '(org-download-yank :wk "org-download-yank")
+
+ ;;Tables
+ "m b" '(ignore :wk "Tables")
+ "m b -" '(org-table-insert-hline :wk "org-table-insert-hline")
+ "m b a" '(org-table-align :wk "org-table-align")
+ "m b b" '(org-table-blank-field :wk "org-table-blank-field")
+ "m b e" '(org-table-edit-field :wk "org-table-edit-field")
+ "m b f" '(org-table-edit-formulas :wk "org-table-edit-formulas")
+ "m b h" '(org-table-field-info :wk "org-table-field-info")
+ "m b s" '(org-table-sort-lines :wk "org-table-sort-lines")
+ "m b r" '(org-table-recalculate :wk "org-table-recalculate")
+ "m b R" '(org-table-recalculate-buffer-tables :wk "org-table-recalculate-buffer-tables")
+ "m b d" '(:ignore :wk "Delete")
+ "m b d c" '(org-table-delete-column :wk "org-table-delete-column")
+ "m b d r" '(org-table-kill-row :wk "org-table-kill-row")
+ "m b i" '(:ignore :wk "Insert")
+ "m b i c" '(org-table-insert-column :wk "org-table-insert-column")
+ "m b i h" '(org-table-insert-hline :wk "org-table-insert-hline")
+ "m b i r" '(org-table-insert-row :wk "org-table-insert-row")
+ "m b i H" '(org-table-hline-and-move :wk "org-table-hline-and-move")
+ "m b t" '(:ingore :wk "Table")
+ "m b t f" '(org-table-toggle-formula-debugger :wk "org-table-toggle-formula-debugger")
+ "m b t o" '(org-table-toggle-coordinate-overlays :wk "org-table-toggle-coordinate-overlays")
+ "m b c" '(:ignore :wk "Clock")
+ "m b c c" '(org-clock-cancel :wk "org-clock-cancel")
  )
 #+end_src
+
+#+RESULTS:
+
 * Provide
 :PROPERTIES:
 :CUSTOM_ID: provide
