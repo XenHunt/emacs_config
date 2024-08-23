@@ -42,3 +42,4 @@
 /conf-files/programming/*.el
 /README.el
 /.backup_config.org
+/conf-files/telega/telega-package.el
