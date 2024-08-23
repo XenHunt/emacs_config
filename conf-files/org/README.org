@@ -13,6 +13,7 @@
 - [[#fast-loading][Fast-Loading]]
 - [[#загрузка-скриптов][Загрузка скриптов]]
 - [[#org-mode][Org-Mode]]
+  - [[#ret---open-link-or-exec-src-block][RET - open link or exec src block]]
   - [[#org-agenda][Org-Agenda]]
   - [[#hover-links][Hover Links]]
   - [[#org-appear][Org-Appear]]
@@ -70,6 +71,43 @@
 :PROPERTIES:
 :CUSTOM_ID: org-mode
 :END:
+** RET - open link or exec src block
+:PROPERTIES:
+:CUSTOM_ID: ret---open-link-or-exec-src-block
+:END:
+
+Мое решение (и =gptel=) для объединения открытия ссылки или запуска src block'а в Emacs одно клавишой =RET=.
+
+#+begin_src emacs-lisp
+(defun my/org-babel-execute-maybe ()
+  "If point is at a source code block, execute it with org-babel."
+  (interactive)
+  (let ((context (org-element-context)))
+    (when (and context
+               (eq (car context) 'src-block))
+      (org-babel-execute-src-block))))
+
+(defun my/org-link-maybe ()
+  "If point is at an org-mode link, open it."
+  (interactive)
+  (let ((context (org-element-context)))
+    (when (and context
+               (eq (car context) 'link))
+      (org-open-at-point))))
+
+(defun my/ret-keybindings ()
+  "It combines mine maybe commands together"
+  (interactive)
+  (my/org-babel-execute-maybe)
+  (my/org-link-maybe))
+
+
+(evil-define-key 'normal org-mode-map (kbd "RET") 'my/ret-keybindings)
+
+#+end_src
+
+#+RESULTS:
+
 ** Org-Agenda
 :PROPERTIES:
 :CUSTOM_ID: org-agenda
@@ -377,7 +415,8 @@
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((emacs-lisp . t)
-   (python . t)))
+   (python . t)
+   (shell . t)))
 
 #+end_src
 
@@ -554,7 +593,6 @@
 #+end_src
 
 #+RESULTS:
-
 * Provide
 :PROPERTIES:
 :CUSTOM_ID: provide

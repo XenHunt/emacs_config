@@ -17,6 +17,7 @@
   - [[#other][Other]]
   - [[#programming][Programming]]
   - [[#ai][AI]]
+  - [[#telega][Telega]]
 - [[#provide][Provide]]
 :END:
 
@@ -108,6 +109,16 @@
 #+begin_src emacs-lisp
 (add-to-list 'load-path "~/.emacs.d/conf-files/ai/")
 (require 'ai)
+#+end_src
+** Telega
+:PROPERTIES:
+:CUSTOM_ID: telega
+:END:
+
+Эта часть подключает =telega=. Подробнее: [[./telega/README.org][README для telega]].
+#+begin_src emacs-lisp
+(add-to-list 'load-path "~/.emacs.d/conf-files/telega/")
+(require 'telega-package)
 #+end_src
 * Provide
 :PROPERTIES:

@@ -432,12 +432,12 @@
  				    vterm
  				    bufler
  				    indent
+                                    telega
  				    corfu
  				    consult
  				    vertico
 				    embark
 				    which-key
-				    dashboard
 				    (pdf pdf-view)
 				    elpaca
 				    imenu

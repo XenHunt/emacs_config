@@ -1,0 +1,53 @@
+#+TITLE:XenHunt Config (telega)
+#+AUTHOR: Evgeny Berlizov (XenHunt)
+#+DESCRIPTION: XenHunt's config of telega
+#+STARTUP: content
+#+PROPERTY: header-args :tangle telega-package.el
+* Содержание
+:PROPERTIES:
+:TOC:      :include all :depth 100 :force (nothing) :ignore (this) :local (nothing)
+:END:
+:CONTENTS:
+- [[#введение][Введение]]
+- [[#fast-loading][Fast-Loading]]
+- [[#telegael][Telega.el]]
+- [[#provide][Provide]]
+:END:
+* Введение
+:PROPERTIES:
+:CUSTOM_ID: введение
+:END:
+
+Эта часть конфига посвящена настройке =telega.el= - клиента =Telegram= для =Emacs=.
+
+* Fast-Loading
+:PROPERTIES:
+:CUSTOM_ID: fast-loading
+:END:
+
+Быстрая загрузка модуля.
+
+#+begin_src emacs-lisp
+;; -*- lexical-binding: t; -*-
+#+end_src
+
+* Telega.el
+:PROPERTIES:
+:CUSTOM_ID: telegael
+:END:
+#+begin_src emacs-lisp
+(use-package telega
+  :init
+  (setq telega-use-image t
+        telega-emoji-use-image t)
+  :config
+  (add-hook 'telega-load-hook 'telega-notifications-mode))
+#+end_src
+
+* Provide
+:PROPERTIES:
+:CUSTOM_ID: provide
+:END:
+#+begin_src emacs-lisp
+(provide 'telega-package)
+#+end_src

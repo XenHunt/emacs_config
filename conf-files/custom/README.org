@@ -189,6 +189,17 @@
   (setq dashboard-set-file-icons t)
   (setq dashboard-set-heading-icons t)
   (setq dashboard-display-icons-p t)
+
+  (defun my/dashboard-insert-books (list-size)
+    (dashboard-insert-heading "Books:"
+                              "b"
+                              (all-the-icons-faicon "book"
+                                                    :height 1.2
+                                                    :v-adjust 0.0
+                                                    :face 'dashboard-heading))
+    (insert "\n")
+    )
+  
   :custom
   (dashboard-modify-heading-icons '((recents . "file-text")
                                     (bookmarks . "book")))
@@ -201,17 +212,24 @@
 			      (recents   . "r")
                               (bookmarks . "m")
                               (projects  . "p")
-			      (agenda . "a")))
+			      (agenda . "a")
+                              (books . "b")))
   (dashboard-projects-backend 'projectile)
+  (dashboard-startup-banner "~/.emacs.d/logo1.png")
   :config
   (add-hook 'elpaca-after-init-hook #'dashboard-insert-startupify-lists)
   (add-hook 'elpaca-after-init-hook #'dashboard-initialize)
-
+  (add-to-list 'dashboard-item-generators  '(books . my/dashboard-insert-books))
+  (add-to-list 'dashboard-items '(books . 5) t)
   (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
   ;; (setq dashboard-banner-logo-png "/home/berlizoves/.emacs.d/logo.png")
   (dashboard-setup-startup-hook)
   )
 #+end_src
+
+#+RESULTS:
+: [nil 26311 32199 862234 nil elpaca-process-queues nil nil 349000 nil]
+
 ** Rainbow-mode 
 :PROPERTIES:
 :CUSTOM_ID: rainbow-mode
