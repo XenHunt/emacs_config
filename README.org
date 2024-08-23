@@ -41,6 +41,7 @@
 + LSP и другие программистские штуки:
   + Treesitter;
   + Python;
+  + Docker;
   + Clojure;
   + Guile Scheme;
   + Direnv;
@@ -50,6 +51,7 @@
     + HTML;
     + CSS;
   + Nix;
++ Telega (not finished)
 * Fast-Loading
 :PROPERTIES:
 :CUSTOM_ID: fast-loading
