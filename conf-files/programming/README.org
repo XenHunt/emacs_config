@@ -52,6 +52,7 @@
     - [[#docker-compose][Docker-Compose]]
     - [[#dockerfile-mode][Dockerfile-mode]]
     - [[#docker-0][Docker]]
+  - [[#xkb-mode][XKB-Mode]]
   - [[#treesitter][Treesitter]]
     - [[#treesitter-auto][Treesitter-auto]]
     - [[#treesitter-0][Treesitter]]
@@ -835,6 +836,13 @@
 #+begin_src emacs-lisp
 (use-package docker)
 #+end_src
+** XKB-Mode
+:PROPERTIES:
+:CUSTOM_ID: xkb-mode
+:END:
+#+begin_src emacs-lisp
+(use-package xkb-mode)
+#+end_src
 ** Treesitter
 :PROPERTIES:
 :CUSTOM_ID: treesitter
@@ -889,6 +897,7 @@
   )
 (use-package tree-sitter-langs)
 #+end_src
+
 * Provide
 :PROPERTIES:
 :CUSTOM_ID: provide
