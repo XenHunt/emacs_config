@@ -16,10 +16,13 @@
   - [[#ret---open-link-or-exec-src-block][RET - open link or exec src block]]
   - [[#org-agenda][Org-Agenda]]
   - [[#hover-links][Hover Links]]
+  - [[#org-inline-images][Org Inline Images]]
   - [[#org-appear][Org-Appear]]
   - [[#toc][Toc]]
   - [[#highlight-todo][Highlight TODO]]
   - [[#org-bullets][Org-Bullets]]
+  - [[#org-modern][Org-Modern]]
+  - [[#org-modern-indent][Org-Modern-Indent]]
   - [[#org-tempo][Org Tempo]]
   - [[#org-headings-size][Org Headings Size]]
   - [[#org-auto-tangle][Org-Auto-Tangle]]
@@ -31,9 +34,9 @@
   - [[#org-download][Org-Download]]
   - [[#org-ref][Org-Ref]]
   - [[#corg][Corg]]
-  - [[#org-modern-indent][Org-Modern-Indent]]
   - [[#restclient][Restclient]]
-  - [[#prettify][Prettify]]
+  - [[#org-sticky-header][Org-Sticky-Header]]
+  - [[#org-transclusion][Org-Transclusion]]
   - [[#раскладка][Раскладка]]
 - [[#provide][Provide]]
 :END:
@@ -113,8 +116,12 @@
 :CUSTOM_ID: org-agenda
 :END:
 #+begin_src emacs-lisp
-(setq org-agenda-files (list "~/.org/" "~/.org/roam/"))
+(setq org-agenda-files (list "~/.org/roam/2024-08-21-22:56:38-планы.org"))
 #+end_src
+
+#+RESULTS:
+| ~/.org/roam/2024-08-21-22:56:38-планы.org |
+
 ** Hover Links 
 :PROPERTIES:
 :CUSTOM_ID: hover-links
@@ -123,6 +130,17 @@
 (setq org-mouse-1-follows-link t)
 (setq org-descriptive-links t)
 #+end_src
+** Org Inline Images
+:PROPERTIES:
+:CUSTOM_ID: org-inline-images
+:END:
+#+begin_src  emacs-lisp
+(setq org-startup-with-inline-images t)
+#+end_src
+
+#+RESULTS:
+: t
+
 ** Org-Appear 
 :PROPERTIES:
 :CUSTOM_ID: org-appear
@@ -198,12 +216,55 @@
 =org-bullets= - это пакет, меняющий заголовки и превращающий их в нечто более красивое.
 
 #+begin_src emacs-lisp
-(add-hook 'org-mode-hook 'org-indent-mode)
-(use-package org-bullets
-  :config
-  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+(setq org-startup-indented nil
+      org-pretty-entities t)
+;; (use-package org-bullets
+;;   :config
+;;   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 (elpaca-wait)
 #+end_src
+
+#+RESULTS:
+
+** Org-Modern
+:PROPERTIES:
+:CUSTOM_ID: org-modern
+:END:
+#+begin_src emacs-lisp
+(use-package org-modern
+  :hook (org-mode . org-modern-mode)
+  :custom
+  (org-modern-hide-stars nil)		; adds extra indentation
+  ;; (org-modern-table nil)
+  (org-modern-list 
+   '(;; (?- . "-")
+     (?* . "•")
+     (?+ . "‣")))
+  (org-modern-block-name '("" . "")) ; or other chars; so top bracket is drawn promptly
+  )
+#+end_src
+
+#+RESULTS:
+: [nil 26321 35790 743497 nil elpaca-process-queues nil nil 928000 nil]
+
+** Org-Modern-Indent
+:PROPERTIES:
+:CUSTOM_ID: org-modern-indent
+:END:
+
+=org-modern-indent= добавляет красивое выделение для блоков в =org=.
+
+#+begin_src emacs-lisp
+(use-package org-modern-indent
+  :ensure (:host github :repo "jdtsmith/org-modern-indent")
+  :after org-modern
+  :config
+  (add-hook 'org-mode-hook #'org-modern-indent-mode 90)
+  )
+#+end_src
+
+#+RESULTS:
+: [nil 26321 37179 983531 nil elpaca-process-queues nil nil 850000 nil]
 
 ** Org Tempo 
 :PROPERTIES:
@@ -341,8 +402,19 @@
                               "#+title: ${title}\n#+date: %U\n#+filetags: :Article:Programming:Habr:\n#+pers_rating:\n")
            :unnarrowed t
            )
-          )
+          ("o" "definition" plain
+           (file "~/.org/roam/templates/definition.org")
+           :if-new (file+head "%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
+                              "#+title: ${title}\n#+date: %U\n")
+           :unnarrowed t)
+          ("t" "data type" plain
+           (file "~/.org/roam/templates/data_type.org")
+           :if-new (file+head "%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
+                              "#+title: ${title}\n#+date: %U\n#+filetags: :Data_Type:Programming:")
+           :unnarrowed t)
+          )         
         )
+  
   (setq org-roam-dailies-capture-templates
         '(("d" "default" entry "* %<%I:%M %p>\n%?"
            :if-new (file+head "%<%Y-%m-%d>.org" "#+title:%<%Y-%m-%d>\n#+filetags: :Dailies:"))))
@@ -360,6 +432,9 @@
         org-roam-ui-update-on-save t
         org-roam-ui-open-on-start t))
 #+end_src
+
+#+RESULTS:
+| d | default | entry | * %<%I:%M %p> |
 
 ** Org-QL-Roam
 :PROPERTIES:
@@ -412,13 +487,17 @@
 #+begin_src emacs-lisp
 (setq org-src-fontify-natively t)
 (setq org-confirm-babel-evaluate nil)
+(require 'ob-clojure)
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((emacs-lisp . t)
    (python . t)
-   (shell . t)))
+   (shell . t)
+   (clojure . t)))
 
 #+end_src
+
+#+RESULTS:
 
 ** Org-Download 
 :PROPERTIES:
@@ -460,20 +539,6 @@
 (use-package corg
   :ensure (:host github :repo "isamert/corg.el"))
 #+end_src
-** Org-Modern-Indent
-:PROPERTIES:
-:CUSTOM_ID: org-modern-indent
-:END:
-
-=org-modern-indent= добавляет красивое выделение для блоков в =org=.
-
-#+begin_src emacs-lisp
-(use-package org-modern-indent
-  :ensure (:host github :repo "jdtsmith/org-modern-indent")
-  :config ; add late to hook
-     (add-hook 'org-mode-hook #'org-modern-indent-mode 90)
-  )
-#+end_src
 ** Restclient
 :PROPERTIES:
 :CUSTOM_ID: restclient
@@ -489,29 +554,31 @@
   :after org
   :after restclient)
 #+end_src
-** TODO Prettify
+** Org-Sticky-Header
 :PROPERTIES:
-:CUSTOM_ID: prettify
+:CUSTOM_ID: org-sticky-header
 :END:
 #+begin_src emacs-lisp
-(add-hook 'org-mode-hook (lambda ()
-                           "Beautify Org Symbols"
-                           ;; (mapc (lambda (symb) (push symb prettify-symbols-alist))
-                           ;;       '(("#+BEGIN_SRC" . "src")
-                           ;;         ("#+END_SRC" . "src" )
-                           ;;         ("#+BEGIN_EXAMPLE" . "example")
-                           ;;         ("#+END_EXAMPLE" . "example")
-                           ;;         ("#+BEGIN_QUOTE" . "quote")
-                           ;;         ("#+END_QUOTE" . "quote")
-                           ;;         ("#+begin_quote" . "quote")
-                           ;;         ("#+end_quote" . "quote")
-                           ;;         ("#+begin_example" . "example")
-                           ;;         ("#+end_example" . "example")
-                           ;;         ("#+begin_src" . "F")
-                           ;;         ("#+end_src" . "F")))
-
-                           (prettify-symbols-mode)))
+(use-package org-sticky-header)
 #+end_src
+
+#+RESULTS:
+: [nil 26321 39101 48239 nil elpaca-process-queues nil nil 512000 nil]
+** Org-Transclusion
+:PROPERTIES:
+:CUSTOM_ID: org-transclusion
+:END:
+#+begin_src emacs-lisp
+(use-package org-transclusion
+  :after org
+  :hook (org-mode . org-transclusion-mode)
+  :init
+  )
+#+end_src
+
+#+RESULTS:
+: [nil 26321 40045 673291 nil elpaca-process-queues nil nil 408000 nil]
+
 ** TODO Раскладка
 :PROPERTIES:
 :CUSTOM_ID: раскладка

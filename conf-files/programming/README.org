@@ -795,6 +795,9 @@
 (use-package clojure-mode)
 #+end_src
 
+#+RESULTS:
+: [nil 26320 15728 74625 nil elpaca-process-queues nil nil 897000 nil]
+
 *** Guile
 :PROPERTIES:
 :CUSTOM_ID: guile

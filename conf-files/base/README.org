@@ -17,6 +17,7 @@
   - [[#jsonrpc][Jsonrpc]]
 - [[#startup-time-boost][Startup time boost]]
 - [[#alias-for-yesno][Alias for yes/no]]
+- [[#emacs][Emacs]]
 - [[#wgrep][Wgrep]]
 - [[#smartparens][Smartparens]]
 - [[#general-keybindigs][General Keybindigs]]
@@ -41,7 +42,6 @@
 - [[#diminish][Diminish]]
 - [[#exec-path-from-shell][Exec-path-from-shell]]
 - [[#editor-config][Editor-Config]]
-- [[#emacs][Emacs]]
 - [[#shell][Shell]]
   - [[#vterm][VTerm]]
 - [[#which-key][Which-key]]
@@ -157,6 +157,28 @@
 (ignore-errors
   (setq confirm-kill-emacs 'y-or-n-p)
   (defalias 'yes-or-no-p 'y-or-n-p))
+#+end_src
+* Emacs 
+:PROPERTIES:
+:CUSTOM_ID: emacs
+:END:
+#+begin_src emacs-lisp
+(use-package emacs
+  :ensure nil
+  :config
+  (setq gc-cons-threshold 100000000)
+  (setq ring-bel-functuin #'ignore)  
+  (setq text-mode-ispell-word-completion nil)
+  (setq tab-always-indent 'complete)
+  (unless (or (file-exists-p (file-truename "~/.Trash/"))
+               (file-symlink-p (file-truename "~/.Trash/")))
+    (make-symbolic-link (file-truename "~/.local/share/Trash/")
+                        (file-truename "~/.Trash")))
+
+  (setq backup-directory-alist '((".*" . "~/.Trash/files/")))
+  (setq read-process-output-max (* 1024 1024 10)))
+  (elpaca-wait)
+
 #+end_src
 * Wgrep
 :PROPERTIES:
@@ -681,27 +703,6 @@
   :ensure t
   :config
   (editorconfig-mode 1))
-#+end_src
-* Emacs 
-:PROPERTIES:
-:CUSTOM_ID: emacs
-:END:
-#+begin_src emacs-lisp
-(use-package emacs
-  :ensure nil
-  :config
-  (setq gc-cons-threshold 100000000)
-  (setq ring-bel-functuin #'ignore)  
-  (setq text-mode-ispell-word-completion nil)
-  (setq tab-always-indent 'complete)
-  (unless (file-symlink-p (file-truename "~/.Trash"))
-         (make-symbolic-link (file-truename "~/.local/share/Trash/")
-                             (file-truename "~/.Trash")))
-  (setq backup-directory-alist '((".*" . "~/.Trash/files/")))
-  (setq read-process-output-max (* 1024 1024 10))
-  )
-(elpaca-wait)
-
 #+end_src
 * Shell
 :PROPERTIES:
