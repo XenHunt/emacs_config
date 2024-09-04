@@ -11,6 +11,7 @@
 - [[#введение][Введение]]
 - [[#fast-loading][Fast-Loading]]
 - [[#загрузка-конфига][Загрузка конфига]]
+  - [[#загрузка-скриптов][Загрузка скриптов]]
   - [[#base][Base]]
   - [[#custom][Custom]]
   - [[#org][Org]]
@@ -46,6 +47,17 @@
 
 Загрузка всего конфига.
 
+** Загрузка скриптов
+:PROPERTIES:
+:CUSTOM_ID: загрузка-скриптов
+:END:
+
+Загрузка базовых скриптов.
+
+#+begin_src emacs-lisp
+(add-to-list 'load-path "~/.emacs.d/scripts/")
+(require 'scripts)
+#+end_src
 ** Base
 :PROPERTIES:
 :CUSTOM_ID: base
@@ -120,6 +132,7 @@
 (add-to-list 'load-path "~/.emacs.d/conf-files/telega/")
 (require 'telega-package)
 #+end_src
+
 * Provide
 :PROPERTIES:
 :CUSTOM_ID: provide

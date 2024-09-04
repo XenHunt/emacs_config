@@ -2,7 +2,7 @@
 #+AUTHOR: Evgeny Berlizov (XenHunt)
 #+DESCRIPTION: XenHunt config README
 #+STARTUP: content
-
+#+PROPERTY: header-args :tangle startup-config.el
 * Содержание
 :PROPERTIES:
 :TOC:      :include all :depth 100 :force (nothing) :ignore (this) :local (nothing)
@@ -73,6 +73,7 @@
 #+begin_src emacs-lisp
 (add-to-list 'load-path "~/.emacs.d/conf-files/")
 (require 'full)
+(provide 'startup-config)
 #+end_src
 
 * Thanks

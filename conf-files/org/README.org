@@ -11,7 +11,6 @@
 :CONTENTS:
 - [[#введение][Введение]]
 - [[#fast-loading][Fast-Loading]]
-- [[#загрузка-скриптов][Загрузка скриптов]]
 - [[#org-mode][Org-Mode]]
   - [[#ret---open-link-or-exec-src-block][RET - open link or exec src block]]
   - [[#org-agenda][Org-Agenda]]
@@ -59,17 +58,6 @@
 ;; -*- lexical-binding: t; -*-
 #+end_src
 
-* Загрузка скриптов
-:PROPERTIES:
-:CUSTOM_ID: загрузка-скриптов
-:END:
-
-Загрузка базовых скриптов.
-
-#+begin_src emacs-lisp
-(add-to-list 'load-path "~/.emacs.d/scripts/")
-(require 'scripts)
-#+end_src
 * Org-Mode
 :PROPERTIES:
 :CUSTOM_ID: org-mode
@@ -118,9 +106,6 @@
 #+begin_src emacs-lisp
 (setq org-agenda-files (list "~/.org/roam/2024-08-21-22:56:38-планы.org"))
 #+end_src
-
-#+RESULTS:
-| ~/.org/roam/2024-08-21-22:56:38-планы.org |
 
 ** Hover Links 
 :PROPERTIES:
@@ -525,7 +510,8 @@
 :CUSTOM_ID: org-ref
 :END:
 #+begin_src emacs-lisp
-(use-package org-ref)
+(use-package org-ref
+:no-require t)
 
 #+end_src
 ** Corg

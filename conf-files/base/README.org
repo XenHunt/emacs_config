@@ -10,11 +10,11 @@
 :CONTENTS:
 - [[#введение][Введение]]
 - [[#fast-loading][Fast-Loading]]
-- [[#загрузка-скриптов][Загрузка скриптов]]
 - [[#по-умолчанию][По-умолчанию]]
 - [[#elpaca-fixes][Elpaca Fixes]]
   - [[#closql][Closql]]
   - [[#jsonrpc][Jsonrpc]]
+- [[#benchmark][Benchmark]]
 - [[#startup-time-boost][Startup time boost]]
 - [[#alias-for-yesno][Alias for yes/no]]
 - [[#emacs][Emacs]]
@@ -38,7 +38,6 @@
   - [[#evil-fold][Evil-Fold]]
   - [[#evil-args][Evil-Args]]
   - [[#evil-org][Evil-Org]]
-  - [[#раскладка][Раскладка]]
 - [[#diminish][Diminish]]
 - [[#exec-path-from-shell][Exec-path-from-shell]]
 - [[#editor-config][Editor-Config]]
@@ -70,17 +69,6 @@
 ;; -*- lexical-binding: t; -*-
 #+end_src
 
-* Загрузка скриптов
-:PROPERTIES:
-:CUSTOM_ID: загрузка-скриптов
-:END:
-
-Загрузка базовых скриптов.
-
-#+begin_src emacs-lisp
-(add-to-list 'load-path "~/.emacs.d/scripts/")
-(require 'scripts)
-#+end_src
 * По-умолчанию
 :PROPERTIES:
 :CUSTOM_ID: по-умолчанию
@@ -138,6 +126,17 @@
 (use-package jsonrpc
   :ensure (jsonrpc :depth 1)
   :defer t)
+#+end_src
+* Benchmark
+:PROPERTIES:
+:CUSTOM_ID: benchmark
+:END:
+#+begin_src emacs-lisp
+(use-package benchmark-init
+  :ensure t
+  :config
+  ;; To disable collection of benchmark data after init is done.
+  (add-hook 'after-init-hook 'benchmark-init/deactivate))
 #+end_src
 * Startup time boost
 :PROPERTIES:
@@ -314,7 +313,8 @@
     "h f" '(helpful-function :wk "Describe function")
     "h v" '(helpful-variable :wk "Describe variable")
     "h ." '(helpful-at-point :wk "Help at point")
-    "h m" '(describe-mode :wk "Describe mode")
+    "h m" '(helpful-macro :wk "Describe macro")
+    "h M" '(describe-mode :wk "Describe mode")
     "h p" '(describe-package :wk "Describe package")
     "h k" '(describe-key :wk "Describe key")
     "h K" '(describe-keymap :wk "Describe keymap")
@@ -419,7 +419,8 @@
   (evil-set-undo-system 'undo-redo)
   (evil-mode)
   )
-(use-package evil-tutor :ensure t :demand t)
+
+;; (use-package evil-tutor :ensure t :demand t)
 (elpaca-wait)
 
 ;; Setting RETURN key in org-mode to follow links
@@ -491,7 +492,7 @@
   (define-key evil-motion-state-map (kbd "C-o") nil)
   )
 
-  #+end_src
+#+end_src
 
 #+RESULTS:
 
@@ -566,7 +567,7 @@
              evilnc-inner-comment
              evilnc-outer-commenter)
   ;; :general ([remap comment-line] #'evilnc-comment-or-uncomment-lines)
-)
+  )
 #+end_src
 ** Visulstar
 :PROPERTIES:
@@ -671,13 +672,6 @@
   (require 'evil-org-agenda)
   (evil-org-agenda-set-keys))
 #+end_src
-** TODO Раскладка
-:PROPERTIES:
-:CUSTOM_ID: раскладка
-:END:
-#+begin_src emacs-lisp
-
-#+end_src
 * Diminish 
 :PROPERTIES:
 :CUSTOM_ID: diminish
@@ -691,8 +685,12 @@
 :END:
 #+begin_src emacs-lisp
 (use-package exec-path-from-shell
+  :custom
+  (exec-path-from-shell-arguments '("-l"))
   :config
-  (exec-path-from-shell-initialize))
+  (when (daemonp)
+    (exec-path-from-shell-initialize))
+  )
 #+end_src
 * Editor-Config 
 :PROPERTIES:

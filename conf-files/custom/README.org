@@ -10,7 +10,6 @@
 :CONTENTS:
 - [[#введение][Введение]]
 - [[#fast-loading][Fast-Loading]]
-- [[#загрузка-скриптов][Загрузка скриптов]]
 - [[#graphical-beauty][Graphical Beauty]]
   - [[#doom-theme][Doom Theme]]
   - [[#doom-modeline][Doom Modeline]]
@@ -44,18 +43,6 @@
 
 #+begin_src emacs-lisp
 ;; -*- lexical-binding: t; -*-
-#+end_src
-
-* Загрузка скриптов
-:PROPERTIES:
-:CUSTOM_ID: загрузка-скриптов
-:END:
-
-Загрузка базовых скриптов.
-
-#+begin_src emacs-lisp
-(add-to-list 'load-path "~/.emacs.d/scripts/")
-(require 'scripts)
 #+end_src
 
 * Graphical Beauty
@@ -190,15 +177,35 @@
   (setq dashboard-set-heading-icons t)
   (setq dashboard-display-icons-p t)
 
-  (defun my/dashboard-insert-books (list-size)
-    (dashboard-insert-heading "Books:"
-                              "b"
-                              (all-the-icons-faicon "book"
-                                                    :height 1.2
-                                                    :v-adjust 0.0
-                                                    :face 'dashboard-heading))
-    (insert "\n")
+  (defun get-recent-books (&optional list-size)
+    "Returns a list of recent books (PDF, EPUB, DJVU) based on LIST-SIZE"
+    (let ((list-size (or list-size 10))
+          result
+          )
+      (dolist (element recentf-list)
+        (when (and (file-name-extension element) (or (string= (downcase (file-name-extension element)) "pdf")
+                                                     (string= (downcase (file-name-extension element)) "epub")
+                                                     (string= (downcase (file-name-extension element)) "djvu")
+                                                     ))
+          (add-to-list 'result element)
+          )
+        )
+      (nreverse (cl-subseq result 0 (min (length result) list-size)))
+      )
     )
+  (defun my/dashboard-insert-books (list-size)
+    "Add the list of LIST-SIZE items of recent books"
+    (dashboard-insert-section
+     "Books"
+     (get-recent-books list-size)
+     list-size
+     'books
+     `(lambda (&rest ignore)
+        (find-file-existing ,el)
+        (dashboard-refresh-buffer)
+        )
+     (format "%s" el)
+     ))
   
   :custom
   (dashboard-modify-heading-icons '((recents . "file-text")
@@ -215,20 +222,19 @@
 			      (agenda . "a")
                               (books . "b")))
   (dashboard-projects-backend 'projectile)
-  (dashboard-startup-banner "~/.emacs.d/logo1.png")
+  (dashboard-startup-banner "~/.emacs.d/logo.png")
   :config
   (add-hook 'elpaca-after-init-hook #'dashboard-insert-startupify-lists)
   (add-hook 'elpaca-after-init-hook #'dashboard-initialize)
-  (add-to-list 'dashboard-item-generators  '(books . my/dashboard-insert-books))
-  (add-to-list 'dashboard-items '(books . 5) t)
+  ;; (add-to-list 'dashboard-item-generators  '(books . my/dashboard-insert-books))
+  ;; (add-to-list 'dashboard-items '(books . 5) t)
   (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
-  ;; (setq dashboard-banner-logo-png "/home/berlizoves/.emacs.d/logo.png")
   (dashboard-setup-startup-hook)
   )
 #+end_src
 
 #+RESULTS:
-: [nil 26311 32199 862234 nil elpaca-process-queues nil nil 349000 nil]
+: [nil 26328 15347 105538 nil elpaca-process-queues nil nil 503000 nil]
 
 ** Rainbow-mode 
 :PROPERTIES:
@@ -270,7 +276,7 @@
   ;; :elpaca (prism :fetcher github :repo "alphapapa/prism.el")
   :hook (
 	 (python-mode . prism-whitespace-mode)
-	 ((javascript-mode css-mode typescript-mode json-mode yaml-mode html-mode markdown-mode  latex-mode bash-mode scheme-mode clojure-mode) . prism-mode)
+	 ((javascript-mode css-mode typescript-mode json-mode yaml-mode html-mode markdown-mode  latex-mode bash-mode scheme-mode clojure-mode janet-mode) . prism-mode)
 	 )
   :init
   ;;(message (member 'prism-mode #'emacs-lisp-mode-hook))

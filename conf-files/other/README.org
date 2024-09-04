@@ -10,7 +10,6 @@
 :CONTENTS:
 - [[#введение][Введение]]
 - [[#fast-loading][Fast-Loading]]
-- [[#загрузка-скриптов][Загрузка скриптов]]
 - [[#bufler][Bufler]]
 - [[#beacon][Beacon]]
 - [[#completion][Completion]]
@@ -29,6 +28,7 @@
 - [[#sudo-edit][SUDO EDIT]]
 - [[#pdf-tools][PDF-Tools]]
 - [[#nov-mode][Nov-mode]]
+- [[#djvu][Djvu]]
 - [[#elfeed][Elfeed]]
 - [[#imenu][Imenu]]
   - [[#imenu-list][Imenu-List]]
@@ -55,17 +55,6 @@
 ;; -*- lexical-binding: t; -*-
 #+end_src
 
-* Загрузка скриптов
-:PROPERTIES:
-:CUSTOM_ID: загрузка-скриптов
-:END:
-
-Загрузка базовых скриптов.
-
-#+begin_src emacs-lisp
-(add-to-list 'load-path "~/.emacs.d/scripts/")
-(require 'scripts)
-#+end_src
 * Bufler 
 :PROPERTIES:
 :CUSTOM_ID: bufler
@@ -426,12 +415,15 @@
 :END:
 #+begin_src emacs-lisp
 (use-package yasnippet
+  :no-require t
   :config
   (yas-global-mode 1)
   )
-(use-package yasnippet-snippets)
+(use-package yasnippet-snippets
+  :no-require t)
 
 (use-package consult-yasnippet
+  :no-require
   :after yasnippet
   :after consult)
 #+end_src
@@ -484,6 +476,20 @@
 ;;   (define-key nov-mode-map (kbd "o") 'nov-xwidget-view)
 ;;   (add-hook 'nov-mode-hook 'nov-xwidget-inject-all-files))
 #+end_src
+* Djvu
+:PROPERTIES:
+:CUSTOM_ID: djvu
+:END:
+#+begin_src emacs-lisp
+(use-package djvu)
+(use-package djvu3
+  :after djvu
+  :ensure (djvu3 :type git :host github :repo "dalanicolai/djvu3" :files ("djvu3.el")))
+#+end_src
+
+#+RESULTS:
+: [nil 26327 26259 966804 nil elpaca-process-queues nil nil 85000 nil]
+
 * Elfeed
 :PROPERTIES:
 :CUSTOM_ID: elfeed

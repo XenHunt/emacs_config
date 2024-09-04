@@ -10,7 +10,6 @@
 :CONTENTS:
 - [[#введение][Введение]]
 - [[#fast-loading][Fast-Loading]]
-- [[#загрузка-скриптов][Загрузка скриптов]]
 - [[#gptel][Gptel]]
 - [[#codeium][Codeium]]
 - [[#consult-omni][Consult-Omni]]
@@ -32,18 +31,6 @@
 
 #+begin_src emacs-lisp
 ;; -*- lexical-binding: t; -*-
-#+end_src
-
-* Загрузка скриптов
-:PROPERTIES:
-:CUSTOM_ID: загрузка-скриптов
-:END:
-
-Загрузка базовых скриптов.
-
-#+begin_src emacs-lisp
-(add-to-list 'load-path "~/.emacs.d/scripts/")
-(require 'scripts)
 #+end_src
 
 * Gptel
