@@ -148,12 +148,23 @@
 :END:
 #+begin_src emacs-lisp
 (use-package nerd-icons
-  ;; :custom
+  :custom
   ;; The Nerd Font you want to use in GUI
   ;; "Symbols Nerd Font Mono" is the default and is recommended
   ;; but you can use any other Nerd Font if you want
-  ;; (nerd-icons-font-family "Symbols Nerd Font Mono")
+  (nerd-icons-font-family "Symbols Nerd Font Mono")
   )
+
+(use-package nerd-icons-dired
+  :after nerd-icons
+  :hook
+  (dired-mode . nerd-icons-dired-mode))
+
+(use-package nerd-icons-completion
+      :after (marginalia nerd-icons)
+      :hook (marginalia-mode . nerd-icons-marginalia-setup)
+      :config
+      (nerd-icons-completion-mode))
 #+end_src
 ** ALL-THE-ICONS 
 :PROPERTIES:
@@ -163,8 +174,8 @@
 (use-package all-the-icons
   :ensure t
   :if (display-graphic-p))
-(use-package all-the-icons-dired
-  :hook (dired-mode . (lambda () (all-the-icons-dired-mode t))))
+;; (use-package all-the-icons-dired
+;;   :hook (dired-mode . (lambda () (all-the-icons-dired-mode t))))
 #+end_src
 ** Dashboard 
 :PROPERTIES:
@@ -176,6 +187,8 @@
   (setq dashboard-set-file-icons t)
   (setq dashboard-set-heading-icons t)
   (setq dashboard-display-icons-p t)
+  (defvar dashboard-books-alist nil
+    "List of books for dashboard")
 
   (defun get-recent-books (&optional list-size)
     "Returns a list of recent books (PDF, EPUB, DJVU) based on LIST-SIZE"
@@ -197,11 +210,12 @@
     "Add the list of LIST-SIZE items of recent books"
     (dashboard-insert-section
      "Books"
-     (get-recent-books list-size)
+     (dashboard-shorten-paths (get-recent-books list-size) 'dashboard-books-alist 'books)
      list-size
      'books
+     (dashboard-get-shortcut 'books)
      `(lambda (&rest ignore)
-        (find-file-existing ,el)
+        (find-file-existing (dashboard-expand-path-alist ,el dashboard-books-alist))
         (dashboard-refresh-buffer)
         )
      (format "%s" el)
@@ -214,27 +228,34 @@
 		     (recents . 5)
 		     (bookmarks . 5)
 		     (projects . 5)
-		     (agenda . 5)))
+		     (agenda . 5)
+                     ;; (books . 5)
+                     ))
   (dashboard-item-shortcuts '(
 			      (recents   . "r")
                               (bookmarks . "m")
                               (projects  . "p")
 			      (agenda . "a")
-                              (books . "b")))
+                              ;; (books . "b")
+                              ))
   (dashboard-projects-backend 'projectile)
   (dashboard-startup-banner "~/.emacs.d/logo.png")
   :config
+
+  (add-to-list 'dashboard-item-shortcuts '(books . "b"))
+  (add-to-list 'dashboard-item-generators  '(books . my/dashboard-insert-books))
+  ;; (add-to-list 'dashboard-items '(books . 5))
+  
   (add-hook 'elpaca-after-init-hook #'dashboard-insert-startupify-lists)
   (add-hook 'elpaca-after-init-hook #'dashboard-initialize)
-  ;; (add-to-list 'dashboard-item-generators  '(books . my/dashboard-insert-books))
-  ;; (add-to-list 'dashboard-items '(books . 5) t)
+  
   (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
   (dashboard-setup-startup-hook)
   )
 #+end_src
 
 #+RESULTS:
-: [nil 26328 15347 105538 nil elpaca-process-queues nil nil 503000 nil]
+: [nil 26328 32309 232892 nil elpaca-process-queues nil nil 53000 nil]
 
 ** Rainbow-mode 
 :PROPERTIES:
@@ -275,8 +296,8 @@
 (use-package prism
   ;; :elpaca (prism :fetcher github :repo "alphapapa/prism.el")
   :hook (
-	 (python-mode . prism-whitespace-mode)
-	 ((javascript-mode css-mode typescript-mode json-mode yaml-mode html-mode markdown-mode  latex-mode bash-mode scheme-mode clojure-mode janet-mode) . prism-mode)
+	 ((python-mode python-ts-mode) . prism-whitespace-mode)
+	 ((javascript-mode css-mode typescript-mode json-mode yaml-mode html-mode markdown-mode  latex-mode bash-mode scheme-mode clojure-mode janet-mode janet-ts-mode) . prism-mode)
 	 )
   :init
   ;;(message (member 'prism-mode #'emacs-lisp-mode-hook))

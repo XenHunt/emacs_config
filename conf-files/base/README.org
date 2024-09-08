@@ -49,6 +49,8 @@
   - [[#dired-open][Dired-open]]
   - [[#peep-dired][Peep-Dired]]
 - [[#projectile][Projectile]]
+- [[#tramp][Tramp]]
+  - [[#ssh-machine][SSH-Machine]]
 - [[#provide][Provide]]
 :END:
 * Введение
@@ -873,6 +875,26 @@
   (projectile-mode 1))
 
 #+end_src
+* Tramp
+:PROPERTIES:
+:CUSTOM_ID: tramp
+:END:
+#+begin_src emacs-lisp
+(require 'tramp)
+(use-package ssh)
+(setq tramp-default-method "ssh"
+      tramp-verbose 6)
+#+end_src
+
+** SSH-Machine
+:PROPERTIES:
+:CUSTOM_ID: ssh-machine
+:END:
+#+begin_src emacs-lisp
+;; (use-package ssh-machine
+;;   :ensure (ssh-machine :host github :type git :repo "charmitro/emacs-ssh-machines" :branch "master" :main "init-ssh.el" :files ("*.el")))
+#+end_src
+
 * Provide
 :PROPERTIES:
 :CUSTOM_ID: provide
@@ -880,4 +902,3 @@
 #+begin_src emacs-lisp
 (provide 'base)
 #+end_src
-

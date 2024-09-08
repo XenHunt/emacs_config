@@ -29,6 +29,7 @@
 - [[#pdf-tools][PDF-Tools]]
 - [[#nov-mode][Nov-mode]]
 - [[#djvu][Djvu]]
+- [[#fb2][FB2]]
 - [[#elfeed][Elfeed]]
 - [[#imenu][Imenu]]
   - [[#imenu-list][Imenu-List]]
@@ -325,6 +326,10 @@
   ;; package.
   (marginalia-mode))
 #+end_src
+
+#+RESULTS:
+: [nil 26333 27716 331036 nil elpaca-process-queues nil nil 713000 nil]
+
 ** Embark
 :PROPERTIES:
 :CUSTOM_ID: embark
@@ -489,7 +494,20 @@
 
 #+RESULTS:
 : [nil 26327 26259 966804 nil elpaca-process-queues nil nil 85000 nil]
-
+* FB2
+:PROPERTIES:
+:CUSTOM_ID: fb2
+:END:
+#+begin_src emacs-lisp
+(use-package fb2-reader
+  :mode ("\\.fb2\\(\\.zip\\)?\\'" . fb2-reader-mode)
+  :commands (fb2-reader-continue)
+  :custom
+  ;; This mode renders book with fixed width, adjust to your preferences.
+  (fb2-reader-page-width 120)
+  (fb2-reader-image-max-width 400)
+  (fb2-reader-image-max-height 400))
+#+end_src
 * Elfeed
 :PROPERTIES:
 :CUSTOM_ID: elfeed

@@ -573,6 +573,20 @@
 Команда для быстрой вставки =:wk "<группа_1>"= - =%s/\("[^"]*"\) '(\([^):]*\))/\1 '(\2 :wk "\2")=
 #+begin_src emacs-lisp
 (general-define-key
+ :states 'normal
+ :keymaps 'org-mode-map
+ :prefix "]"
+ "h" '(org-next-visible-heading :wk "org-next-visible-heading")
+ )
+
+(general-define-key
+ :states 'normal
+ :keymaps 'org-mode-map
+ :prefix "["
+ "h" '(org-previous-visible-heading :wk "org-previous-visible-heading")
+ )
+
+(general-define-key
  ;; :definer 'minor-mode
  :states 'normal
  :keymaps 'org-mode-map

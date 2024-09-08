@@ -47,6 +47,8 @@
     - [[#clojure][Clojure]]
     - [[#guile][Guile]]
     - [[#janet][Janet]]
+      - [[#ajrepl][AJRepl]]
+      - [[#flycheck][Flycheck]]
   - [[#nix-mode][Nix-Mode]]
   - [[#docker][Docker]]
     - [[#docker-compose][Docker-Compose]]
@@ -802,23 +804,51 @@
 (use-package janet-mode)
 (use-package parsec)
 (elpaca-wait)
-(use-package ijanet-mode
-  :after janet-mode parsec
-  :ensure ( ijanet-mode
-           :type git
-           :host github
-           :repo "SerialDev/ijanet-mode"
-           ;; :branch "master"
-           :main "ijanet.el"
-           :files ("*.el")))
+;; (use-package ijanet-mode
+;;   :after janet-mode parsec
+;;   :ensure ( ijanet-mode
+;;            :type git
+;;            :host github
+;;            :repo "SerialDev/ijanet-mode"
+;;            ;; :branch "master"
+;;            :main "ijanet.el"
+;;            :files ("*.el")))
 (use-package janet-ts-mode
-  :elpaca (:host github
+  :ensure (:host github
            :repo "sogaiu/janet-ts-mode"
            :files ("*.el")))
 #+end_src
 
 #+RESULTS:
 : [nil 26326 8402 77101 nil elpaca-process-queues nil nil 792000 nil]
+
+**** AJRepl
+:PROPERTIES:
+:CUSTOM_ID: ajrepl
+:END:
+#+begin_src emacs-lisp
+(use-package ajrepl
+  :after janet-ts-mode
+  :ensure (ajrepl :type git :host github  :repo "sogaiu/ajrepl" :files ("*.el" "ajrepl"))
+  :hook (janet-ts-mode . ajrepl-interaction-mode))
+#+end_src
+
+#+RESULTS:
+: [nil 26332 13745 318785 nil elpaca-process-queues nil nil 939000 nil]
+
+**** Flycheck
+:PROPERTIES:
+:CUSTOM_ID: flycheck
+:END:
+#+begin_src emacs-lisp
+(use-package flycheck-janet
+  :ensure (flycheck-janet  :type git :host github  :repo "sogaiu/flycheck-janet" :files ("*.el"))
+  :after (flycheck janet-ts-mode)
+  )
+#+end_src
+
+#+RESULTS:
+: [nil 26332 14054 302533 nil elpaca-process-queues nil nil 83000 nil]
 
 ** Nix-Mode
 :PROPERTIES:
@@ -890,8 +920,13 @@
 	  (toml . ("https://github.com/tree-sitter/tree-sitter-toml"))
 	  (zig . ("https://github.com/GrayJack/tree-sitter-zig"))
           (janet-simple . ("https://github.com/sogaiu/tree-sitter-janet-simple"))))
+  (when (not (treesit-language-available-p 'janet-simple))
+    (treesit-install-language-grammar 'janet-simple))
   )
 #+end_src
+
+#+RESULTS:
+
 **** Treesitter-auto
 :PROPERTIES:
 :CUSTOM_ID: treesitter-auto
