@@ -86,7 +86,7 @@
    gptel-backend (gptel-make-ollama "Ollama"
                    :host "localhost:11434"
                    :stream t
-                   :models '("llama3.1:8b-instruct-q8_0" "deepseek-coder-v2:16b")))
+                   :models '("llama3.1:8b-instruct-fp16" "deepseek-coder-v2:16b-lite-base-q8_0")))
   (add-to-list 'gptel-directives '(clojure-teacher . "You are a professional programmer-teacher in Clojure. Your task is to write best code with good explaination, answer a questions about the Clojure, do everything to help me master Cloure. Respond concisely."))
   (add-to-list 'gptel-directives '(org-helper . "You are a helper in writing declartive config for Emacs in Org files. Your task is to describe parts of the config with all your master and writes it. Respond concisely."))
   (leader-key
@@ -99,6 +99,9 @@
     "e a" '(gptel-abort :wk "Abort")))
 
 #+end_src
+
+#+RESULTS:
+: [nil 26334 63911 452257 nil elpaca-process-queues nil nil 756000 nil]
 
 * Codeium 
 :PROPERTIES:

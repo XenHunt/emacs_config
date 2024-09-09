@@ -33,7 +33,7 @@
   - [[#org-download][Org-Download]]
   - [[#org-ref][Org-Ref]]
   - [[#corg][Corg]]
-  - [[#restclient][Restclient]]
+  - [[#restclient-deprecated][Restclient (Deprecated)]]
   - [[#org-sticky-header][Org-Sticky-Header]]
   - [[#org-transclusion][Org-Transclusion]]
   - [[#раскладка][Раскладка]]
@@ -525,9 +525,9 @@
 (use-package corg
   :ensure (:host github :repo "isamert/corg.el"))
 #+end_src
-** Restclient
+** Restclient (Deprecated)
 :PROPERTIES:
-:CUSTOM_ID: restclient
+:CUSTOM_ID: restclient-deprecated
 :END:
 
 Обычный REST клиент при помощи =org=.
