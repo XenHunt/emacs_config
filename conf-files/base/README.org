@@ -439,7 +439,7 @@
 (use-package evil-collection :ensure t :demand t
   :after evil
   :config
-  (setq e vil-collection-mode-list '(
+  (setq evil-collection-mode-list '(
  				    dashboard
                                     docker
  				    dired

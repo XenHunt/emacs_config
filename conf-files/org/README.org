@@ -536,7 +536,7 @@
 (use-package verb
   :after org
   :config
-  (verb-util--log)
+  ;; (verb-util--log)
 )
 #+end_src
 ** Org-Sticky-Header
