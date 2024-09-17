@@ -33,7 +33,7 @@
   - [[#org-download][Org-Download]]
   - [[#org-ref][Org-Ref]]
   - [[#corg][Corg]]
-  - [[#restclient-deprecated][Restclient (Deprecated)]]
+  - [[#verb][Verb]]
   - [[#org-sticky-header][Org-Sticky-Header]]
   - [[#org-transclusion][Org-Transclusion]]
   - [[#раскладка][Раскладка]]
@@ -525,20 +525,19 @@
 (use-package corg
   :ensure (:host github :repo "isamert/corg.el"))
 #+end_src
-** Restclient (Deprecated)
+** Verb
 :PROPERTIES:
-:CUSTOM_ID: restclient-deprecated
+:CUSTOM_ID: verb
 :END:
 
 Обычный REST клиент при помощи =org=.
 
 #+begin_src emacs-lisp
-(use-package restclient
-  :after org)
-
-(use-package ob-restclient
+(use-package verb
   :after org
-  :after restclient)
+  :config
+  (verb-util--log)
+)
 #+end_src
 ** Org-Sticky-Header
 :PROPERTIES:
@@ -657,6 +656,8 @@
  "m b c" '(:ignore :wk "Clock")
  "m b c c" '(org-clock-cancel :wk "org-clock-cancel")
  )
+
+;; (general-def 'normal 'override "C-x C-x" """)
 #+end_src
 
 #+RESULTS:
@@ -666,4 +667,6 @@
 :END:
 #+begin_src emacs-lisp
 (provide 'org-mine)
+
+
 #+end_src

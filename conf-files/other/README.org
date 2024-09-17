@@ -36,6 +36,7 @@
 - [[#ibuffer][IBuffer]]
   - [[#nerd-icons-ibuffer][Nerd-Icons-IBuffer]]
 - [[#jinx][Jinx]]
+- [[#guix][Guix]]
 - [[#provide][Provide]]
 :END:
 * Введение
@@ -374,6 +375,9 @@
 
 (use-package consult-dir)
 
+(use-package consult-flycheck
+  :after (consult flycheck))
+
 (use-package consult-org-roam
   :ensure t
   :after org-roam
@@ -645,6 +649,14 @@
   :hook ((text-mode ) . jinx-mode )
   :config
   )
+#+end_src
+
+* Guix
+:PROPERTIES:
+:CUSTOM_ID: guix
+:END:
+#+begin_src emacs-lisp
+(use-package guix)
 #+end_src
 * Provide
 :PROPERTIES:

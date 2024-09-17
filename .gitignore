@@ -44,3 +44,6 @@
 /.backup_config.org
 /conf-files/telega/telega-package.el
 /conf-files/base/base.el~
+/bookmarks~
+/fb2-reader/
+/tree-sitter/

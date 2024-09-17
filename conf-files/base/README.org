@@ -48,6 +48,8 @@
   - [[#base][Base]]
   - [[#dired-open][Dired-open]]
   - [[#peep-dired][Peep-Dired]]
+  - [[#image-dired][Image-Dired+]]
+  - [[#dired-open-with][Dired-Open-With]]
 - [[#projectile][Projectile]]
 - [[#tramp][Tramp]]
   - [[#ssh-machine][SSH-Machine]]
@@ -279,7 +281,7 @@
    "c c" '(compile :wk "Compile code")
    "c r" '(lsp-rename :wk "Rename object")
    "c d" '(lsp-find-definition :wk "Find definition")
-   "c x" '(consult-flymake :wk "List errors")
+   "c x" '(consult-flycheck :wk "List errors")
    "c R" '(lsp-workspace-restart :wk "Restart LSP")
    "c s" '(consult-lsp-symbols :wk "Search symbol")
    )
@@ -437,11 +439,14 @@
 (use-package evil-collection :ensure t :demand t
   :after evil
   :config
-  (setq evil-collection-mode-list '(
+  (setq e vil-collection-mode-list '(
  				    dashboard
                                     docker
  				    dired
  				    dired-sidebar
+                                    (image image-mode)
+                                    image+
+                                    image-dired
 				    devdocs
                                     help
                                     scheme
@@ -479,6 +484,7 @@
 				    flymake
 				    elfeed
 				    js2-mode
+                                    smerge-mode
 				    ;; rjsx-modre
 				    xref
  				    ))
@@ -818,7 +824,8 @@
                                 ("jpg" . "sxiv")
                                 ("png" . "sxiv")
                                 ("mkv" . "mpv")
-                                ("mp4" . "mpv"))))
+                                ("mp4" . "mpv")
+                                ("exe" . "portproton"))))
 #+end_src
 ** Peep-Dired 
 :PROPERTIES:
@@ -859,6 +866,36 @@
     )
   )
 #+end_src
+** Image-Dired+
+:PROPERTIES:
+:CUSTOM_ID: image-dired
+:END:
+#+begin_src emacs-lisp
+(use-package image-dired+
+  :after dired
+  :config
+  (setq image-diredx-async-mode 1
+        image-diredx-adjust-mode 1)
+  )
+#+end_src
+
+#+RESULTS:
+: [nil 26345 33176 786413 nil elpaca-process-queues nil nil 98000 nil]
+** Dired-Open-With
+:PROPERTIES:
+:CUSTOM_ID: dired-open-with
+:END:
+#+begin_src emacs-lisp
+(use-package dired-open-with
+  :after dired
+  :config
+  (evil-define-key 'normal dired-mode-map
+    (kbd "C-<return>") 'dired-open-with)
+  )
+#+end_src
+
+#+RESULTS:
+: [nil 26345 34307 967024 nil elpaca-process-queues nil nil 467000 nil]
 
 * Projectile 
 :PROPERTIES:

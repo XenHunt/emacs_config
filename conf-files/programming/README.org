@@ -45,10 +45,12 @@
     - [[#yaml][Yaml]]
   - [[#lisp][Lisp]]
     - [[#clojure][Clojure]]
+      - [[#раскладка-1][Раскладка]]
     - [[#guile][Guile]]
     - [[#janet][Janet]]
       - [[#ajrepl][AJRepl]]
       - [[#flycheck][Flycheck]]
+      - [[#раскладка-2][Раскладка]]
   - [[#nix-mode][Nix-Mode]]
   - [[#docker][Docker]]
     - [[#docker-compose][Docker-Compose]]
@@ -87,12 +89,12 @@
 :CUSTOM_ID: git-time-machine
 :END:
 #+begin_src emacs-lisp
-;; (us;; e-package git-timemachine
-;; ;;   :hook (evil-normalize-keymaps . git-timemachine-hook)
-;; ;;   :config
-;; ;;     (evil-define-key 'normal git-timemachine-mode-map (kbd "C-j") 'git-timemachine-show-previous-revision)
-;; ;;     (evil-define-key 'normal git-timemachine-mode-map (kbd "C-k") 'git-timemachine-show-next-revision)
-;; ;; )
+(use-package git-timemachine
+  :hook (evil-normalize-keymaps . git-timemachine-hook)
+  ;;   :config
+  ;;     (evil-define-key 'normal git-timemachine-mode-map (kbd "C-j") 'git-timemachine-show-previous-revision)
+  ;;     (evil-define-key 'normal git-timemachine-mode-map (kbd "C-k") 'git-timemachine-show-next-revision)
+  )
 #+end_src
 ** Magit
 :PROPERTIES:
@@ -143,8 +145,8 @@
 :END:
 #+begin_src emacs-lisp
 (use-package direnv
- :config
- (direnv-mode))
+  :config
+  (direnv-mode))
 #+end_src
 
 * Programming Language 
@@ -240,12 +242,13 @@
 	 (lsp-completion-mode . fv--lsp-mode-capf-setup)
 	 ;; replace XXX-mode with concrete major-mode(e. g. python-mode)
 	 (python-mode . lsp)
+         (python-ts-mode . lsp)
 	 (json-mode . lsp)
 	 (yaml-mode . lsp)
 	 (javascript-mode . lsp)
-     (clojure-mode . lsp)
-     (clojurescript-mode . lsp)
-     (clojurec-mode . lsp)
+         (clojure-mode . lsp)
+         (clojurescript-mode . lsp)
+         (clojurec-mode . lsp)
 	 ;; (web-mode . lsp)
 	 ;; (typescript-mode . lsp)
 	 (css-mode . lsp)
@@ -418,7 +421,7 @@
 (general-define-key
  ;; :definer 'minor-mode
  :states 'normal
- :keymaps 'python-mode-map
+ :keymaps '(python-mode-map python-ts-mode-map)
  :prefix "SPC"
  "m" '(:ignore t :wk "Python commands")
  "m i" '(:ignore t :wk "Imports")
@@ -787,7 +790,30 @@
 
 #+RESULTS:
 : [nil 26320 15728 74625 nil elpaca-process-queues nil nil 897000 nil]
+**** Раскладка
+:PROPERTIES:
+:CUSTOM_ID: раскладка-1
+:END:
+#+begin_src emacs-lisp
+(general-define-key
+ :states 'normal
+ :keymaps 'clojure-mode-map
+ :prefix "SPC"
+ "m" '(:ignore t :wk "Clojure commands")
+ "m i" '(:ignore t :wk "Imports")
+ "m i i" '(lsp-clojure-add-import-to-namespace :wk "Add import")
+ "m i f" '(clojure-insert-ns-form :wk "Insert ns form")
+ "m i F" '(clojure-insert-ns-form-at-point :wk "Insert ns form at point")
+ "m i r" '(clojure-rename-ns-alias :wk "Rename ns alias")
+ "m i c" '(lsp-clojure-clean-ns :wk "Clean ns form")
+ "m i s" '(clojure-sort-ns :wk "Sort namespaces")
 
+ "m c" '(:ignore t :wk "Cider")
+ "m c c" '(cider :wk "Start cider")
+ "m c j" '(cider-jack-in :wk "Cider connect")
+ "m c q" '(cider-quit :wk "Cider quit")
+ "m d" '(cider-clojuredocs :wk "Clojure Doc"))
+#+end_src
 *** Guile
 :PROPERTIES:
 :CUSTOM_ID: guile
@@ -850,6 +876,19 @@
 #+RESULTS:
 : [nil 26332 14054 302533 nil elpaca-process-queues nil nil 83000 nil]
 
+**** Раскладка
+:PROPERTIES:
+:CUSTOM_ID: раскладка-2
+:END:
+#+begin_src emacs-lisp
+(general-define-key
+ :states 'normal
+ :keymaps '(janet-mode-map janet-ts-mode-map)
+ :prefix "SPC"
+ "m" '(:ignore t :wk "Janet commands")
+ "m a" '(ajrepl :wk "Start ajrepl")
+ )
+#+end_src
 ** Nix-Mode
 :PROPERTIES:
 :CUSTOM_ID: nix-mode
@@ -932,10 +971,14 @@
 :CUSTOM_ID: treesitter-auto
 :END:
 #+begin_src emacs-lisp
-;; (use-package treesit-auto
-;;   :config
-;;   (global-treesit-auto-mode))
+(use-package treesit-auto
+  :config
+  (global-treesit-auto-mode))
 #+end_src
+
+#+RESULTS:
+: [nil 26345 25834 305414 nil elpaca-process-queues nil nil 231000 nil]
+
 **** Treesitter
 :PROPERTIES:
 :CUSTOM_ID: treesitter-0
