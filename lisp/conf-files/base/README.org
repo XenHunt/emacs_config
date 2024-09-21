@@ -257,7 +257,7 @@
     "f" '(:ignore t :wk "Files")
     "." '(find-file :wk "Find File")
     "f C" '((lambda () (interactive) (find-file "~/.emacs.d/")) :wk "Find files in config folder")
-    "f c" '((lambda () (interactive) (find-file "~/.emacs.d/conf-files/")) :wk "Edit config file")
+    "f c" '((lambda () (interactive) (find-file "~/.emacs.d/lisp/conf-files/")) :wk "Edit config file")
     "f r" '(consult-recent-file :wk "Find recent file")
     )
 
