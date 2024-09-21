@@ -1,6 +1,6 @@
 (setq user-emacs-directory "~/.emacs.d/")
 
-(add-to-list 'load-path "~/.emacs.d")
+(add-to-list 'load-path "~/.emacs.d/lisp")
 
 
 (require 'startup-config)
@@ -12,6 +12,41 @@
  '(codeium/metadata/api_key "94d3967e-4391-4209-942d-e1e03ff7629d")
  '(custom-safe-themes
    '("34cf3305b35e3a8132a0b1bdf2c67623bc2cb05b125f8d7d26bd51fd16d547ec" default))
+ '(ibuffer-saved-filter-groups nil)
+ '(ibuffer-saved-filters
+   '(("programming"
+      (or
+       (derived-mode . prog-mode)
+       (mode . ess-mode)
+       (mode . compilation-mode)))
+     ("text document"
+      (and
+       (derived-mode . text-mode)
+       (not
+        (starred-name))))
+     ("TeX"
+      (or
+       (derived-mode . tex-mode)
+       (mode . latex-mode)
+       (mode . context-mode)
+       (mode . ams-tex-mode)
+       (mode . bibtex-mode)))
+     ("web"
+      (or
+       (derived-mode . sgml-mode)
+       (derived-mode . css-mode)
+       (mode . javascript-mode)
+       (mode . js2-mode)
+       (mode . scss-mode)
+       (derived-mode . haml-mode)
+       (mode . sass-mode)))
+     ("gnus"
+      (or
+       (mode . message-mode)
+       (mode . mail-mode)
+       (mode . gnus-group-mode)
+       (mode . gnus-summary-mode)
+       (mode . gnus-article-mode)))))
  '(indent-tabs-mode nil)
  '(org-safe-remote-resources
    '("\\`https://fniessen\\.github\\.io/org-html-themes/org/theme-readtheorg\\.setup\\'"))

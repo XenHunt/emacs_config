@@ -14,7 +14,6 @@
 - [[#elpaca-fixes][Elpaca Fixes]]
   - [[#closql][Closql]]
   - [[#jsonrpc][Jsonrpc]]
-- [[#benchmark][Benchmark]]
 - [[#startup-time-boost][Startup time boost]]
 - [[#alias-for-yesno][Alias for yes/no]]
 - [[#emacs][Emacs]]
@@ -130,17 +129,6 @@
 (use-package jsonrpc
   :ensure (jsonrpc :depth 1)
   :defer t)
-#+end_src
-* Benchmark
-:PROPERTIES:
-:CUSTOM_ID: benchmark
-:END:
-#+begin_src emacs-lisp
-(use-package benchmark-init
-  :ensure t
-  :config
-  ;; To disable collection of benchmark data after init is done.
-  (add-hook 'after-init-hook 'benchmark-init/deactivate))
 #+end_src
 * Startup time boost
 :PROPERTIES:
@@ -318,6 +306,7 @@
     "h v" '(helpful-variable :wk "Describe variable")
     "h ." '(helpful-at-point :wk "Help at point")
     "h m" '(helpful-macro :wk "Describe macro")
+    "h e" '(elpaca-manager :WK "Elpaca manager")
     "h M" '(describe-mode :wk "Describe mode")
     "h p" '(describe-package :wk "Describe package")
     "h k" '(describe-key :wk "Describe key")
@@ -444,7 +433,10 @@
                                     docker
  				    dired
  				    dired-sidebar
+                                    disk-usage
                                     (image image-mode)
+                                    daemons
+                                    cider
                                     image+
                                     image-dired
 				    devdocs
@@ -454,6 +446,7 @@
  				    minibuffer
  				    sh-script
  				    compile
+                                    helpful
  				    bookmark
  				    magit
  				    magit-todos
@@ -466,6 +459,8 @@
  				    corfu
  				    consult
  				    vertico
+                                    guix
+                                   bufler 
 				    embark
 				    which-key
 				    (pdf pdf-view)
@@ -693,11 +688,12 @@
 :END:
 #+begin_src emacs-lisp
 (use-package exec-path-from-shell
-  :custom
-  (exec-path-from-shell-arguments '("-l"))
+  ;; :custom
+  ;; (exec-path-from-shell-arguments '("-l"))
   :config
-  (when (daemonp)
-    (exec-path-from-shell-initialize))
+  ;; (when (daemonp)
+    (exec-path-from-shell-initialize)
+    ;; )
   )
 #+end_src
 * Editor-Config 
@@ -917,10 +913,16 @@
 :CUSTOM_ID: tramp
 :END:
 #+begin_src emacs-lisp
-(require 'tramp)
-(use-package ssh)
-(setq tramp-default-method "ssh"
-      tramp-verbose 6)
+;; (use-package tramp
+;;   :ensure nil
+;;   :config
+;;   (setq tramp-default-method "ssh"
+;;         tramp-verbose 6)
+;;   )
+
+;; (use-package ssh)
+;; (setq tramp-default-method "ssh"
+;;       tramp-verbose 6)
 #+end_src
 
 ** SSH-Machine
@@ -928,6 +930,12 @@
 :CUSTOM_ID: ssh-machine
 :END:
 #+begin_src emacs-lisp
+;; (use-package tramp-ssh
+;;   :config
+;;   (add-to-list 'tramp-remote-path "/usr/local/sbin")
+;;   (add-to-list 'tramp-remote-path "/opt/java/current/bin")
+;;   (add-to-list 'tramp-remote-path "/opt/gradle/current/bin")
+;;   (add-to-list 'tramp-remote-path "~/bin")))
 ;; (use-package ssh-machine
 ;;   :ensure (ssh-machine :host github :type git :repo "charmitro/emacs-ssh-machines" :branch "master" :main "init-ssh.el" :files ("*.el")))
 #+end_src

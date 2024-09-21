@@ -298,8 +298,8 @@
 (use-package prism
   ;; :elpaca (prism :fetcher github :repo "alphapapa/prism.el")
   :hook (
-	 ((python-mode python-ts-mode) . prism-whitespace-mode)
-	 ((javascript-mode css-mode typescript-mode json-mode yaml-mode html-mode markdown-mode  latex-mode bash-mode scheme-mode clojure-mode janet-mode janet-ts-mode) . prism-mode)
+	 ((python-mode python-ts-mode html-mode) . prism-whitespace-mode)
+	 ((javascript-mode css-mode typescript-mode json-mode yaml-mode html-mode markdown-mode  latex-mode bash-mode scheme-mode clojure-mode janet-mode janet-ts-mode ) . prism-mode)
 	 )
   :init
   ;;(message (member 'prism-mode #'emacs-lisp-mode-hook))

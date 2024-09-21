@@ -29,6 +29,7 @@
     - [[#раскладка][Раскладка]]
   - [[#jupyter][Jupyter]]
   - [[#web][WEB]]
+    - [[#vue][Vue]]
     - [[#add-node-modules-path][add-node-modules-path]]
     - [[#js2-xref][JS2-xref]]
     - [[#web-mode][WEB-Mode]]
@@ -178,9 +179,9 @@
    '("ngserver"
      "--stdio"
      "--tsProbeLocations"
-     "/home/berlizoves/.nvm/versions/node/v20.13.1/lib/node_modules/"
+     "/home/berlizoves/.nvm/versions/node/v20.17.0/lib/node_modules/"
      "--ngProbeLocations"
-     "/home/berlizoves/.nvm/versions/node/v20.13.1/lib/node_modules/@angular/language-server/node_modules/"
+     "/home/berlizoves/.nvm/versions/node/v20.17.0/lib/node_modules/@angular/language-server/node_modules/"
      ))
   (lsp-log-io nil) ; ensure this is off when not debugging
   (lsp-completion-provider :none)
@@ -246,6 +247,7 @@
 	 (json-mode . lsp)
 	 (yaml-mode . lsp)
 	 (javascript-mode . lsp)
+	 ;; (vue-mode . lsp)
          (clojure-mode . lsp)
          (clojurescript-mode . lsp)
          (clojurec-mode . lsp)
@@ -351,6 +353,15 @@
 (use-package apheleia
   :ensure t
   :config
+  ;; (setf (alist-get 'prettier apheleia-formatters)
+  ;;       '("apheleia-npx" "prettier"
+  ;;             "--trailing-comma"  "es5"
+  ;;             "--bracket-spacing" "true"
+  ;;             "--single-quote"    "true"
+  ;;             "--semi"            "false"
+  ;;             "--print-width"     "100"
+  ;;             "--tab-width" "4"
+  ;;             file))
   (apheleia-global-mode +1))
 
 #+end_src
@@ -515,6 +526,35 @@
 :PROPERTIES:
 :CUSTOM_ID: web
 :END:
+*** Vue
+:PROPERTIES:
+:CUSTOM_ID: vue
+:END:
+#+begin_src emacs-lisp
+(use-package vue-mode
+  ;; :init
+  ;; (add-to-list 'auto-mode-alist '("\\.vue\\'" . web-mode))
+  :custom (vue-html-tab-width 2)
+  :hook ((vue-mode . lsp))
+  :mode "\\.vue\\'"
+  :config
+  (add-to-list 'apheleia-mode-alist '(vue-mode . prettier))
+  (after! prism
+    (add-to-list 'prism-whitespace-mode-indents '(vue-mode . vue-html-tab-width))))
+;; (use-package vue-ts-mode
+;;   :mode "\\.vue\\'"
+;;   :ensure (vue-ts-mode
+;;            :type git
+;;            :host github
+;;            :repo "8uff3r/vue-ts-mode"
+;;            :files ("*.el"))
+;;   :init
+;;   (add-to-list 'auto-mode-alist '("\\.vue\\'" . web-mode)))
+#+end_src
+
+#+RESULTS:
+: [nil 26348 22970 351351 nil elpaca-process-queues nil nil 477000 nil]
+
 *** add-node-modules-path
 :PROPERTIES:
 :CUSTOM_ID: add-node-modules-path
@@ -548,12 +588,10 @@
 	 ("\\.html\\'" . web-mode)
          ("\\.css\\'" . web-mode)
          ("\\.js\\'" . web-mode)
-	 ;; ("\\.vue\\'" . web-mode) 
-	 ;; ("\\.ts\\'" . web-mode)
 	 )
   :config
-  (add-to-list 'auto-mode-alist '("\\.vue\\'" . web-mode) 'append)
-  :mode "\\.vue\\'"
+  ;; (add-to-list 'auto-mode-alist '("\\.vue\\'" . web-mode) 'append)
+  ;; :mode "\\.vue\\'"
   :hook ((web-mode . lsp-mode))
   :config
   (setq web-mode-markup-indent-offset 2) ; Отступ для HTML и XML
@@ -772,6 +810,7 @@
   (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode))
   )
 #+end_src
+
 ** Lisp
 :PROPERTIES:
 :CUSTOM_ID: lisp
@@ -944,6 +983,7 @@
 	  (cmake . ("https://github.com/uyha/tree-sitter-cmake"))
 	  (go . ("https://github.com/tree-sitter/tree-sitter-go"))
 	  (html . ("https://github.com/tree-sitter/tree-sitter-html"))
+      (vue . ("https://github.com/ikatyang/tree-sitter-vue"))
 	  (javascript . ("https://github.com/tree-sitter/tree-sitter-javascript"))
 	  (json . ("https://github.com/tree-sitter/tree-sitter-json"))
 	  (julia . ("https://github.com/tree-sitter/tree-sitter-julia"))

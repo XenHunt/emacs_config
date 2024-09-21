@@ -55,7 +55,7 @@
 Загрузка базовых скриптов.
 
 #+begin_src emacs-lisp
-(add-to-list 'load-path "~/.emacs.d/scripts/")
+(add-to-list 'load-path "~/.emacs.d/lisp/scripts/")
 (require 'scripts)
 #+end_src
 ** Base
@@ -65,7 +65,7 @@
 
 Это базовая часть конфига, включающая в себя самые базовые вещи (evil-mode, значения по-умолчанию и некоторые другие вещи). Подробнее: [[./base/README.org][README базы]]
 #+begin_src emacs-lisp
-(add-to-list 'load-path "~/.emacs.d/conf-files/base/")
+(add-to-list 'load-path "~/.emacs.d/lisp/conf-files/base/")
 (require 'base)
 #+end_src
 ** Custom
@@ -75,7 +75,7 @@
 
 Эта часть конфига посвященая всяким украшательствам (тема, фонты и другое). Подробнее: [[./custom/README.org][README кастомизации]]
 #+begin_src emacs-lisp
-(add-to-list 'load-path "~/.emacs.d/conf-files/custom/")
+(add-to-list 'load-path "~/.emacs.d/lisp/conf-files/custom/")
 (require 'beauty)
 #+end_src
 ** Org
@@ -86,7 +86,7 @@
 Эта часть посвящена всем расширениям для =org-mode=. Подробнее: [[./org/README.org][README для org]]
 
 #+begin_src emacs-lisp
-(add-to-list 'load-path "~/.emacs.d/conf-files/org/")
+(add-to-list 'load-path "~/.emacs.d/lisp/conf-files/org/")
 (require 'org-mine)
 #+end_src
 ** Other
@@ -97,7 +97,7 @@
 Эта часть посвящена разнообразным вещам, которые не могут быть отнесены к другим модулям. Подробнее: [[./other/README.org][README оставшихся вещей]]
 
 #+begin_src emacs-lisp
-(add-to-list 'load-path "~/.emacs.d/conf-files/other/")
+(add-to-list 'load-path "~/.emacs.d/lisp/conf-files/other/")
 (require 'other)
 #+end_src
 ** Programming
@@ -108,7 +108,7 @@
 Эта часть посвящена всему, что превращает =Emacs= в IDE (lsp, дебаг и т.д.). Подробнее: [[./programming/README.org][README для программирования]]
 
 #+begin_src emacs-lisp
-(add-to-list 'load-path "~/.emacs.d/conf-files/programming/")
+(add-to-list 'load-path "~/.emacs.d/lisp/conf-files/programming/")
 (require 'programming)
 #+end_src
 ** AI
@@ -119,7 +119,7 @@
 Эта часть посвящена добавлению ИИ (=Codeium= и =gptel=) в =Emacs=. Подробнее: [[./ai/README.org][README для ИИ]]
 
 #+begin_src emacs-lisp
-(add-to-list 'load-path "~/.emacs.d/conf-files/ai/")
+(add-to-list 'load-path "~/.emacs.d/lisp/conf-files/ai/")
 (require 'ai)
 #+end_src
 ** Telega
@@ -129,7 +129,7 @@
 
 Эта часть подключает =telega=. Подробнее: [[./telega/README.org][README для telega]].
 #+begin_src emacs-lisp
-(add-to-list 'load-path "~/.emacs.d/conf-files/telega/")
+(add-to-list 'load-path "~/.emacs.d/lisp/conf-files/telega/")
 (require 'telega-package)
 #+end_src
 

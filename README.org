@@ -1,25 +1,12 @@
-#+TITLE:README for my config.
+#+TITLE:README
 #+AUTHOR: Evgeny Berlizov (XenHunt)
 #+DESCRIPTION: XenHunt config README
 #+STARTUP: content
-#+PROPERTY: header-args :tangle startup-config.el
-* Содержание
-:PROPERTIES:
-:TOC:      :include all :depth 100 :force (nothing) :ignore (this) :local (nothing)
-:END:
-:CONTENTS:
-- [[#введение][Введение]]
-- [[#фичи][Фичи]]
-- [[#fast-loading][Fast-Loading]]
-- [[#загрузка-конфига][Загрузка конфига]]
-- [[#thanks][Thanks]]
-:END:
-* Введение
-:PROPERTIES:
-:CUSTOM_ID: введение
-:END:
 
-Это README моего конфига для =Emacs=.
+* Введение
+
+Это мой README моего конфига, чтобы настроить/посмотреть код, нужно перейти по следующей [[./lisp/conf-files/][ссылке]].
+
 * Фичи
 :PROPERTIES:
 :CUSTOM_ID: фичи
@@ -52,35 +39,3 @@
     + CSS;
   + Nix;
 + Telega (not finished)
-* Fast-Loading
-:PROPERTIES:
-:CUSTOM_ID: fast-loading
-:END:
-
-Быстрая загрузка модуля.
-
-#+begin_src emacs-lisp
-;; -*- lexical-binding: t; -*-
-#+end_src
-
-* Загрузка конфига
-:PROPERTIES:
-:CUSTOM_ID: загрузка-конфига
-:END:
-
-Загрузка моего конфига. Подробнее про каждый модуль по [[./conf-files/README.org][ссылке]].
-
-#+begin_src emacs-lisp
-(add-to-list 'load-path "~/.emacs.d/conf-files/")
-(require 'full)
-(provide 'startup-config)
-#+end_src
-
-* Thanks
-:PROPERTIES:
-:CUSTOM_ID: thanks
-:END:
-
-Особая благодарность
-+ DistroTube за его прекрасные видосы посвященные не только Emacs, но Linux в целом: [[https://www.youtube.com/watch?v=d1fgypEiQkE&list=PL5--8gKSku15e8lXf7aLICFmAHQVo0KXX][ссылка]] на плейлист настройки Emacs, [[https://gitlab.com/dwt1/configuring-emacs][ссылка]] на gitlab базового конфига с плейлиста;
-+ Artawower, чей конфиг позволил добавить что-то новое в мой: [[https://gitlab.com/dwt1/configuring-emacs][ссылка]] на конфиг в GitHub.

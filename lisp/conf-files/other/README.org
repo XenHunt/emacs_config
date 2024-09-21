@@ -37,6 +37,10 @@
   - [[#nerd-icons-ibuffer][Nerd-Icons-IBuffer]]
 - [[#jinx][Jinx]]
 - [[#guix][Guix]]
+- [[#leetcode][Leetcode]]
+- [[#disk-usage][Disk-Usage]]
+- [[#daemons][Daemons]]
+- [[#command-log-mode][Command-log-mode]]
 - [[#provide][Provide]]
 :END:
 * Введение
@@ -151,7 +155,8 @@
               ("DEL" . vertico-directory-delete-char)
               ("M-DEL" . vertico-directory-delete-word))
   ;; Tidy shadowed file names
-  :hook (rfn-eshadow-update-overlay . vertico-directory-tidy))
+  :hook (rfn-eshadow-update-overlay . vertico-directory-tidy)
+  )
 ;; Persist history over Emacs restarts. Vertico sorts by history position.
 (use-package vertico-multiform
   :after vertico
@@ -432,7 +437,7 @@
   :no-require t)
 
 (use-package consult-yasnippet
-  :no-require
+  :no-require t
   :after yasnippet
   :after consult)
 #+end_src
@@ -646,8 +651,8 @@
 (use-package jinx
   :custom
   (jinx-languages "ru_RU en_US")
+  (global-jinx-modes '(text-mode))
   :hook ((text-mode ) . jinx-mode )
-  :config
   )
 #+end_src
 
@@ -657,6 +662,38 @@
 :END:
 #+begin_src emacs-lisp
 (use-package guix)
+#+end_src
+
+* Leetcode
+:PROPERTIES:
+:CUSTOM_ID: leetcode
+:END:
+#+begin_src emacs-lisp
+(use-package leetcode)
+#+end_src
+
+* Disk-Usage
+:PROPERTIES:
+:CUSTOM_ID: disk-usage
+:END:
+#+begin_src emacs-lisp
+(use-package disk-usage)
+#+end_src
+
+* Daemons
+:PROPERTIES:
+:CUSTOM_ID: daemons
+:END:
+#+begin_src emacs-lisp
+(use-package daemons)
+#+end_src
+
+* Command-log-mode
+:PROPERTIES:
+:CUSTOM_ID: command-log-mode
+:END:
+#+begin_src emacs-lisp
+(use-package command-log-mode)
 #+end_src
 * Provide
 :PROPERTIES:
