@@ -416,6 +416,7 @@
         org-roam-ui-follow t
         org-roam-ui-update-on-save t
         org-roam-ui-open-on-start t))
+(elpaca-wait)
 #+end_src
 
 #+RESULTS:

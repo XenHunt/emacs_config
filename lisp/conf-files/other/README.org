@@ -695,6 +695,7 @@
 #+begin_src emacs-lisp
 (use-package command-log-mode)
 #+end_src
+
 * Provide
 :PROPERTIES:
 :CUSTOM_ID: provide

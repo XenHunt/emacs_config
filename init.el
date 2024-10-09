@@ -47,6 +47,7 @@
        (mode . gnus-group-mode)
        (mode . gnus-summary-mode)
        (mode . gnus-article-mode)))))
+ '(ignored-local-variable-values '((default-directory . projectile-project-root)))
  '(indent-tabs-mode nil)
  '(org-safe-remote-resources
    '("\\`https://fniessen\\.github\\.io/org-html-themes/org/theme-readtheorg\\.setup\\'"))
