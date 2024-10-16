@@ -243,6 +243,8 @@
   (dashboard-projects-backend 'projectile)
   (dashboard-startup-banner "~/.emacs.d/logo.png")
   :config
+  (defun switch-to-dashboard ()
+    (switch-to-buffer "*dashboard*"))
 
   (add-to-list 'dashboard-item-shortcuts '(books . "b"))
   (add-to-list 'dashboard-item-generators  '(books . my/dashboard-insert-books))
@@ -328,8 +330,27 @@
 :CUSTOM_ID: ligatures
 :END:
 #+begin_src emacs-lisp
-;; (use-package ligature)
+(use-package ligature
+  :config
+  (ligature-set-ligatures 'prog-mode '("--" "---" "==" "===" "!=" "!==" "=!="
+                              "=:=" "=/=" "<=" ">=" "&&" "&&&" "&=" "++" "+++" "***" ";;" "!!"
+                              "??" "???" "?:" "?." "?=" "<:" ":<" ":>" ">:" "<:<" "<>" "<<<" ">>>"
+                              "<<" ">>" "||" "-|" "_|_" "|-" "||-" "|=" "||=" "##" "###" "####"
+                              "#{" "#[" "]#" "#(" "#?" "#_" "#_(" "#:" "#!" "#=" "^=" "<$>" "<$"
+                              "$>" "<+>" "<+" "+>" "<*>" "<*" "*>" "</" "</>" "/>" "<!--" "<#--"
+                              "-->" "->" "->>" "<<-" "<-" "<=<" "=<<" "<<=" "<==" "<=>" "<==>"
+                              "==>" "=>" "=>>" ">=>" ">>=" ">>-" ">-" "-<" "-<<" ">->" "<-<" "<-|"
+                              "<=|" "|=>" "|->" "<->" "<~~" "<~" "<~>" "~~" "~~>" "~>" "~-" "-~"
+                              "~@" "[||]" "|]" "[|" "|}" "{|" "[<" ">]" "|>" "<|" "||>" "<||"
+                              "|||>" "<|||" "<|>" "..." ".." ".=" "..<" ".?" "::" ":::" ":=" "::="
+                              ":?" ":?>" "//" "///" "/*" "*/" "/=" "//=" "/==" "@_" "__" "???"
+                              "<:<" ";;;"))
+  (global-ligature-mode t))
 #+end_src
+
+#+RESULTS:
+: [nil 26384 3261 275682 nil elpaca-process-queues nil nil 171000 nil]
+
 ** Highlight indent
 :PROPERTIES:
 :CUSTOM_ID: highlight-indent

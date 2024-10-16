@@ -471,6 +471,9 @@
   (pdf-tools-install)  ; Standard activation command
   (pdf-loader-install) ; On demand loading, leads to faster startup time
   )
+(use-package saveplace-pdf-view
+  :config
+  (save-place-mode 1))
 #+end_src
 * Nov-mode
 :PROPERTIES:

@@ -301,7 +301,8 @@
 
   (leader-key
     "h"  '(:ignore t :wk "Help")
-    "h d" '(devdocs-peruse :wk "Devdocs")
+    "h d" '(devdocs-lookup :wk "Devdocs current")
+    "h D" '(devdocs-peruse :wk "Devdocs search")
     "h f" '(helpful-function :wk "Describe function")
     "h v" '(helpful-variable :wk "Describe variable")
     "h ." '(helpful-at-point :wk "Help at point")
@@ -744,6 +745,13 @@
   :custom
   (vterm-always-compile-module t)
   :config
+  ;; (defun vterm-spawn (&optional args)
+  ;;   (let ((name (or args "")))
+  ;;     (message name)
+  ;;     (if (and  (not (string-empty-p args)))
+  ;;         (vterm name)
+  ;;       (vterm "Vterm"))))
+  ;; (vterm-spawn)
   (setq shell-file-name "/bin/zsh"
         vterm-max-scrollback 5000)
   (leader-key

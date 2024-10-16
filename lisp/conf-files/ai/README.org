@@ -12,6 +12,7 @@
 - [[#fast-loading][Fast-Loading]]
 - [[#ellama][Ellama]]
 - [[#gptel][Gptel]]
+  - [[#magit-gptcommit][Magit-GPTCommit]]
 - [[#elysium][Elysium]]
 - [[#codeium][Codeium]]
 - [[#consult-omni][Consult-Omni]]
@@ -115,9 +116,34 @@
    gptel-backend (gptel-make-ollama "Ollama"
                    :host "localhost:11434"
                    :stream t
-                   :models '("llama3.1:8b" "deepseek-coder-v2:16b")))
-  (add-to-list 'gptel-directives '(clojure-teacher . "You are a professional programmer-teacher in Clojure. Your task is to write best code with good explaination, answer a questions about the Clojure, do everything to help me master Cloure. Respond concisely."))
-  (add-to-list 'gptel-directives '(org-helper . "You are a helper in writing declartive config for Emacs in Org files. Your task is to describe parts of the config with all your master and writes it. Respond concisely."))
+                   :models '("llama3.1:8b" "deepseek-coder-v2:16b" "qwen2.5:3b")))
+  ;; (add-to-list 'gptel-directives '(clojure-teacher . "You are a professional programmer-teacher in Clojure. Your task is to write best code with good explaination, answer a questions about the Clojure, do everything to help me master Cloure. Respond concisely."))
+  ;; (add-to-list 'gptel-directives '(org-helper . "You are a helper in writing declartive config for Emacs in Org files. Your task is to describe parts of the config with all your master and writes it. Respond concisely."))
+  ;; (add-to-list 'gptel-di)
+  (let ((directives '((clojure-teacher . "Task: You are a Clojure AI Teacher whose task is to guide and educate the user on learning Clojure programming language, providing comprehensive explanations, examples, and step-by-step guidance through various topics including but not limited to basic syntax, functional programming concepts, data structures, higher-order functions, and more.
+
+Your goal is to help users understand complex concepts in a simplified manner, answering questions, addressing doubts, and ensuring the user has a smooth learning experience in Clojure.")
+                     (org-helper . "You are a helper in writing declartive config for Emacs in Org files. Your task is to describe parts of the config with all your master and writes it. Respond concisely.")
+                     (translater . "Task: Translate a given text from English to Russian, preserving its original meaning and context while using proper grammar and spelling in the target language.
+
+Example texts may include short paragraphs, sentences, or even single words. Be mindful of idioms, colloquial expressions, and cultural nuances that might not have direct translations.
+
+*Priority considerations:*
+
+- Accuracy in translating the source text
+- Natural flow and readability in Russian translation
+- Consistency in terminology and vocabulary usage
+
+Assume a general audience familiar with basic English and willing to understand complex sentences. Translate accordingly, taking into account the context and purpose of each text.")
+                     (reteller . "You are a reteller. Your task is to shrink text from context, but it must be still consistent and very understandable.")
+                     (gptel-directive-writer . "Task: You are a specialized assistant tasked with refining the prompts for GPTel directives. Your goal is to enhance the clarity and specificity of these prompts so that AI can perform more efficiently in fulfilling the tasks associated with each directive.
+
+Guidelines:
+1. Receive a name and task description for a specific GPTel directive.
+2. Review and analyze the current prompt format.
+3. Refine the task by adding detailed instructions or clarifications.
+4. Make sure the refined prompt makes clear how to improve AI performance in executing its directive duties."))))
+    (mapc (lambda (x) (add-hook 'gptel-directives x)) directives))
   (leader-key
     "e" '(:ignore t :wk "Gptel")
     "e e" '(gptel :wk "Start/Switch")
@@ -130,8 +156,29 @@
 #+end_src
 
 #+RESULTS:
-: [nil 26334 63911 452257 nil elpaca-process-queues nil nil 756000 nil]
+: [nil 26374 46927 640270 nil elpaca-process-queues nil nil 114000 nil]
 
+** Magit-GPTCommit
+:PROPERTIES:
+:CUSTOM_ID: magit-gptcommit
+:END:
+#+begin_src emacs-lisp
+(use-package magit-gptcommit
+  :after gptel magit
+  :config
+
+  ;; Enable magit-gptcommit-mode to watch staged changes and generate commit message automatically in magit status buffer
+  ;; This mode is optional, you can also use `magit-gptcommit-generate' to generate commit message manually
+  ;; `magit-gptcommit-generate' should only execute on magit status buffer currently
+  ;; (magit-gptcommit-mode 1)
+
+  ;; Add gptcommit transient commands to `magit-commit'
+  ;; Eval (transient-remove-suffix 'magit-commit '(1 -1)) to remove gptcommit transient commands
+  (magit-gptcommit-status-buffer-setup)
+  :bind (:map git-commit-mode-map
+              ("C-c C-g" . magit-gptcommit-commit-accept))
+  )
+#+end_src
 * Elysium
 :PROPERTIES:
 :CUSTOM_ID: elysium
@@ -253,6 +300,8 @@
 (use-package consult-omni
   :ensure (consult-omni :type git :host github :repo "armindarvish/consult-omni" :branch "main" :files (:defaults "sources/*.el"))
   :after consult
+  :custom
+  (consult-omni-gptel-model "llama3.1:8b")
   :config
   ;; Load Sources Core code
   (require 'consult-omni-sources)

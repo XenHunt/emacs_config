@@ -51,6 +51,8 @@
     - [[#yaml][Yaml]]
   - [[#lisp][Lisp]]
     - [[#clojure][Clojure]]
+      - [[#neil][Neil]]
+      - [[#jet][Jet]]
       - [[#раскладка-1][Раскладка]]
     - [[#guile][Guile]]
     - [[#janet][Janet]]
@@ -307,6 +309,7 @@
   (lsp-diagnostics-provider :flymake)
   (lsp-disabled-clients '(eslint))
   (lsp-auto-execute-action nil)
+  (lsp-log-max 250)
   ;; (lsp-keymap-prefix "SPC c l")
   :init
   ;; (evil-define-minor-mode-key 'normal lsp-mode (kbd "SPC c l") lsp-command-map)
@@ -527,7 +530,7 @@
 #+begin_src emacs-lisp
 (use-package lsp-pyright
   :ensure t
-  :hook (python-mode . (lambda ()
+  :hook ((python-mode python-ts-mode) . (lambda ()
 			 (require 'lsp-pyright)
 			 (lsp))))
 #+end_src
@@ -537,7 +540,7 @@
 :END:
 #+begin_src emacs-lisp
 (use-package pipenv
-  :hook (python-mode . pipenv-mode)
+  :hook ((python-mode python-ts-mode) . pipenv-mode)
   :init
   (setq
    pipenv-projectile-after-switch-function
@@ -995,6 +998,7 @@
   :config
   (setq org-babel-clojure-backend 'cider))
 (use-package cider-eval-sexp-fu)
+(use-package flycheck-clj-kondo)
 (use-package clojure-mode)
 (use-package clojure-ts-mode
   :after clojure-mode
@@ -1009,6 +1013,7 @@
 
     ;; (add-hook 'before-save-hook 'gofmt-before-save)
     ;; (setq-local tab-width 4)
+    (require 'flycheck-clj-kondo)
     (smartparens-mode)            
     (lsp-deferred)
     )
@@ -1023,6 +1028,20 @@
 
 #+RESULTS:
 : [nil 26346 48426 591037 nil elpaca-process-queues nil nil 283000 nil]
+**** Neil
+:PROPERTIES:
+:CUSTOM_ID: neil
+:END:
+#+begin_src emacs-lisp
+(use-package neil)
+#+end_src
+**** Jet
+:PROPERTIES:
+:CUSTOM_ID: jet
+:END:
+#+begin_src emacs-lisp
+(use-package jet)
+#+end_src
 **** Раскладка
 :PROPERTIES:
 :CUSTOM_ID: раскладка-1
@@ -1030,7 +1049,7 @@
 #+begin_src emacs-lisp
 (general-define-key
  :states 'normal
- :keymaps 'clojure-mode-map
+ :keymaps '(clojure-mode-map clojure-ts-mode-map)
  :prefix "SPC"
  "m" '(:ignore t :wk "Clojure commands")
  "m i" '(:ignore t :wk "Imports")
@@ -1043,9 +1062,16 @@
 
  "m c" '(:ignore t :wk "Cider")
  "m c c" '(cider :wk "Start cider")
+ "m c r" '(cider-run :wk "Run -main")
  "m c j" '(cider-jack-in :wk "Cider connect")
  "m c q" '(cider-quit :wk "Cider quit")
- "m d" '(cider-clojuredocs :wk "Clojure Doc"))
+ "m d" '(cider-clojuredocs :wk "Clojure Doc")
+ "m e" '(:ignore t :wk "Evaluate")
+ "m e r" '(cider-eval-region :wk "Region")
+ "m e e" '(cider-eval-sexp-at-point :wk "Sexp at point")
+ "m e l" '(cider-eval-list-at-point :wk "List")
+ "m e f" '(cider-eval-file :wk "File")
+ "m e b" '(cider-eval-buffer :wk "Buffer"))
 #+end_src
 *** Guile
 :PROPERTIES:
@@ -1194,10 +1220,14 @@
 	  (toml . ("https://github.com/tree-sitter/tree-sitter-toml"))
 	  (zig . ("https://github.com/GrayJack/tree-sitter-zig"))
       (janet-simple . ("https://github.com/sogaiu/tree-sitter-janet-simple"))))
-  (when (not (treesit-language-available-p 'janet-simple))
-    (treesit-install-language-grammar 'janet-simple))
-  (when (not (treesit-language-available-p 'go))
-    (treesit-install-language-grammar 'go))
+  ;; (when (not (treesit-language-available-p 'janet-simple))
+  ;;   (treesit-install-language-grammar 'janet-simple))
+  ;; (when (not (treesit-language-available-p 'go))
+  ;;   (treesit-install-language-grammar 'go))
+  (let ((tree-langs '(janet-simple python clojure typescript tsx make css html json yaml vue bash)))
+    (mapc (lambda [x] (unles (treesit-language-available-p x)
+                             (treesit-install-language-grammar x)))
+          tree-langs))
   )
 #+end_src
 
