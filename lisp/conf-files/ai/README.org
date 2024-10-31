@@ -13,7 +13,9 @@
 - [[#ellama][Ellama]]
 - [[#gptel][Gptel]]
   - [[#magit-gptcommit][Magit-GPTCommit]]
-- [[#elysium][Elysium]]
+  - [[#elysium][Elysium]]
+  - [[#evedel][Evedel]]
+  - [[#corsair][Corsair]]
 - [[#codeium][Codeium]]
 - [[#consult-omni][Consult-Omni]]
 - [[#provide][Provide]]
@@ -123,20 +125,34 @@
   (let ((directives '((clojure-teacher . "Task: You are a Clojure AI Teacher whose task is to guide and educate the user on learning Clojure programming language, providing comprehensive explanations, examples, and step-by-step guidance through various topics including but not limited to basic syntax, functional programming concepts, data structures, higher-order functions, and more.
 
 Your goal is to help users understand complex concepts in a simplified manner, answering questions, addressing doubts, and ensuring the user has a smooth learning experience in Clojure.")
-                     (org-helper . "You are a helper in writing declartive config for Emacs in Org files. Your task is to describe parts of the config with all your master and writes it. Respond concisely.")
-                     (translater . "Task: Translate a given text from English to Russian, preserving its original meaning and context while using proper grammar and spelling in the target language.
+		      (code-commentary-generator . "You are a programming commentator. Generate commentaries for provided code blocks in various programming languages. Each commentary should:
+
+- Be concise (max 2-3 sentences)
+- Focus on the core functionality and logic of the code
+- Use precise language to avoid ambiguity or confusion
+- Consider language-specific features and idioms when applicable
+
+Provide clear explanations for:
+
+- Loops (e.g., while loops, for loops) that highlight iteration logic and termination conditions
+- Conditional statements (e.g., if-else statements) that clarify branching logic and evaluation criteria
+- Functions or methods that detail input parameters, return values, and any notable complexities
+
+Use a neutral tone and avoid overly technical jargon. Ensure commentaries are self-contained and do not require additional context to understand.")
+                      (org-helper . "You are a helper in writing declartive config for Emacs in Org files. Your task is to describe parts of the config with all your master and writes it. Respond concisely.")
+                      (translater . "Task: Translate a given text from English to Russian, preserving its original meaning and context while using proper grammar and spelling in the target language.
 
 Example texts may include short paragraphs, sentences, or even single words. Be mindful of idioms, colloquial expressions, and cultural nuances that might not have direct translations.
 
-*Priority considerations:*
+,*Priority considerations:*
 
 - Accuracy in translating the source text
 - Natural flow and readability in Russian translation
 - Consistency in terminology and vocabulary usage
 
 Assume a general audience familiar with basic English and willing to understand complex sentences. Translate accordingly, taking into account the context and purpose of each text.")
-                     (reteller . "You are a reteller. Your task is to shrink text from context, but it must be still consistent and very understandable.")
-                     (gptel-directive-writer . "Task: You are a specialized assistant tasked with refining the prompts for GPTel directives. Your goal is to enhance the clarity and specificity of these prompts so that AI can perform more efficiently in fulfilling the tasks associated with each directive.
+                      (reteller . "You are a reteller. Your task is to shrink text from context, but it must be still consistent and very understandable.")
+                      (gptel-directive-writer . "Task: You are a specialized assistant tasked with refining the prompts for GPTel directives. Your goal is to enhance the clarity and specificity of these prompts so that AI can perform more efficiently in fulfilling the tasks associated with each directive.
 
 Guidelines:
 1. Receive a name and task description for a specific GPTel directive.
@@ -145,18 +161,18 @@ Guidelines:
 4. Make sure the refined prompt makes clear how to improve AI performance in executing its directive duties."))))
     (mapc (lambda (x) (add-hook 'gptel-directives x)) directives))
   (leader-key
-    "e" '(:ignore t :wk "Gptel")
-    "e e" '(gptel :wk "Start/Switch")
-    "e c" '(gptel-add :wk "Add/Remove regions of buffers from context")
-    "e f" '(gptel-add-file :wk "Add file")
-    "e m" '(gptel-menu :wk "Confuguration menu")
-    "e s" '(gptel-send :wk "Send")
-    "e a" '(gptel-abort :wk "Abort")))
+    "e g" '(:ignore t :wk "Gptel")
+    "e gg" '(gptel :wk "Start/Switch")
+    "e gc" '(gptel-add :wk "Add/Remove regions of buffers from context")
+    "e gf" '(gptel-add-file :wk "Add file")
+    "e gm" '(gptel-menu :wk "Confuguration menu")
+    "e gs" '(gptel-send :wk "Send")
+    "e ga" '(gptel-abort :wk "Abort")))
 
 #+end_src
 
 #+RESULTS:
-: [nil 26374 46927 640270 nil elpaca-process-queues nil nil 114000 nil]
+: [nil 26403 13421 488387 nil elpaca-process-queues nil nil 716000 nil]
 
 ** Magit-GPTCommit
 :PROPERTIES:
@@ -164,6 +180,20 @@ Guidelines:
 :END:
 #+begin_src emacs-lisp
 (use-package magit-gptcommit
+  :ensure (magit-gptcommit
+           :type git
+           :host github
+           :branch "gptel"
+           :repo "douo/magit-gptcommit"
+           :files ("*.el" "*.el.in" "dir" "*.info"
+                   "*.texi" "*.texinfo" "doc/dir"
+                   "doc/*.info" "doc/*.texi"
+                   "doc/*.texinfo" "lisp/*.el" "docs/dir"
+                   "docs/*.info" "docs/*.texi"
+                   "docs/*.texinfo" (:exclude
+                                     ".dir-locals.el" "test.el" "tests.el"
+                                     "*-test.el" "*-tests.el" "LICENSE"
+                                     "README*" "*-pkg.el")))
   :after gptel magit
   :config
 
@@ -179,22 +209,119 @@ Guidelines:
               ("C-c C-g" . magit-gptcommit-commit-accept))
   )
 #+end_src
-* Elysium
+** Elysium
 :PROPERTIES:
 :CUSTOM_ID: elysium
 :END:
 #+begin_src emacs-lisp
 (use-package elysium
   :ensure (:host github :repo "lanceberge/elysium")
+  :after gptel
+  ;; :bind
   :custom
   ;; Below are the default values
   (elysium-window-size 0.33) ; The elysium buffer will be 1/3 your screen
-  (elysium-window-style 'vertical))
+  (elysium-window-style 'vertical)
+  :config
+  (leader-key
+    "ee" '(:ignore t :wk "Elysium")
+    "e ee" '(elysium-query :wk "Query")
+    "e et" '(elysium-toggle-window :wk "Toggle window")))
 (use-package smerge-mode
   :ensure nil
   :hook
-  (prog-mode . smerge-mode))
+  (prog-mode . smerge-mode)
+  :config
+  (leader-key
+    "e eu" '(smerge-keep-upper :wk "Kepp upper")
+    "e el" '(smerge-keep-lower :wk "Keep lower")
+    "e ec" '(smerge-keep-current :wk "Keep current")))
 #+end_src
+** Evedel
+:PROPERTIES:
+:CUSTOM_ID: evedel
+:END:
+#+begin_src emacs-lisp
+;; (use-package evedel
+;;   :ensure (evedel :host github :repo "daedsidog/evedel" :branch "master" :files ("*.el"))
+;;   :config
+
+;;   (let ((roles '((python-ts-mode . "a Python programmer")
+;;                  (python-mode . "a Python programmer")
+;;                  (clojure-mode . "a Clojure programmer")
+;;                  (clojure-ts-mode . "a Clojure programmer")
+;;                  (vue-mode . "a Vue programmer")
+;;                  (vue-ts-mode . "a Vue programmer")
+;;                  (typescript-mode . "a Typescript programmer")
+;;                  (typescript-ts-mode . "a Typescript programmer"))))
+;;     (mapc (lambda (x) (add-to-list 'evedel-descriptive-mode-roles x)) roles))
+  
+;;   (general-define-key
+;;    ;; :definer 'minor-mode
+;;    :states 'normal
+;;    :keymaps '(global-map)
+;;    :prefix "SPC e"
+;;    "e" '(:ignore t :wk "Evedel")
+;;    "e D" '(evedel-delete-all-instructions :wk "Delete All")
+
+;;    ;; Instructions
+;;    "e i" '(:ignore t :wk "Instructions")
+;;    "e i n" '(evedel-next-instruction :wk "Next")
+;;    "e i p" '(evedel-previous-instruction :wk "Previous")
+;;    "e i d" '(evedel-delete-instructions :wk "Delete (point/region)")
+;;    "e i s" '(evedel-save-instructions :wk "Save")
+;;    "e i l" '(evedel-load-instructions :wk "Load")
+
+;;    ;; Directives
+;;    "e d" '(:ignore t :wk "Directive")
+;;    "e d c" '(evedel-create-directive :wk "Create")
+;;    "e d n" '(evedel-next-directive :wk "Next")
+;;    "e d p" '(evedel-previous-directive :wk "Previous")
+;;    "e d m" '(evedel-modify-directive :wk "Modify")
+
+;;    ;; References
+;;    "e r" '(:ignore t :wk "References")
+;;    "e r n" '(evedel-next-reference :wk "Next")
+;;    "e r p" '(evedel-previous-reference :wk "Previous")
+;;    "e r c" '(evedel-create-reference :wk "Create")
+;;    "e r m" '(evedel-modify-reference-commentary :wk "Modify commentary")
+   
+;;    ;; Tags
+;;    "e t" '(:ignore t :wk "Tags")
+;;    "e t a" '(evedel-add-tags :wk "Add")
+;;    "e t d" '(evedel-remove-tags :wk "Delete")
+;;    "e t q" '(evedel-modify-directive-tag-query :wk "Query")
+
+;;    ;; Prompt
+;;    "e p" '(:ignore t :wk "Prompt")
+;;    "e p p" '(evedel-process-directives :wk "Send")
+;;    "e p P" '(evedel-preview-directive-prompt :wk "Preview")
+;;    ))
+#+end_src
+
+#+RESULTS:
+: [nil 26384 53875 277358 nil elpaca-process-queues nil nil 857000 nil]
+
+** Corsair
+:PROPERTIES:
+:CUSTOM_ID: corsair
+:END:
+#+begin_src emacs-lisp
+(use-package corsair
+  :after gptel
+  :config
+  (leader-key
+    "e c" '(:ignore t :wk "Corsair")
+    "e cn" '(corsair-accumulate-file-name :wk "This file name")
+    "e cc" '(corsair-accumulate-file-path-and-contents :wk "Append file or folder")
+    "e cC" '(corsair-accumulate-selected-text :wk "Selected text")
+    "e cs" '(corsair-open-chat-buffer :wk "Switch/open to chat")
+    "e ci" '(corsair-insert-file-or-folder-contents :wk "Insert file or folder")))
+#+end_src
+
+#+RESULTS:
+: [nil 26403 11332 772728 nil elpaca-process-queues nil nil 982000 nil]
+
 * Codeium 
 :PROPERTIES:
 :CUSTOM_ID: codeium
@@ -225,8 +352,9 @@ Guidelines:
   ;; codeium-completion-at-point is autoloaded, but you can
   ;; optionally set a timer, which might speed up things as the
   ;; codeium local language server takes ~0.2s to start up
-  (add-hook 'emacs-startup-hook
-            (lambda () (run-with-timer 0.4 nil #'codeium-init)))
+
+  ;; (add-hook 'emacs-startup-hook
+  ;;           (lambda () (run-with-timer 0.4 nil #'codeium-init)))
 
   ;; :defer t ;; lazy loading, if you want
   :config

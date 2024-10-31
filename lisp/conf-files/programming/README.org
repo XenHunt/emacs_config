@@ -196,7 +196,15 @@
 :END:
 #+begin_src emacs-lisp
 (elpaca-wait)
-(use-package magit)
+(use-package magit
+  :config
+  (general-define-key
+   ;; :definer 'minor-mode
+   :states 'normal
+   :keymaps '(magit-diff-mode-map magit-status-mode-map)
+   ;; :prefix "SPC"
+   "]]" '(magit-next-line :wk "magit-next-line")
+   "[[" '(magit-previous-line :wk "magit-previous-line")))
 #+end_src
 ** Magit-TODOS
 :PROPERTIES:
@@ -694,6 +702,15 @@
   ;; (org-babel-jupyter-override-src-block "python")
   ;; (org-babel-jupyter-override-src-block "R")
   )
+(use-package ein
+  :config
+  (general-define-key
+   :states 'normal
+   :keymaps 'ein:notebook-mode-map
+   :prefix "SPC"
+   ;; "m a" '(aangit-menu :wk "Aangit")
+   )
+  )
 #+end_src
 
 ** WEB
@@ -762,11 +779,14 @@
 	 ("\\.html\\'" . web-mode)
          ("\\.css\\'" . web-mode)
          ("\\.js\\'" . web-mode)
+         ("\\.djhtml\\'" . web-mode)
 	 )
   :config
   ;; (add-to-list 'auto-mode-alist '("\\.vue\\'" . web-mode) 'append)
   ;; :mode "\\.vue\\'"
-  :hook ((web-mode . lsp-mode))
+  :hook ((web-mode . lsp-deferred))
+  ;; :custom
+  ;; (web-mode-engines-alist '(("django" . "\\.\\(djhtml\\|tmpl\\|dtl\\|liquid\\|j2\\|njk\\)\\'")))
   :config
   (setq web-mode-markup-indent-offset 2) ; Отступ для HTML и XML
   (setq web-mode-css-indent-offset 2)    ; Отступ для CSS
@@ -1225,7 +1245,7 @@
   ;; (when (not (treesit-language-available-p 'go))
   ;;   (treesit-install-language-grammar 'go))
   (let ((tree-langs '(janet-simple python clojure typescript tsx make css html json yaml vue bash)))
-    (mapc (lambda [x] (unles (treesit-language-available-p x)
+    (mapc (lambda [x] (unless (treesit-language-available-p x)
                              (treesit-install-language-grammar x)))
           tree-langs))
   )

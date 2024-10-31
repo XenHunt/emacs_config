@@ -156,6 +156,8 @@
 #+begin_src emacs-lisp
 (use-package emacs
   :ensure nil
+  :custom
+  (custom-file (concat user-emacs-directory "secrets.el"))
   :config
   (setq gc-cons-threshold 100000000)
   (setq ring-bel-functuin #'ignore)  
@@ -459,6 +461,7 @@
                                     docker
  				    dired
  				    dired-sidebar
+				    doc-view
                                     disk-usage
                                     (image image-mode)
                                     daemons
