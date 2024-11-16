@@ -301,8 +301,10 @@
   ;; :elpaca (prism :fetcher github :repo "alphapapa/prism.el")
   :hook (
 	 ((python-mode python-ts-mode html-mode) . prism-whitespace-mode)
-	 ((javascript-mode css-mode typescript-mode json-mode yaml-mode html-mode markdown-mode  latex-mode bash-mode scheme-mode janet-mode janet-ts-mode go-mode go-ts-mode lisp-mode) . prism-mode)
+	 ((javascript-mode js-ts-mode js-mode js2-mode css-mode typescript-mode json-mode yaml-mode html-mode markdown-mode  latex-mode bash-mode scheme-mode janet-mode janet-ts-mode go-mode go-ts-mode lisp-mode sh-mode bash-ts-mode) . prism-mode)
 	 )
+  :mode
+  (("\\.html\\'" . (lambda () (prism-whitespace-mode) (setq-local prism-whitespace-indent-offset 2))))
   :init
   ;;(message (member 'prism-mode #'emacs-lisp-mode-hook))
   (defun my/set-elisp-prism()

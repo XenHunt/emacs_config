@@ -41,8 +41,14 @@
   (setq telega-use-image t
         telega-emoji-use-image t)
   :config
-  (add-hook 'telega-load-hook 'telega-notifications-mode))
+  (add-hook 'telega-load-hook 'telega-notifications-mode)
+  (let ((libs '(telega-dired-dwim telega-dashboard telega-mnz telega-transient)))
+    (mapc (lambda (x) (require x)) libs))
+  (global-telega-mnz-mode 1))
 #+end_src
+
+#+RESULTS:
+: [nil 26403 17277 313326 nil elpaca-process-queues nil nil 514000 nil]
 
 * Provide
 :PROPERTIES:

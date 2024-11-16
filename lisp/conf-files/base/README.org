@@ -52,6 +52,7 @@
 - [[#projectile][Projectile]]
 - [[#tramp][Tramp]]
   - [[#ssh-machine][SSH-Machine]]
+- [[#pass][Pass]]
 - [[#provide][Provide]]
 :END:
 * Введение
@@ -169,6 +170,8 @@
                         (file-truename "~/.Trash")))
 
   (setq backup-directory-alist '((".*" . "~/.Trash/files/")))
+  (after! auth-source
+    (auth-source-pass-enable))
   (setq read-process-output-max (* 1024 1024 10)))
   (elpaca-wait)
 
@@ -184,7 +187,7 @@
   :config
   (general-auto-unbind-keys)
   (general-evil-setup)
-
+  (general-auto-unbind-keys)
   ;; (general-define-key
   ;;  :keymaps '(normal insert visual emacs )
   ;;  :prefix "SPC"
@@ -240,6 +243,13 @@
     "s" '(:ignore t :wk "Search")
     "s b" '(consult-buffer :wk "Buffer")
     "s i" '(consult-imenu :wk "Imenu")
+    "s f" '(consult-omni-fd :wk "File")
+    "s a" '(consult-omni-apps :wk "Apps")
+    "s t" '(consult-omni-ripgrep :wk "Text")
+    "s T" '(consult-omni-ripgrep-all :wk "Text (even pdf, archives and etc)")
+    "s g" '(consult-omni-git-grep :wk "Git Files")
+    "s G" '(consult-omni-github :wk "Github repos")
+    "s p" '(pass :wk "Password")
     ;; "s "
     )
   (leader-key
@@ -248,6 +258,7 @@
     "f C" '((lambda () (interactive) (find-file "~/.emacs.d/")) :wk "Find files in config folder")
     "f c" '((lambda () (interactive) (find-file "~/.emacs.d/lisp/conf-files/")) :wk "Edit config file")
     "f r" '(consult-recent-file :wk "Find recent file")
+    ;; "f f" '(consult-omni-fd :wk "Find file (consult)")
     )
 
   (general-define-key
@@ -305,11 +316,15 @@
     "h"  '(:ignore t :wk "Help")
     "h d" '(devdocs-lookup :wk "Devdocs current")
     "h D" '(devdocs-peruse :wk "Devdocs search")
+    "h e" '(:ignore t :wk "Evaluate")
+    "h e e" '(eval-expression :wk "Expression")
+    "h e r" '(eval-region :wk "Region")
+    "h e b" '(eval-buffer :wk "Buffer")
     "h f" '(helpful-function :wk "Describe function")
     "h v" '(helpful-variable :wk "Describe variable")
     "h ." '(helpful-at-point :wk "Help at point")
     "h m" '(helpful-macro :wk "Describe macro")
-    "h e" '(elpaca-manager :WK "Elpaca manager")
+    "h E" '(elpaca-manager :WK "Elpaca manager")
     "h M" '(describe-mode :wk "Describe mode")
     "h p" '(describe-package :wk "Describe package")
     "h k" '(describe-key :wk "Describe key")
@@ -461,6 +476,7 @@
                                     docker
  				    dired
  				    dired-sidebar
+				    pass
 				    doc-view
                                     disk-usage
                                     (image image-mode)
@@ -489,7 +505,7 @@
  				    consult
  				    vertico
                                     guix
-                                   bufler 
+                                    bufler 
 				    embark
 				    which-key
 				    (pdf pdf-view)
@@ -623,7 +639,7 @@
 (use-package evil-mc
   :after evil
   :config
-  (evil-mc-mode  1) ;; enable
+  (global-evil-mc-mode  1) ;; enable
   )
 #+end_src
 ** Evil-Googles
@@ -675,8 +691,17 @@
 :END:
 #+begin_src emacs-lisp
 (use-package evil-args
+  ;; :hook ((emacs-lisp-mode clojure-ts-mode clojure-mode scheme-mode) #'setup-evil-args-for-lisp)
+  ;; :init
+  ;; (defun my/evil-args-hook ()
+  ;;   (setq-local evil-args-delimiters " "))
+  ;; (defun my/setup-evil-args-lisp ()
+  ;;   (let ((hooks '('emacs-lisp-mode-hook 'clojure-ts-mode-hook 'clojure-mode-hook 'scheme-mode-hook)))
+  ;;     (mapcar (lambda (x)
+  ;; 		(unless (member #'my/evil-args-hook x)
+  ;; 		  (add-hook #'my/evil-args-hook x))) hooks)))
   :config
-
+  ;; (add-hook 'server-after-make-frame-hook #'my/setup-evil-args-lisp)
   ;; bind evil-args text objects
   (define-key evil-inner-text-objects-map "a" 'evil-inner-arg)
   (define-key evil-outer-text-objects-map "a" 'evil-outer-arg)
@@ -691,6 +716,10 @@
   (define-key evil-normal-state-map "K" 'evil-jump-out-args)
   )
 #+end_src
+
+#+RESULTS:
+: [nil 26421 43836 28126 nil elpaca-process-queues nil nil 955000 nil]
+
 ** Evil-Org
 :PROPERTIES:
 :CUSTOM_ID: evil-org
@@ -748,13 +777,14 @@
   :custom
   (vterm-always-compile-module t)
   :config
-  ;; (defun vterm-spawn (&optional args)
-  ;;   (let ((name (or args "")))
-  ;;     (message name)
-  ;;     (if (and  (not (string-empty-p args)))
-  ;;         (vterm name)
-  ;;       (vterm "Vterm"))))
+  (defun vterm-spawn (&optional args)
+    (let ((name (or args "")))
+      ;; (message name)
+      (if (not (string-empty-p name))
+          (vterm name)
+        (vterm "Vterm"))))
   ;; (vterm-spawn)
+  ;; (dired "")
   (setq shell-file-name "/bin/zsh"
         vterm-max-scrollback 5000)
   (leader-key
@@ -789,7 +819,7 @@
                  ;;(dedicated . t) ;dedicated is supported in emacs27
                  (reusable-frames . visible)
                  (window-height . 0.3))))
-#+end_src
+  #+end_src
 * Which-key
 :PROPERTIES:
 :CUSTOM_ID: which-key
@@ -828,6 +858,10 @@
   :ensure nil
   :config
 
+  (defun dired-spawn (&optional args)
+    (let ((path (or args "")))
+      (dired path)))
+  ;; (dired-spawn)
   (setq delete-by-moving-to-trash 1
 	trash-directory "/home/berlizoves/.Trash/files/")
   (setq
@@ -839,9 +873,9 @@
    )
 
   (add-hook 'dired-mode-hook (lambda ()
-                                 (when (file-remote-p dired-directory)
-                                   (setq-local dired-listing-switches "-aglhF"
-                                               dired-actual-switches "-aglhF"))))
+                               (when (file-remote-p dired-directory)
+                                 (setq-local dired-listing-switches "-aglhF"
+                                             dired-actual-switches "-aglhF"))))
   (setq  dired-use-ls-dired nil)
   (setq  image-dired-dir (concat user-cache-dir "image-dired/")
 	 image-dired-db-file (concat image-dired-dir "db.el")
@@ -942,6 +976,8 @@
 :END:
 #+begin_src emacs-lisp
 (use-package projectile
+  :custom
+  (projectile-ignore-projects '("~/.emacs.d/" "~/.emacs.d/*" "~/"))
   :config
   (leader-key
     "p" '(:ignore t :wk "Project"))
@@ -987,6 +1023,22 @@
 ;; (use-package ssh-machine
 ;;   :ensure (ssh-machine :host github :type git :repo "charmitro/emacs-ssh-machines" :branch "master" :main "init-ssh.el" :files ("*.el")))
 #+end_src
+* Pass
+:PROPERTIES:
+:CUSTOM_ID: pass
+:END:
+#+begin_src emacs-lisp
+(use-package password-store
+  :custom
+  (password-store-password-length 45))
+(use-package pass)
+;; (use-package password-store-menu
+;;   :config (password-store-menu-enable))
+;; (general-auto-unbind-keys)
+#+end_src
+
+#+RESULTS:
+: [nil 26423 21558 891351 nil elpaca-process-queues nil nil 273000 nil]
 
 * Provide
 :PROPERTIES:

@@ -19,6 +19,7 @@
   - [[#magit][Magit]]
   - [[#magit-todos][Magit-TODOS]]
   - [[#git-modes][Git-Modes]]
+  - [[#consult-gh][Consult-gh]]
 - [[#dash-docs][Dash-Docs]]
 - [[#direnv][Direnv]]
 - [[#programming-language][Programming Language]]
@@ -49,6 +50,7 @@
     - [[#multi-web-mode][Multi-Web-Mode]]
     - [[#json][JSON]]
     - [[#yaml][Yaml]]
+    - [[#autorenametag][AutoRenameTag]]
   - [[#lisp][Lisp]]
     - [[#clojure][Clojure]]
       - [[#neil][Neil]]
@@ -223,6 +225,23 @@
 :END:
 #+begin_src emacs-lisp
 (use-package git-modes)
+#+end_src
+** Consult-gh
+:PROPERTIES:
+:CUSTOM_ID: consult-gh
+:END:
+#+begin_src emacs-lisp
+(use-package consult-gh
+  :after consult)
+(use-package consult-gh-embark
+  :after consult-gh
+  :config
+  (consult-gh-embark-mode +1))
+(use-package consult-gh-forge
+  :after consult-gh
+  :config
+  (consult-gh-forge-mode +1))
+(elpaca-wait)
 #+end_src
 * Dash-Docs
 :PROPERTIES:
@@ -492,6 +511,9 @@
   ;;             "--print-width"     "100"
   ;;             "--tab-width" "4"
   ;;             file))
+  (setf (alist-get 'prettier apheleia-formatters)
+        '("aphelia-npx" "prettier" "--stdin-filepath" filepath
+	  (apheleia-formatters-js-indent "--use-tabs" "--tab-width" 2)))
   (apheleia-global-mode +1))
 
 #+end_src
@@ -703,6 +725,7 @@
   ;; (org-babel-jupyter-override-src-block "R")
   )
 (use-package ein
+  :mode "\\.ipynb\\'"
   :config
   (general-define-key
    :states 'normal
@@ -1001,10 +1024,19 @@
 #+begin_src emacs-lisp
 (use-package yaml-mode
   :init
-  (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode))
+  (add-to-list 'auto-mode-alist '("\\.yaml\\'" . yaml-mode))
   )
 #+end_src
 
+*** AutoRenameTag
+:PROPERTIES:
+:CUSTOM_ID: autorenametag
+:END:
+#+begin_src emacs-lisp
+(use-package auto-rename-tag
+  :config
+  (auto-rename-tag-mode t))
+#+end_src
 ** Lisp
 :PROPERTIES:
 :CUSTOM_ID: lisp
@@ -1083,7 +1115,7 @@
  "m c" '(:ignore t :wk "Cider")
  "m c c" '(cider :wk "Start cider")
  "m c r" '(cider-run :wk "Run -main")
- "m c j" '(cider-jack-in :wk "Cider connect")
+ "m c j" '(cider-connect-clj :wk "Cider connect")
  "m c q" '(cider-quit :wk "Cider quit")
  "m d" '(cider-clojuredocs :wk "Clojure Doc")
  "m e" '(:ignore t :wk "Evaluate")
@@ -1098,7 +1130,18 @@
 :CUSTOM_ID: guile
 :END:
 #+begin_src emacs-lisp
-(use-package geiser-guile)
+(use-package geiser-guile
+  :config
+  (general-define-key
+   :states 'normal
+   :keymaps '(scheme-mode-map)
+   :prefix "SPC m"
+   "" '(:ignore t :wk "Scheme commands")
+   ;; "" '(:ignore t :wk "Shell")
+   "s" '(geiser-guile :wk "Start REPL")
+   "a" '(geiser-add-to-load-path :wk "Add to load path")
+   "u" '(geiser-unload :wk "Unload modules")
+   ))
 #+end_src
 
 *** Janet
@@ -1168,6 +1211,7 @@
  "m a" '(ajrepl :wk "Start ajrepl")
  )
 #+end_src
+
 ** Nix-Mode
 :PROPERTIES:
 :CUSTOM_ID: nix-mode
@@ -1244,8 +1288,8 @@
   ;;   (treesit-install-language-grammar 'janet-simple))
   ;; (when (not (treesit-language-available-p 'go))
   ;;   (treesit-install-language-grammar 'go))
-  (let ((tree-langs '(janet-simple python clojure typescript tsx make css html json yaml vue bash)))
-    (mapc (lambda [x] (unless (treesit-language-available-p x)
+  (let ((tree-langs '(janet-simple python clojure typescript tsx make css html json vue bash)))
+    (mapc (lambda (x) (unless (treesit-language-available-p x)
                              (treesit-install-language-grammar x)))
           tree-langs))
   )

@@ -11,6 +11,7 @@
 - [[#введение][Введение]]
 - [[#fast-loading][Fast-Loading]]
 - [[#bufler][Bufler]]
+- [[#activities][Activities]]
 - [[#beacon][Beacon]]
 - [[#completion][Completion]]
   - [[#flycheck][Flycheck]]
@@ -79,6 +80,32 @@
     "TAB w" '(bufler-workspace-frame-set :wk "Set frame")
     )
   )
+#+end_src
+
+* Activities
+:PROPERTIES:
+:CUSTOM_ID: activities
+:END:
+#+begin_src emacs-lisp
+(use-package activities
+  :init
+  (activities-mode)
+  ;; (activities-tabs-mode)
+  ;; Prevent `edebug' default bindings from interfering.
+  (setq edebug-inhibit-emacs-lisp-mode-bindings t)
+  :config
+  (leader-key
+    "TAB" '(:ignore t :wk "Activities")
+    "TAB n" '(activities-new :wk "New")
+    "TAB d" '(activities-define :wk "Define")
+    "TAB a" '(activities-resume :wk "Resume")
+    "TAB s" '(activities-suspend :wk "Suspend")
+    "TAB k" '(activities-kill :wk "Kill")
+    "TAB RET" '(activities-switch :wk "Switch")
+    "TAB b" '(activities-switch-buffer :wk "Switch buffer")
+    "TAB g" '(activities-revert :wk "Revert")
+    "TAB l" '(activities-list :wk "List")
+    ))
 #+end_src
 * Beacon
 :PROPERTIES:

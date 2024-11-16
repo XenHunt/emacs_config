@@ -113,7 +113,7 @@
   :config
 
   (setq
-   gptel-model "deepseek-coder-v2:16b"
+   gptel-model 'deepseek-coder-v2:16b
    gptel-default-mode #'org-mode
    gptel-backend (gptel-make-ollama "Ollama"
                    :host "localhost:11434"
@@ -139,6 +139,17 @@ Provide clear explanations for:
 - Functions or methods that detail input parameters, return values, and any notable complexities
 
 Use a neutral tone and avoid overly technical jargon. Ensure commentaries are self-contained and do not require additional context to understand.")
+		      (explainer . "Task: Your role is to meticulously analyze and break down complex code snippets provided by users. To ensure accuracy and effectiveness in your explanations, follow these guidelines:
+1. *Precision*: Clearly delineate each segment of the code, distinguishing between different functions, variables, or loops as needed.
+2. *Consistency*: Adhere to a consistent structure for all explanations to maintain clarity and ease of understanding. This includes using clear headings and bullet points when necessary.
+3. *Detailed Explanation*: Provide an in-depth explanation that not only covers the functionality but also contextualizes the code within its broader programming environment or project context.
+4. *Engage with Technical Terminology*: Utilize appropriate technical jargon to convey a comprehensive understanding of the code, ensuring users without extensive coding experience can follow your explanations.
+5. *Clarity and Brevity*: Balance complexity with simplicity, aiming to explain as much as possible while keeping explanations accessible to a wide audience.
+6. *User-Centric Approach*: Always consider the user's level of programming expertise when crafting your explanation; adjust difficulty levels accordingly.
+7. *Feedback Integration*: Incorporate feedback from users into future explanations for continuous improvement and better meet their learning needs.
+8. *Attention to Detail*: Ensure that all parts of the code are accounted for in the explanation, including data structures, algorithms, and any dependencies or external factors affecting functionality.
+9. *Engage with Visual Aids if Appropriate*: Use diagrams or flowcharts where appropriate to visually represent processes within the codebase, aiding understanding and retention.
+10. *Review and Revise*: Regularly review explanations for effectiveness and make revisions as necessary to enhance clarity and accuracy over time.")
                       (org-helper . "You are a helper in writing declartive config for Emacs in Org files. Your task is to describe parts of the config with all your master and writes it. Respond concisely.")
                       (translater . "Task: Translate a given text from English to Russian, preserving its original meaning and context while using proper grammar and spelling in the target language.
 
@@ -151,7 +162,29 @@ Example texts may include short paragraphs, sentences, or even single words. Be 
 - Consistency in terminology and vocabulary usage
 
 Assume a general audience familiar with basic English and willing to understand complex sentences. Translate accordingly, taking into account the context and purpose of each text.")
-                      (reteller . "You are a reteller. Your task is to shrink text from context, but it must be still consistent and very understandable.")
+                      (reteller . "You are a reteller. Your task is to succinctly reduce lengthy texts by eliminating non-essential details, abstract concepts, or unnecessary language without sacrificing the core message, tone, or intent of the original text.
+
+,*Key Performance Indicators (KPIs) for Success:*
+
+1. *Meaning preservation*: Retain the essential ideas, themes, and insights from the original text.
+2. *Readability enhancement*: Ensure the rewritten summary is clear, concise, and easy to understand.
+3. *Length reduction*: Achieve a substantial decrease in text length without compromising its core message.
+4. *Clarity and coherence*: Maintain logical flow and proper sentence structure throughout the rewritten text.
+
+,*Guidelines for Refining the Reteller Directive:*
+
+1. Use active voice and present-tense language to enhance readability.
+2. Avoid redundancy by condensing ideas, eliminating repetitive phrases or sentences.
+3. Preserve key terminology and concepts relevant to the original context.
+4. Ensure consistency in style, tone, and format with the original text.
+
+,*Tips for Improving AI Performance:*
+
+1. Provide context-specific training data for the Reteller model to adapt to diverse genres, styles, and domains.
+2. Develop a robust evaluation framework that incorporates KPIs mentioned above.
+3. Regularly fine-tune the model using feedback from human evaluators and quality control processes.
+
+By refining the prompt in this manner, we've clarified the expectations for the AI's performance as a Reteller and provided actionable guidelines to improve its efficiency and effectiveness.")
                       (gptel-directive-writer . "Task: You are a specialized assistant tasked with refining the prompts for GPTel directives. Your goal is to enhance the clarity and specificity of these prompts so that AI can perform more efficiently in fulfilling the tasks associated with each directive.
 
 Guidelines:
@@ -329,6 +362,12 @@ Guidelines:
 #+begin_src emacs-lisp
 (use-package codeium
   :ensure (codeium :host github :repo "Exafunction/codeium.el")
+  ;; :custom
+  ;; (setq codeium/metadata/api_key (auth-source-search
+  ;; 				  :host "codeium"
+  ;; 				  :user "api"
+  ;; 				  :require '(:secret)
+  ;; 				  :secret))
 
   ;; if you use straight
   ;; :straight '(:type git :host github :repo "Exafunction/codeium.el")
@@ -430,6 +469,8 @@ Guidelines:
   :after consult
   :custom
   (consult-omni-gptel-model "llama3.1:8b")
+  (consult-omni-show-preview t)
+  (consult-omni-preview-key "C-o")
   :config
   ;; Load Sources Core code
   (require 'consult-omni-sources)
@@ -440,7 +481,7 @@ Guidelines:
   ;; (require 'consult-omni-elfeed)
   ;; (require 'consult-omni-apps)
   ;; (require 'consult-omni-fd)
-  (setq consult-omni-sources-modules-to-load '(consult-omni-gptel consult-omni-apps consult-omni-fd consult-omni-elfeed ))
+  (setq consult-omni-sources-modules-to-load '(consult-omni-gptel consult-omni-apps consult-omni-fd consult-omni-elfeed consult-omni-ripgrep consult-omni-ripgrep-all consult-omni-gh consult-omni-git-grep))
   (consult-omni-sources-load-modules)
   ;; (setq consult-omni-multi-sources-apps-launcher '("Apps"))
   (setq consult-omni-multi-sources '("Apps"
@@ -449,7 +490,7 @@ Guidelines:
                                      "fd"))
 
   (setq consult-omni-embark-default-term #'vterm)
-  (setq consult-omni-show-preview t)
+  ;; (setq consult-omni-show-preview t)
   
   ;;; Set your shorthand favorite interactive command
   (setq consult-omni-default-interactive-command #'consult-omni-apps))
