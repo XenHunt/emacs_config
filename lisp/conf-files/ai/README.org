@@ -12,6 +12,7 @@
 - [[#fast-loading][Fast-Loading]]
 - [[#ellama][Ellama]]
 - [[#gptel][Gptel]]
+  - [[#gptel-itself][Gptel Itself]]
   - [[#magit-gptcommit][Magit-GPTCommit]]
   - [[#elysium][Elysium]]
   - [[#evedel][Evedel]]
@@ -43,62 +44,62 @@
 :CUSTOM_ID: ellama
 :END:
 #+begin_src emacs-lisp
-(use-package ellama
-  :custom
-  (ellama-keymap-prefix "C-l")
-  (ellama-auto-scroll t)
-  :config
-  ;; setup key bindings
-  ;; (evil-make-overriding-map ellama-keymap)
-  ;; (general-auto-unbind-keys)
-  ;; (leader-key
-  ;;   "l" '(:ignore t :wk "Ellama"))
-  (general-define-key
-   ;; :states 'normal
-   :keymaps 'ellama-keymap
-   :prefix ellama-keymap-prefix
-   "a" '(:ignore t :wk "Ask Ellama")
-   "c" '(:ignore t :wk "Code")
-   "d" '(:ignore t :wk "Define")
-   "i" '(:ignore t :wk "Improve")
-   "m" '(:ignore t :wk "Make")
-   "p" '(:ignore t :wk "Provider")
-   "s" '(:ignore t :wk "Session")
-   "t" '(:ignore t :wk "Translate")
-   "x" '(:ignore t :wk "Context"))
-  ;; (setopt ellama-keymap-prefix "SPC l")
-  ;; language you want ellama to translate to
-  (setopt ellama-language "Russian")
-  ;; could be llm-openai for example
-  (require 'llm-ollama)
-  (setopt ellama-provider
-	  (make-llm-ollama
-	   ;; this model should be pulled to use it
-	   ;; value should be the same as you print in terminal during pull
-	   :chat-model "llama3.1:8b"
-	   ;; :chat-model "llama3:8b"
-	   :embedding-model "nomic-embed-text"
-	   :default-chat-non-standard-params '(("num_ctx" . 8192))))
-  ;; Predefined llm providers for interactive switching.
-  ;; You shouldn't add ollama providers here - it can be selected interactively
-  ;; without it. It is just example.
-  (setopt ellama-providers
-	  '(("llama3.1" . ellama-provider)
-            ("deepseek-coder" . (make-llm-ollama
-				 :chat-model "deepseek-coder-v2:16b"
-				 :embedding-model "deepseek-coder-v2:16b"))))
-  ;; Naming new sessions with llm
-  (setopt ellama-naming-provider
-	  (make-llm-ollama
-	   :chat-model "llama3.1:8b"
-	   :embedding-model "nomic-embed-text"
-	   :default-chat-non-standard-params '(("stop" . ("\n")))))
-  (setopt ellama-naming-scheme 'ellama-generate-name-by-llm)
-  ;; Translation llm provider
-  (setopt ellama-translation-provider (make-llm-ollama
-        			       :chat-model "qwen2.5:3b"
-        			       :embedding-model "qwen2.5:3b"))
-  )
+;; (use-package ellama
+;;   :custom
+;;   (ellama-keymap-prefix "C-l")
+;;   (ellama-auto-scroll t)
+;;   :config
+;;   ;; setup key bindings
+;;   ;; (evil-make-overriding-map ellama-keymap)
+;;   ;; (general-auto-unbind-keys)
+;;   ;; (leader-key
+;;   ;;   "l" '(:ignore t :wk "Ellama"))
+;;   (general-define-key
+;;    ;; :states 'normal
+;;    :keymaps 'ellama-keymap
+;;    :prefix ellama-keymap-prefix
+;;    "a" '(:ignore t :wk "Ask Ellama")
+;;    "c" '(:ignore t :wk "Code")
+;;    "d" '(:ignore t :wk "Define")
+;;    "i" '(:ignore t :wk "Improve")
+;;    "m" '(:ignore t :wk "Make")
+;;    "p" '(:ignore t :wk "Provider")
+;;    "s" '(:ignore t :wk "Session")
+;;    "t" '(:ignore t :wk "Translate")
+;;    "x" '(:ignore t :wk "Context"))
+;;   ;; (setopt ellama-keymap-prefix "SPC l")
+;;   ;; language you want ellama to translate to
+;;   (setopt ellama-language "Russian")
+;;   ;; could be llm-openai for example
+;;   (require 'llm-ollama)
+;;   (setopt ellama-provider
+;; 	  (make-llm-ollama
+;; 	   ;; this model should be pulled to use it
+;; 	   ;; value should be the same as you print in terminal during pull
+;; 	   :chat-model "llama3.1:8b"
+;; 	   ;; :chat-model "llama3:8b"
+;; 	   :embedding-model "nomic-embed-text"
+;; 	   :default-chat-non-standard-params '(("num_ctx" . 8192))))
+;;   ;; Predefined llm providers for interactive switching.
+;;   ;; You shouldn't add ollama providers here - it can be selected interactively
+;;   ;; without it. It is just example.
+;;   (setopt ellama-providers
+;; 	  '(("llama3.1" . ellama-provider)
+;;             ("deepseek-coder" . (make-llm-ollama
+;; 				 :chat-model "deepseek-coder-v2:16b"
+;; 				 :embedding-model "deepseek-coder-v2:16b"))))
+;;   ;; Naming new sessions with llm
+;;   (setopt ellama-naming-provider
+;; 	  (make-llm-ollama
+;; 	   :chat-model "llama3.1:8b"
+;; 	   :embedding-model "nomic-embed-text"
+;; 	   :default-chat-non-standard-params '(("stop" . ("\n")))))
+;;   (setopt ellama-naming-scheme 'ellama-generate-name-by-llm)
+;;   ;; Translation llm provider
+;;   (setopt ellama-translation-provider (make-llm-ollama
+;;         			       :chat-model "qwen2.5:3b"
+;;         			       :embedding-model "qwen2.5:3b"))
+;;   )
 #+end_src
 
 #+RESULTS:
@@ -108,23 +109,31 @@
 :PROPERTIES:
 :CUSTOM_ID: gptel
 :END:
+** Gptel Itself
+:PROPERTIES:
+:CUSTOM_ID: gptel-itself
+:END:
 #+begin_src emacs-lisp
 (use-package gptel
+  :custom
+  (gptel-model 'qwen2.5-coder:14b)
+  (gptel-default-mode #'org-mode)
   :config
 
   (setq
-   gptel-model 'deepseek-coder-v2:16b
-   gptel-default-mode #'org-mode
+   ;; gptel-model 'deepseek-coder-v2:16b
+   ;; gptel-default-mode #'org-mode
    gptel-backend (gptel-make-ollama "Ollama"
                    :host "localhost:11434"
                    :stream t
-                   :models '("llama3.1:8b" "deepseek-coder-v2:16b" "qwen2.5:3b")))
+                   :models '(llama3.1:8b deepseek-coder-v2:16b qwen2.5:3b qwen2.5-coder:14b qwen2.5-coder:32b)))
   ;; (add-to-list 'gptel-directives '(clojure-teacher . "You are a professional programmer-teacher in Clojure. Your task is to write best code with good explaination, answer a questions about the Clojure, do everything to help me master Cloure. Respond concisely."))
   ;; (add-to-list 'gptel-directives '(org-helper . "You are a helper in writing declartive config for Emacs in Org files. Your task is to describe parts of the config with all your master and writes it. Respond concisely."))
   ;; (add-to-list 'gptel-di)
   (let ((directives '((clojure-teacher . "Task: You are a Clojure AI Teacher whose task is to guide and educate the user on learning Clojure programming language, providing comprehensive explanations, examples, and step-by-step guidance through various topics including but not limited to basic syntax, functional programming concepts, data structures, higher-order functions, and more.
 
 Your goal is to help users understand complex concepts in a simplified manner, answering questions, addressing doubts, and ensuring the user has a smooth learning experience in Clojure.")
+                      (vue-teacher . "You are a Vue AI Teacher whose task is to teach me with all Vue essential components. You must give comprehensive explanations, examples and be best helpful AI companion")
 		      (code-commentary-generator . "You are a programming commentator. Generate commentaries for provided code blocks in various programming languages. Each commentary should:
 
 - Be concise (max 2-3 sentences)
@@ -275,61 +284,61 @@ Guidelines:
 :CUSTOM_ID: evedel
 :END:
 #+begin_src emacs-lisp
-;; (use-package evedel
-;;   :ensure (evedel :host github :repo "daedsidog/evedel" :branch "master" :files ("*.el"))
-;;   :config
+(use-package evedel
+  ;; :ensure (evedel :host github :repo "daedsidog/evedel" :branch "master" :files ("*.el"))
+  :config
 
-;;   (let ((roles '((python-ts-mode . "a Python programmer")
-;;                  (python-mode . "a Python programmer")
-;;                  (clojure-mode . "a Clojure programmer")
-;;                  (clojure-ts-mode . "a Clojure programmer")
-;;                  (vue-mode . "a Vue programmer")
-;;                  (vue-ts-mode . "a Vue programmer")
-;;                  (typescript-mode . "a Typescript programmer")
-;;                  (typescript-ts-mode . "a Typescript programmer"))))
-;;     (mapc (lambda (x) (add-to-list 'evedel-descriptive-mode-roles x)) roles))
+  (let ((roles '((python-ts-mode . "a Python programmer")
+                 (python-mode . "a Python programmer")
+                 (clojure-mode . "a Clojure programmer")
+                 (clojure-ts-mode . "a Clojure programmer")
+                 (vue-mode . "a Vue programmer")
+                 (vue-ts-mode . "a Vue programmer")
+                 (typescript-mode . "a Typescript programmer")
+                 (typescript-ts-mode . "a Typescript programmer"))))
+    (mapc (lambda (x) (add-to-list 'evedel-descriptive-mode-roles x)) roles))
   
-;;   (general-define-key
-;;    ;; :definer 'minor-mode
-;;    :states 'normal
-;;    :keymaps '(global-map)
-;;    :prefix "SPC e"
-;;    "e" '(:ignore t :wk "Evedel")
-;;    "e D" '(evedel-delete-all-instructions :wk "Delete All")
+  (general-define-key
+   ;; :definer 'minor-mode
+   :states 'normal
+   :keymaps '(global-map)
+   :prefix "C-e"
+   "" '(:ignore t :wk "Evedel")
+   "D" '(evedel-delete-all-instructions :wk "Delete All")
 
-;;    ;; Instructions
-;;    "e i" '(:ignore t :wk "Instructions")
-;;    "e i n" '(evedel-next-instruction :wk "Next")
-;;    "e i p" '(evedel-previous-instruction :wk "Previous")
-;;    "e i d" '(evedel-delete-instructions :wk "Delete (point/region)")
-;;    "e i s" '(evedel-save-instructions :wk "Save")
-;;    "e i l" '(evedel-load-instructions :wk "Load")
+   ;; Instructions
+   "i" '(:ignore t :wk "Instructions")
+   "i n" '(evedel-next-instruction :wk "Next")
+   "i p" '(evedel-previous-instruction :wk "Previous")
+   "i d" '(evedel-delete-instructions :wk "Delete (point/region)")
+   "i s" '(evedel-save-instructions :wk "Save")
+   "i l" '(evedel-load-instructions :wk "Load")
 
-;;    ;; Directives
-;;    "e d" '(:ignore t :wk "Directive")
-;;    "e d c" '(evedel-create-directive :wk "Create")
-;;    "e d n" '(evedel-next-directive :wk "Next")
-;;    "e d p" '(evedel-previous-directive :wk "Previous")
-;;    "e d m" '(evedel-modify-directive :wk "Modify")
+   ;; Directives
+   "d" '(:ignore t :wk "Directive")
+   "d c" '(evedel-create-directive :wk "Create")
+   "d n" '(evedel-next-directive :wk "Next")
+   "d p" '(evedel-previous-directive :wk "Previous")
+   "d m" '(evedel-modify-directive :wk "Modify")
 
-;;    ;; References
-;;    "e r" '(:ignore t :wk "References")
-;;    "e r n" '(evedel-next-reference :wk "Next")
-;;    "e r p" '(evedel-previous-reference :wk "Previous")
-;;    "e r c" '(evedel-create-reference :wk "Create")
-;;    "e r m" '(evedel-modify-reference-commentary :wk "Modify commentary")
+   ;; References
+   "r" '(:ignore t :wk "References")
+   "r n" '(evedel-next-reference :wk "Next")
+   "r p" '(evedel-previous-reference :wk "Previous")
+   "r c" '(evedel-create-reference :wk "Create")
+   "r m" '(evedel-modify-reference-commentary :wk "Modify commentary")
    
-;;    ;; Tags
-;;    "e t" '(:ignore t :wk "Tags")
-;;    "e t a" '(evedel-add-tags :wk "Add")
-;;    "e t d" '(evedel-remove-tags :wk "Delete")
-;;    "e t q" '(evedel-modify-directive-tag-query :wk "Query")
+   ;; Tags
+   "t" '(:ignore t :wk "Tags")
+   "t a" '(evedel-add-tags :wk "Add")
+   "t d" '(evedel-remove-tags :wk "Delete")
+   "t q" '(evedel-modify-directive-tag-query :wk "Query")
 
-;;    ;; Prompt
-;;    "e p" '(:ignore t :wk "Prompt")
-;;    "e p p" '(evedel-process-directives :wk "Send")
-;;    "e p P" '(evedel-preview-directive-prompt :wk "Preview")
-;;    ))
+   ;; Prompt
+   "p" '(:ignore t :wk "Prompt")
+   "p p" '(evedel-process-directives :wk "Send")
+   "p P" '(evedel-preview-directive-prompt :wk "Preview")
+   ))
 #+end_src
 
 #+RESULTS:
@@ -481,7 +490,7 @@ Guidelines:
   ;; (require 'consult-omni-elfeed)
   ;; (require 'consult-omni-apps)
   ;; (require 'consult-omni-fd)
-  (setq consult-omni-sources-modules-to-load '(consult-omni-gptel consult-omni-apps consult-omni-fd consult-omni-elfeed consult-omni-ripgrep consult-omni-ripgrep-all consult-omni-gh consult-omni-git-grep))
+  (setq consult-omni-sources-modules-to-load '(consult-omni-gptel consult-omni-apps consult-omni-fd consult-omni-elfeed consult-omni-ripgrep consult-omni-ripgrep-all consult-omni-git-grep))
   (consult-omni-sources-load-modules)
   ;; (setq consult-omni-multi-sources-apps-launcher '("Apps"))
   (setq consult-omni-multi-sources '("Apps"

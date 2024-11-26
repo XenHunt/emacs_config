@@ -18,6 +18,8 @@
   - [[#line-numbers][Line Numbers]]
   - [[#nerd-icons][Nerd-Icons]]
   - [[#all-the-icons][ALL-THE-ICONS]]
+  - [[#outline-indent][Outline-Indent]]
+  - [[#spacious-padding][Spacious-padding]]
   - [[#dashboard][Dashboard]]
   - [[#rainbow-mode][Rainbow-mode]]
   - [[#rainbow-delimiters][Rainbow Delimiters]]
@@ -161,12 +163,12 @@
   (dired-mode . nerd-icons-dired-mode))
 
 (use-package nerd-icons-completion
-      :after (marginalia nerd-icons)
-      :hook (marginalia-mode . nerd-icons-completion-marginalia-setup)
-      :config
-      (nerd-icons-completion-mode)
-      ;; (add-hook 'marginalia-mode-hook  #'nerd-icons-completion-marginalia-setup)
-      )
+  :after (marginalia nerd-icons)
+  :hook (marginalia-mode . nerd-icons-completion-marginalia-setup)
+  :config
+  (nerd-icons-completion-mode)
+  ;; (add-hook 'marginalia-mode-hook  #'nerd-icons-completion-marginalia-setup)
+  )
 #+end_src
 ** ALL-THE-ICONS 
 :PROPERTIES:
@@ -179,6 +181,33 @@
 ;; (use-package all-the-icons-dired
 ;;   :hook (dired-mode . (lambda () (all-the-icons-dired-mode t))))
 #+end_src
+** Outline-Indent
+:PROPERTIES:
+:CUSTOM_ID: outline-indent
+:END:
+#+begin_src emacs-lisp
+(use-package outline-indent
+  :ensure t
+  :custom
+  (outline-indent-ellipsis " ▼ "))
+#+end_src
+
+#+RESULTS:
+: [nil 26436 37702 488240 nil elpaca-process-queues nil nil 855000 nil]
+
+** Spacious-padding
+:PROPERTIES:
+:CUSTOM_ID: spacious-padding
+:END:
+#+begin_src emacs-lisp
+(use-package spacious-padding
+  :hook ((org-mode nov-mode yaml-mode ) . spacious-padding-mode)
+)
+#+end_src
+
+#+RESULTS:
+: [nil 26436 37704 781307 nil elpaca-process-queues nil nil 477000 nil]
+
 ** Dashboard 
 :PROPERTIES:
 :CUSTOM_ID: dashboard
@@ -324,7 +353,8 @@
   (add-hook 'server-after-make-frame-hook 'my/set-elisp-prism)
 
   (add-hook 'server-after-make-frame-hook 'my/set-clojure-prism)
-  ;;(my/set-elisp-prism)
+  ;; (my/set-elisp-prism)
+  (prism-set-colors)
   )
 #+end_src
 ** Ligatures 

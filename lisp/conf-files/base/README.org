@@ -159,6 +159,7 @@
   :ensure nil
   :custom
   (custom-file (concat user-emacs-directory "secrets.el"))
+  (tab-width 4)
   :config
   (setq gc-cons-threshold 100000000)
   (setq ring-bel-functuin #'ignore)  
@@ -248,7 +249,7 @@
     "s t" '(consult-omni-ripgrep :wk "Text")
     "s T" '(consult-omni-ripgrep-all :wk "Text (even pdf, archives and etc)")
     "s g" '(consult-omni-git-grep :wk "Git Files")
-    "s G" '(consult-omni-github :wk "Github repos")
+    ;; "s G" '(consult-omni-github :wk "Github repos")
     "s p" '(pass :wk "Password")
     ;; "s "
     )
@@ -282,6 +283,7 @@
    ;; "c d" '(lsp-find-definition :wk "Find definition")
    ;; "c x" '(consult-flycheck :wk "List errors")
    ;; "c R" '(lsp-workspace-restart :wk "Restart LSP")
+   "c ." '(i-really-want-to-dumb-jump :wk "Find definition")
    "c x" '(:ignore t :wk "Consult")
    "c x x" '(consult-flycheck :wk "Flycheck")
    "c x s" '(consult-lsp-symbols :wk "Symbols")
@@ -472,6 +474,7 @@
   :after evil
   :config
   (setq evil-collection-mode-list '(
+                                    arc-mode
  				    dashboard
                                     docker
  				    dired
@@ -507,6 +510,9 @@
                                     guix
                                     bufler 
 				    embark
+                                    wdired
+                                    wgrep
+                                    xwidget
 				    which-key
 				    (pdf pdf-view)
 				    elpaca
@@ -527,6 +533,9 @@
                                     smerge-mode
 				    ;; rjsx-modre
 				    xref
+                                    lsp-ui-imenu
+                                    man
+                                    woman
  				    ))
   (evil-collection-init)
   )

@@ -37,6 +37,7 @@
 - [[#ibuffer][IBuffer]]
   - [[#nerd-icons-ibuffer][Nerd-Icons-IBuffer]]
 - [[#jinx][Jinx]]
+- [[#markdown-mode][Markdown-Mode]]
 - [[#guix][Guix]]
 - [[#leetcode][Leetcode]]
 - [[#disk-usage][Disk-Usage]]
@@ -400,6 +401,8 @@
 :END:
 #+begin_src emacs-lisp
 (use-package consult
+  :custom
+  (xref-show-definitions-functions #'consult-xref)
   :config
   (recentf-mode)
   )
@@ -686,6 +689,14 @@
   )
 #+end_src
 
+* Markdown-Mode
+:PROPERTIES:
+:CUSTOM_ID: markdown-mode
+:END:
+#+begin_src emacs-lisp
+(use-package markdown-ts-mode)
+(use-package markdown-soma)
+#+end_src
 * Guix
 :PROPERTIES:
 :CUSTOM_ID: guix

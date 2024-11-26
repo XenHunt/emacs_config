@@ -19,8 +19,8 @@
   - [[#magit][Magit]]
   - [[#magit-todos][Magit-TODOS]]
   - [[#git-modes][Git-Modes]]
-  - [[#consult-gh][Consult-gh]]
 - [[#dash-docs][Dash-Docs]]
+- [[#dumb-jump][Dumb-Jump]]
 - [[#direnv][Direnv]]
 - [[#programming-language][Programming Language]]
   - [[#lsp-mode][LSP-Mode]]
@@ -62,6 +62,7 @@
       - [[#flycheck][Flycheck]]
       - [[#раскладка-2][Раскладка]]
   - [[#nix-mode][Nix-Mode]]
+  - [[#hyprlang-ts-mode][Hyprlang-ts-mode]]
   - [[#docker][Docker]]
     - [[#docker-compose][Docker-Compose]]
     - [[#dockerfile-mode][Dockerfile-mode]]
@@ -226,23 +227,6 @@
 #+begin_src emacs-lisp
 (use-package git-modes)
 #+end_src
-** Consult-gh
-:PROPERTIES:
-:CUSTOM_ID: consult-gh
-:END:
-#+begin_src emacs-lisp
-(use-package consult-gh
-  :after consult)
-(use-package consult-gh-embark
-  :after consult-gh
-  :config
-  (consult-gh-embark-mode +1))
-(use-package consult-gh-forge
-  :after consult-gh
-  :config
-  (consult-gh-forge-mode +1))
-(elpaca-wait)
-#+end_src
 * Dash-Docs
 :PROPERTIES:
 :CUSTOM_ID: dash-docs
@@ -258,6 +242,8 @@
   ;; (leader-key
   ;;   "h d" '(devdocs-lookup :wk "Devdocs Lookup")
   ;;   )
+  :custom
+  (devdocs-use-mathjax t)
   :config
   (add-hook 'python-mode-hook
             (lambda () (setq-local devdocs-current-docs '("python~3.12" "numpy~2.0"))))
@@ -284,6 +270,33 @@
 
 #+RESULTS:
 : [nil 26356 19987 487003 nil elpaca-process-queues nil nil 265000 nil]
+* Dumb-Jump
+:PROPERTIES:
+:CUSTOM_ID: dumb-jump
+:END:
+#+begin_src emacs-lisp
+(use-package dumb-jump
+  :ensure t
+  ;; :hook
+  ;; (prog-mode . dumb-jump-mode)
+  ;; ((xref-backend-functions . dumb-jump-xref-activate))
+  :custom
+  ;; (xref-show-definitions-functions #'xref-show-definitions-completing-read)
+  ;; (xref-show-definitions-functions #'consult-xref)
+  (dumb-jump-prefer-searcher 'rg)
+  ;; :config
+  :config
+  (defun i-really-want-to-dumb-jump ()
+    "Call `xref-find-definitions' but force the usage of Dumb Jump"
+    (interactive)
+    (let ((xref-backend-functions '(dumb-jump-xref-activate)))
+      (funcall-interactively #'xref-find-definitions)))
+  (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
+  )
+#+end_src
+
+#+RESULTS:
+: [nil 26427 12565 768089 nil elpaca-process-queues nil nil 667000 nil]
 
 * Direnv
 :PROPERTIES:
@@ -404,6 +417,7 @@
 	 (lsp-completion-mode . lsp-enable-which-key-integration)
 	 ;; (emacs-lisp-mode . lsp)
 	 (lisp-interaction-mode . lsp)
+         ;; (lsp . (lambda () (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)))
 	 )
   ;; :commands lsp
   :config
@@ -511,9 +525,9 @@
   ;;             "--print-width"     "100"
   ;;             "--tab-width" "4"
   ;;             file))
-  (setf (alist-get 'prettier apheleia-formatters)
-        '("aphelia-npx" "prettier" "--stdin-filepath" filepath
-	  (apheleia-formatters-js-indent "--use-tabs" "--tab-width" 2)))
+  ;; (setf (alist-get 'prettier apheleia-formatters)
+  ;;       '("aphelia-npx" "prettier" "--stdin-filepath" filepath
+  ;;         (apheleia-formatters-js-indent "--use-tabs" "--tab-width" 2)))
   (apheleia-global-mode +1))
 
 #+end_src
@@ -748,7 +762,9 @@
 (use-package vue-mode
   ;; :init
   ;; (add-to-list 'auto-mode-alist '("\\.vue\\'" . web-mode))
-  :custom (vue-html-tab-width 2)
+  :custom
+  (vue-html-tab-width 2)
+  (indent-tabs-mode nil)
   :hook ((vue-mode . lsp))
   :mode "\\.vue\\'"
   :config
@@ -767,7 +783,7 @@
 #+end_src
 
 #+RESULTS:
-: [nil 26348 22970 351351 nil elpaca-process-queues nil nil 477000 nil]
+: [nil 26424 46805 415224 nil elpaca-process-queues nil nil 688000 nil]
 
 *** add-node-modules-path
 :PROPERTIES:
@@ -786,11 +802,11 @@
 :CUSTOM_ID: js2-xref
 :END:
 #+begin_src emacs-lisp
-(use-package xref-js2
-  :config
-  (setq xref-js2-search-program 'rg)
-  (add-hook 'js2-mode-hook (lambda ()
-			     (add-hook 'xref-backend-functions #'xref-js2-xref-backend nil t))))
+;; (use-package xref-js2
+;;   :config
+;;   (setq xref-js2-search-program 'rg)
+;;   (add-hook 'js2-mode-hook (lambda ()
+;; 			     (add-hook 'xref-backend-functions #'xref-js2-xref-backend nil t))))
 #+end_src
 *** WEB-Mode
 :PROPERTIES:
@@ -1141,6 +1157,7 @@
    "s" '(geiser-guile :wk "Start REPL")
    "a" '(geiser-add-to-load-path :wk "Add to load path")
    "u" '(geiser-unload :wk "Unload modules")
+   "r" '(geiser-eval-region :wk "Eval region")
    ))
 #+end_src
 
@@ -1220,6 +1237,23 @@
 (use-package nix-mode
   :mode "\\.nix\\'")
 #+end_src
+
+** Hyprlang-ts-mode
+:PROPERTIES:
+:CUSTOM_ID: hyprlang-ts-mode
+:END:
+#+begin_src emacs-lisp
+(use-package hyprlang-ts-mode
+  :ensure (:type git :host github :repo "Nathan-Melaku/hyprlang-ts-mode")
+  :hook
+  (hyprlang-ts-mode . prism-mode)
+  :custom
+  (hyprlang-ts-mode-indent-offset 4))
+#+end_src
+
+#+RESULTS:
+: [nil 26437 35138 78316 nil elpaca-process-queues nil nil 220000 nil]
+
 ** Docker
 :PROPERTIES:
 :CUSTOM_ID: docker
@@ -1274,13 +1308,14 @@
 	  (lua . ("https://github.com/Azganoth/tree-sitter-lua"))
 	  (make . ("https://github.com/alemuller/tree-sitter-make"))
 	  (ocaml . ("https://github.com/tree-sitter/tree-sitter-ocaml" "master" "ocaml/src"))
-      (python "https://github.com/tree-sitter/tree-sitter-python")
+      (python . ("https://github.com/tree-sitter/tree-sitter-python"))
 	  (php . ("https://github.com/tree-sitter/tree-sitter-php"))
 	  (typescript . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src"))
 	  (tsx . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src"))
 	  (ruby . ("https://github.com/tree-sitter/tree-sitter-ruby"))
 	  (rust . ("https://github.com/tree-sitter/tree-sitter-rust"))
 	  (sql . ("https://github.com/m-novikov/tree-sitter-sql"))
+      (hyprlang . ("https://github.com/tree-sitter-grammars/tree-sitter-hyprlang" "master"))
 	  (toml . ("https://github.com/tree-sitter/tree-sitter-toml"))
 	  (zig . ("https://github.com/GrayJack/tree-sitter-zig"))
       (janet-simple . ("https://github.com/sogaiu/tree-sitter-janet-simple"))))
@@ -1288,14 +1323,12 @@
   ;;   (treesit-install-language-grammar 'janet-simple))
   ;; (when (not (treesit-language-available-p 'go))
   ;;   (treesit-install-language-grammar 'go))
-  (let ((tree-langs '(janet-simple python clojure typescript tsx make css html json vue bash)))
+  (let ((tree-langs '(janet-simple python clojure typescript tsx make css html json vue bash hyprlang)))
     (mapc (lambda (x) (unless (treesit-language-available-p x)
                              (treesit-install-language-grammar x)))
           tree-langs))
   )
 #+end_src
-
-#+RESULTS:
 
 **** Treesitter-auto
 :PROPERTIES:
@@ -1333,6 +1366,8 @@
 (use-package codemetrics
   :ensure (codemetrics :type git :host github :repo "jcs-elpa/codemetrics")
   :after tree-sitter
+  :hook
+  ((python-ts-mode js2-mode clojure-ts-mode web-mode) . codemetrics-mode)
   :config
   (codemetrics-mode 1))
 #+end_src
