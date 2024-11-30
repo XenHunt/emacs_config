@@ -63,6 +63,8 @@
       - [[#раскладка-2][Раскладка]]
   - [[#nix-mode][Nix-Mode]]
   - [[#hyprlang-ts-mode][Hyprlang-ts-mode]]
+  - [[#ansible][Ansible]]
+  - [[#cmake][Cmake]]
   - [[#docker][Docker]]
     - [[#docker-compose][Docker-Compose]]
     - [[#dockerfile-mode][Dockerfile-mode]]
@@ -200,6 +202,7 @@
 #+begin_src emacs-lisp
 (elpaca-wait)
 (use-package magit
+  :defer 4
   :config
   (general-define-key
    ;; :definer 'minor-mode
@@ -218,6 +221,7 @@
   :after magit
   :config (magit-todos-mode 1))
 (use-package forge
+  :defer 5
   :after magit)
 #+end_src
 ** Git-Modes
@@ -679,6 +683,7 @@
 :END:
 #+begin_src emacs-lisp
 (use-package jupyter
+  :defer 5
   ;; :commands (jupyter-run-repl
   ;;            jupyter-run-server-repl
   ;;            jupyter-server-list-kernels
@@ -1029,6 +1034,7 @@
 :END:
 #+begin_src emacs-lisp
 (use-package json-mode
+  :defer 4
   :init
   (add-to-list 'auto-mode-alist '("\\.json\\'" . json-mode))
   )
@@ -1063,6 +1069,7 @@
 :END:
 #+begin_src emacs-lisp
 (use-package cider
+  :defer 5
   :config
   (setq org-babel-clojure-backend 'cider))
 (use-package cider-eval-sexp-fu)
@@ -1147,6 +1154,7 @@
 :END:
 #+begin_src emacs-lisp
 (use-package geiser-guile
+  :defer 4
   :config
   (general-define-key
    :states 'normal
@@ -1254,6 +1262,23 @@
 #+RESULTS:
 : [nil 26437 35138 78316 nil elpaca-process-queues nil nil 220000 nil]
 
+** Ansible
+:PROPERTIES:
+:CUSTOM_ID: ansible
+:END:
+#+begin_src emacs-lisp
+(use-package ansible
+  :defer 5)
+#+end_src
+
+** Cmake
+:PROPERTIES:
+:CUSTOM_ID: cmake
+:END:
+#+begin_src emacs-lisp
+(use-package cmake-mode)
+(elpaca-wait)
+#+end_src
 ** Docker
 :PROPERTIES:
 :CUSTOM_ID: docker
@@ -1367,7 +1392,7 @@
   :ensure (codemetrics :type git :host github :repo "jcs-elpa/codemetrics")
   :after tree-sitter
   :hook
-  ((python-ts-mode js2-mode clojure-ts-mode web-mode) . codemetrics-mode)
+  ((python-mode js2-mode clojure-mode) . codemetrics-mode)
   :config
   (codemetrics-mode 1))
 #+end_src

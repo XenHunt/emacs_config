@@ -19,6 +19,7 @@
   - [[#programming][Programming]]
   - [[#ai][AI]]
   - [[#telega][Telega]]
+  - [[#irc][IRC]]
 - [[#provide][Provide]]
 :END:
 
@@ -132,7 +133,16 @@
 (add-to-list 'load-path "~/.emacs.d/lisp/conf-files/telega/")
 (require 'telega-package)
 #+end_src
+** IRC
+:PROPERTIES:
+:CUSTOM_ID: irc
+:END:
 
+Эта часть подключает =irc= клиент - =cicer=. Подробнее: [[./irc/README.org][README для cicer]].
+#+begin_src emacs-lisp
+(add-to-list 'load-path "~/.emacs.d/lisp/conf-files/irc/")
+(require 'irc-package)
+#+end_src
 * Provide
 :PROPERTIES:
 :CUSTOM_ID: provide

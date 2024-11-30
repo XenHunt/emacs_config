@@ -37,6 +37,7 @@
 :END:
 #+begin_src emacs-lisp
 (use-package telega
+  :defer 4
   :init
   (setq telega-use-image t
         telega-emoji-use-image t)

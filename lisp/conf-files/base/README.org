@@ -81,6 +81,7 @@
 Всякая конфигурация по-умолчанию, которая не может быть отнесена к чему-то определенному.
 
 #+begin_src emacs-lisp
+;; (setq use-package-verbose t)
 (setq native-comp-async-report-warnings-errors nil)
 (delete-selection-mode 1)    ;; You can select text and delete it by typing.
 ;; (electric-indent-mode -1)    ;; Turn off the weird indenting that Emacs does by default.
@@ -249,6 +250,7 @@
     "s t" '(consult-omni-ripgrep :wk "Text")
     "s T" '(consult-omni-ripgrep-all :wk "Text (even pdf, archives and etc)")
     "s g" '(consult-omni-git-grep :wk "Git Files")
+    "s m" '(consult-man :wk "Man pages")
     ;; "s G" '(consult-omni-github :wk "Github repos")
     "s p" '(pass :wk "Password")
     ;; "s "
@@ -327,6 +329,7 @@
     "h ." '(helpful-at-point :wk "Help at point")
     "h m" '(helpful-macro :wk "Describe macro")
     "h E" '(elpaca-manager :WK "Elpaca manager")
+    "h t" '(consult-theme :wk "Change theme")
     "h M" '(describe-mode :wk "Describe mode")
     "h p" '(describe-package :wk "Describe package")
     "h k" '(describe-key :wk "Describe key")
@@ -339,6 +342,7 @@
     "t" '(:ignore t :wk "Toggle")
     "t l" '(display-line-numbers-mode :wk "Toggle line numbers")
     "t t" '(visual-line-mode :wk "Toggle truncated lines")
+    "t t" '(indent-tabs-mode :wk "Tab Mode")
     )
 
   (leader-key
@@ -475,6 +479,7 @@
   :config
   (setq evil-collection-mode-list '(
                                     arc-mode
+                                    evil-mc
  				    dashboard
                                     docker
  				    dired
@@ -755,6 +760,7 @@
 :END:
 #+begin_src emacs-lisp
 (use-package exec-path-from-shell
+  :defer 2
   ;; :custom
   ;; (exec-path-from-shell-arguments '("-l"))
   :config

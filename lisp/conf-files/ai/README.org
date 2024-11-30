@@ -10,7 +10,6 @@
 :CONTENTS:
 - [[#введение][Введение]]
 - [[#fast-loading][Fast-Loading]]
-- [[#ellama][Ellama]]
 - [[#gptel][Gptel]]
   - [[#gptel-itself][Gptel Itself]]
   - [[#magit-gptcommit][Magit-GPTCommit]]
@@ -19,6 +18,8 @@
   - [[#corsair][Corsair]]
 - [[#codeium][Codeium]]
 - [[#consult-omni][Consult-Omni]]
+- [[#chatgpt-shell][Chatgpt-Shell]]
+- [[#ob-chatgpt-shell][Ob-Chatgpt-Shell]]
 - [[#provide][Provide]]
 :END:
 * Введение
@@ -39,72 +40,6 @@
 ;; -*- lexical-binding: t; -*-
 #+end_src
 
-* Ellama
-:PROPERTIES:
-:CUSTOM_ID: ellama
-:END:
-#+begin_src emacs-lisp
-;; (use-package ellama
-;;   :custom
-;;   (ellama-keymap-prefix "C-l")
-;;   (ellama-auto-scroll t)
-;;   :config
-;;   ;; setup key bindings
-;;   ;; (evil-make-overriding-map ellama-keymap)
-;;   ;; (general-auto-unbind-keys)
-;;   ;; (leader-key
-;;   ;;   "l" '(:ignore t :wk "Ellama"))
-;;   (general-define-key
-;;    ;; :states 'normal
-;;    :keymaps 'ellama-keymap
-;;    :prefix ellama-keymap-prefix
-;;    "a" '(:ignore t :wk "Ask Ellama")
-;;    "c" '(:ignore t :wk "Code")
-;;    "d" '(:ignore t :wk "Define")
-;;    "i" '(:ignore t :wk "Improve")
-;;    "m" '(:ignore t :wk "Make")
-;;    "p" '(:ignore t :wk "Provider")
-;;    "s" '(:ignore t :wk "Session")
-;;    "t" '(:ignore t :wk "Translate")
-;;    "x" '(:ignore t :wk "Context"))
-;;   ;; (setopt ellama-keymap-prefix "SPC l")
-;;   ;; language you want ellama to translate to
-;;   (setopt ellama-language "Russian")
-;;   ;; could be llm-openai for example
-;;   (require 'llm-ollama)
-;;   (setopt ellama-provider
-;; 	  (make-llm-ollama
-;; 	   ;; this model should be pulled to use it
-;; 	   ;; value should be the same as you print in terminal during pull
-;; 	   :chat-model "llama3.1:8b"
-;; 	   ;; :chat-model "llama3:8b"
-;; 	   :embedding-model "nomic-embed-text"
-;; 	   :default-chat-non-standard-params '(("num_ctx" . 8192))))
-;;   ;; Predefined llm providers for interactive switching.
-;;   ;; You shouldn't add ollama providers here - it can be selected interactively
-;;   ;; without it. It is just example.
-;;   (setopt ellama-providers
-;; 	  '(("llama3.1" . ellama-provider)
-;;             ("deepseek-coder" . (make-llm-ollama
-;; 				 :chat-model "deepseek-coder-v2:16b"
-;; 				 :embedding-model "deepseek-coder-v2:16b"))))
-;;   ;; Naming new sessions with llm
-;;   (setopt ellama-naming-provider
-;; 	  (make-llm-ollama
-;; 	   :chat-model "llama3.1:8b"
-;; 	   :embedding-model "nomic-embed-text"
-;; 	   :default-chat-non-standard-params '(("stop" . ("\n")))))
-;;   (setopt ellama-naming-scheme 'ellama-generate-name-by-llm)
-;;   ;; Translation llm provider
-;;   (setopt ellama-translation-provider (make-llm-ollama
-;;         			       :chat-model "qwen2.5:3b"
-;;         			       :embedding-model "qwen2.5:3b"))
-;;   )
-#+end_src
-
-#+RESULTS:
-: [nil 26361 22367 950126 nil elpaca-process-queues nil nil 887000 nil]
-
 * Gptel
 :PROPERTIES:
 :CUSTOM_ID: gptel
@@ -115,6 +50,7 @@
 :END:
 #+begin_src emacs-lisp
 (use-package gptel
+  :defer 4
   :custom
   (gptel-model 'qwen2.5-coder:14b)
   (gptel-default-mode #'org-mode)
@@ -286,6 +222,7 @@ Guidelines:
 #+begin_src emacs-lisp
 (use-package evedel
   ;; :ensure (evedel :host github :repo "daedsidog/evedel" :branch "master" :files ("*.el"))
+  :defer 5
   :config
 
   (let ((roles '((python-ts-mode . "a Python programmer")
@@ -371,6 +308,7 @@ Guidelines:
 #+begin_src emacs-lisp
 (use-package codeium
   :ensure (codeium :host github :repo "Exafunction/codeium.el")
+  :defer 10
   ;; :custom
   ;; (setq codeium/metadata/api_key (auth-source-search
   ;; 				  :host "codeium"
@@ -474,6 +412,7 @@ Guidelines:
 :END:
 #+begin_src emacs-lisp
 (use-package consult-omni
+  :defer 1
   :ensure (consult-omni :type git :host github :repo "armindarvish/consult-omni" :branch "main" :files (:defaults "sources/*.el"))
   :after consult
   :custom
@@ -490,7 +429,12 @@ Guidelines:
   ;; (require 'consult-omni-elfeed)
   ;; (require 'consult-omni-apps)
   ;; (require 'consult-omni-fd)
-  (setq consult-omni-sources-modules-to-load '(consult-omni-gptel consult-omni-apps consult-omni-fd consult-omni-elfeed consult-omni-ripgrep consult-omni-ripgrep-all consult-omni-git-grep))
+  (setq consult-omni-sources-modules-to-load '(consult-omni-gptel
+                                               consult-omni-apps
+                                               consult-omni-fd consult-omni-elfeed
+                                               consult-omni-ripgrep
+                                               consult-omni-ripgrep-all
+                                               consult-omni-git-grep))
   (consult-omni-sources-load-modules)
   ;; (setq consult-omni-multi-sources-apps-launcher '("Apps"))
   (setq consult-omni-multi-sources '("Apps"
@@ -507,7 +451,42 @@ Guidelines:
 
 #+RESULTS:
 : [nil 26280 40971 7852 nil elpaca-process-queues nil nil 858000 nil]
+* Chatgpt-Shell
+:PROPERTIES:
+:CUSTOM_ID: chatgpt-shell
+:END:
+#+begin_src emacs-lisp
+(use-package chatgpt-shell
+  :defer 5
+  :init
+  (defun remove-model-by-tag (tag name)
+    "Remove all models with the specified NAME of specified TAG from chatgpt-shell-models list."
+    (setq chatgpt-shell-models (cl-delete-if (lambda (model)
+                                               (string= (assoc-default tag model) name))
+                                             chatgpt-shell-models)))
+  :custom
+  (chatgpt-shell-model-version "qwen2.5-coder:14b")
+  :config
+  (let ((filter-list '((:label "Ollama")
+                       (:provider "Anthropic")
+                       (:provider "Google"))))
+    (mapc (lambda (filter) (remove-model-by-tag (car filter)
+                                                (cadr filter)))
+          filter-list))
+  (chatgpt-shell-ollama-load-models)
+  )
+#+end_src
 
+#+RESULTS:
+
+* Ob-Chatgpt-Shell
+:PROPERTIES:
+:CUSTOM_ID: ob-chatgpt-shell
+:END:
+#+begin_src emacs-lisp
+(use-package ob-chatgpt-shell
+  :defer t)
+#+end_src
 * Provide
 :PROPERTIES:
 :CUSTOM_ID: provide

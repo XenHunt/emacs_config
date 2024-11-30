@@ -26,6 +26,7 @@
   - [[#consult][Consult]]
   - [[#yasnippet][Yasnippet]]
 - [[#drag-stuff][Drag-stuff]]
+- [[#casual][Casual]]
 - [[#sudo-edit][SUDO EDIT]]
 - [[#pdf-tools][PDF-Tools]]
 - [[#nov-mode][Nov-mode]]
@@ -459,14 +460,17 @@
 :END:
 #+begin_src emacs-lisp
 (use-package yasnippet
+  :defer 4
   :no-require t
   :config
   (yas-global-mode 1)
   )
 (use-package yasnippet-snippets
+  :defer 5
   :no-require t)
 
 (use-package consult-yasnippet
+  :defer 5
   :no-require t
   :after yasnippet
   :after consult)
@@ -475,6 +479,28 @@
 :PROPERTIES:
 :CUSTOM_ID: drag-stuff
 :END:
+* Casual
+:PROPERTIES:
+:CUSTOM_ID: casual
+:END:
+#+begin_src emacs-lisp
+(use-package casual ;; A collection of  user interfaces for various built-in Emacs modes.
+  :defer 4
+  :custom
+  (casual-lib-use-unicode t)
+  (casual-dired-use-unicode-symbols t)
+  :general
+  (:states 'normal :keymaps 'org-agenda-mode-map "C-o" 'casual-agenda-tmenu)
+  (:states 'normal :keymaps 'bookmark-bmenu-mode-map "C-o" 'casual-bookmarks-tmenu)
+  (:states 'normal :keymaps 'calendar-mode-map "C-o" 'casual-calendar-tmenu)
+  (:states 'normal :keymaps 'ibuffer-mode-map "C-o" 'casual-ibuffer-tmenu)
+  (:states 'normal :keymaps 'calc-mode-map "C-o" 'casual-calc-tmenu)
+  (:states 'normal :keymaps 'dired-mode-map "C-o" 'casual-dired-tmenu)
+  (:states 'normal :keymaps 'Info-mode-map "C-o" 'casual-info-tmenu))
+#+end_src
+
+#+RESULTS:
+: [nil 26442 2503 96825 nil elpaca-process-queues nil nil 858000 nil]
 
 * SUDO EDIT 
 :PROPERTIES:
@@ -482,6 +508,7 @@
 :END:
 #+begin_src emacs-lisp
 (use-package sudo-edit
+  :defer 4
   :config
   (leader-key
     "f u" '(sudo-edit-find-file :wk "Sudo find file")
@@ -530,6 +557,7 @@
 #+begin_src emacs-lisp
 (use-package djvu)
 (use-package djvu3
+  :defer 2
   :after djvu
   :ensure (djvu3 :type git :host github :repo "dalanicolai/djvu3" :files ("djvu3.el")))
 #+end_src
@@ -710,7 +738,8 @@
 :CUSTOM_ID: leetcode
 :END:
 #+begin_src emacs-lisp
-(use-package leetcode)
+(use-package leetcode
+  :defer 5)
 #+end_src
 
 * Disk-Usage

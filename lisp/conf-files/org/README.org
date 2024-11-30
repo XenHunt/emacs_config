@@ -135,6 +135,7 @@
 
 #+begin_src emacs-lisp
 (use-package org-appear
+  :defer 1
   :custom
   (org-appear-autoemphasis t)
   (org-appear-autolinks t)
@@ -535,6 +536,7 @@
 
 #+begin_src emacs-lisp
 (use-package verb
+  :defer 5
   :after org
   :config
   ;; (verb-util--log)

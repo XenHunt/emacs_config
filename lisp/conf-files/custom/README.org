@@ -58,14 +58,12 @@
 #+begin_src emacs-lisp
 (use-package doom-themes
   :config
-  (load-theme 'doom-dracula t)
+  (load-theme 'doom-moonlight t)
   (setq doom-themes-enable-bold t    ; Включаем bold
         doom-themes-enable-italic t); Включаем italic
   (set-frame-parameter nil 'alpha-background 90) ; Set transparency to 85%
   (add-to-list 'default-frame-alist '(alpha-background . 90)) ; Set transparency for new frames
   (doom-themes-org-config)
-  (leader-key
-    "h t" '(load-theme :wk "Load theme"))
   )
 #+end_src
 ** Doom Modeline 
@@ -354,7 +352,7 @@
 
   (add-hook 'server-after-make-frame-hook 'my/set-clojure-prism)
   ;; (my/set-elisp-prism)
-  (prism-set-colors)
+  ;; (prism-set-colors)
   )
 #+end_src
 ** Ligatures 

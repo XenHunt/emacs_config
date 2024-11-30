@@ -1,0 +1,66 @@
+#+TITLE:XenHunt Config (irc)
+#+AUTHOR: Evgeny Berlizov (XenHunt)
+#+DESCRIPTION: XenHunt's config of IRC
+#+STARTUP: content
+#+PROPERTY: header-args :tangle irc-package.el
+* Содержание
+:PROPERTIES:
+:TOC:      :include all :depth 100 :force (nothing) :ignore (this) :local (nothing)
+:END:
+:CONTENTS:
+- [[#введение][Введение]]
+- [[#fast-loading][Fast-Loading]]
+- [[#irc][IRC]]
+  - [[#circe][Circe]]
+- [[#provide][Provide]]
+:END:
+* Введение
+:PROPERTIES:
+:CUSTOM_ID: введение
+:END:
+
+Эта часть конфига посвящена настройке =circe= - клиента =IRC= для =Emacs=.
+
+* Fast-Loading
+:PROPERTIES:
+:CUSTOM_ID: fast-loading
+:END:
+
+Быстрая загрузка модуля.
+
+#+begin_src emacs-lisp
+;; -*- lexical-binding: t; -*-
+#+end_src
+
+* IRC
+:PROPERTIES:
+:CUSTOM_ID: irc
+:END:
+
+** Circe
+:PROPERTIES:
+:CUSTOM_ID: circe
+:END:
+#+begin_src emacs-lisp
+(use-package circe
+  :custom
+  (circe-default-nick "XenHunt")
+  (circe-network-options '(("Libera Chat"
+                            ;; :nick XenHunt
+                            :channels ("#emacs" "#emacs-circe" "#guix" "#systemcrafters")
+                            :use-tls t)))
+  :config
+  (enable-circe-display-images)
+  (enable-circe-color-nicks))
+#+end_src
+
+#+RESULTS:
+: [nil 26442 58790 237962 nil elpaca-process-queues nil nil 31000 nil]
+
+* Provide
+:PROPERTIES:
+:CUSTOM_ID: provide
+:END:
+#+begin_src emacs-lisp
+(provide 'irc-package)
+#+end_src
