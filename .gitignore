@@ -56,3 +56,5 @@
 /lisp/conf-files/programming/programming.el
 /lisp/conf-files/telega/telega-package.el
 /lisp/conf-files/irc/irc-package.el
+/eshell/
+/.chatgpt-shell.el

@@ -64,7 +64,9 @@
   (set-frame-parameter nil 'alpha-background 90) ; Set transparency to 85%
   (add-to-list 'default-frame-alist '(alpha-background . 90)) ; Set transparency for new frames
   (doom-themes-org-config)
-  (custom-set-faces '(region ((t (:inherit nil :background "purple4")))))
+  (custom-set-faces '(region ((t (:inherit nil :background "purple4"))))
+                    '(doom-modeline-evil-insert-state ((t (:foreground "firebrick3"))))
+                    '(doom-modeline-evil-visual-state ((t (:inherit doom-modeline-warning :foreground "purple2")))))
   )
 #+end_src
 ** Doom Modeline 

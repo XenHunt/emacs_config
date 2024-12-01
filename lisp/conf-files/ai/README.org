@@ -460,10 +460,12 @@ Guidelines:
   :defer 5
   :init
   (defun remove-model-by-tag (tag name)
-    "Remove all models with the specified NAME of specified TAG from chatgpt-shell-models list."
-    (setq chatgpt-shell-models (cl-delete-if (lambda (model)
-                                               (string= (assoc-default tag model) name))
-                                             chatgpt-shell-models)))
+    "Remove a model from `chatgpt-shell-models` that matches the specified TAG and NAME.
+TAG should be a string key in each model's assoc list, and NAME is the value associated with that tag."
+    (setq chatgpt-shell-models
+          (cl-delete-if (lambda (model)
+                          (string= (assoc-default tag model) name))
+                        chatgpt-shell-models)))
   :custom
   (chatgpt-shell-model-version "qwen2.5-coder:14b")
   :config

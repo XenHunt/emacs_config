@@ -480,68 +480,71 @@
   (setq evil-collection-mode-list '(
                                     arc-mode
                                     evil-mc
- 				    dashboard
+                                    (custom cus-edit)
+ 				                    dashboard
                                     docker
- 				    dired
- 				    dired-sidebar
-				    pass
-				    doc-view
+ 				                    dired
+ 				                    dired-sidebar
+				                    pass
+				                    doc-view
                                     disk-usage
                                     (image image-mode)
                                     daemons
                                     cider
                                     image+
                                     image-dired
-				    devdocs
+				                    devdocs
                                     help
                                     scheme
- 				    ibuffer
- 				    minibuffer
- 				    sh-script
- 				    compile
+ 				                    ibuffer
+ 				                    minibuffer
+ 				                    sh-script
+ 				                    compile
                                     helpful
- 				    bookmark
- 				    magit
- 				    magit-todos
- 				    forge
- 				    git-timemachine
- 				    vterm
- 				    bufler
- 				    indent
+ 				                    bookmark
+                                    (magit magit-submodule)
+                                    magit-repos
+                                    magit-section
+                                    magit-todos
+ 				                    forge
+ 				                    git-timemachine
+ 				                    vterm
+ 				                    bufler
+ 				                    indent
                                     telega
- 				    corfu
- 				    consult
- 				    vertico
+ 				                    corfu
+ 				                    consult
+ 				                    vertico
                                     guix
                                     bufler 
-				    embark
+				                    embark
                                     wdired
                                     wgrep
                                     xwidget
-				    which-key
-				    (pdf pdf-view)
-				    elpaca
-				    imenu
-				    imenu-list
+				                    which-key
+				                    (pdf pdf-view)
+				                    elpaca
+				                    imenu
+				                    imenu-list
                                     nov
-				    org
-				    org-roam
-				    python
-				    elisp-mode
-				    typescript-mode
-				    evil-mc
-				    yaml-mode
-				    flycheck
-				    flymake
-				    elfeed
-				    js2-mode
+				                    org
+				                    org-roam
+				                    python
+				                    elisp-mode
+				                    typescript-mode
+				                    evil-mc
+				                    yaml-mode
+				                    flycheck
+				                    flymake
+				                    elfeed
+				                    js2-mode
                                     smerge-mode
-				    ;; rjsx-modre
-				    xref
+				                    rjsx-mode
+				                    xref
                                     lsp-ui-imenu
                                     man
                                     woman
- 				    ))
+ 				                    ))
   (evil-collection-init)
   )
 (elpaca-wait)
