@@ -1,0 +1,63 @@
+#+TITLE:XenHunt Config (usb-mount)
+#+AUTHOR: Evgeny Berlizov (XenHunt)
+#+DESCRIPTION: XenHunt's config of usb-mount
+#+STARTUP: content
+#+PROPERTY: header-args :tangle usb-package.el
+* Содержание
+:PROPERTIES:
+:TOC:      :include all :depth 100 :force (nothing) :ignore (this) :local (nothing)
+:END:
+:CONTENTS:
+- [[#введение][Введение]]
+- [[#fast-loading][Fast-Loading]]
+- [[#usb-mount][Usb-Mount]]
+- [[#provide][Provide]]
+:END:
+* Введение
+:PROPERTIES:
+:CUSTOM_ID: введение
+:END:
+
+Эта часть конфига посвящена настройке =telega.el= - клиента =Telegram= для =Emacs=.
+
+* Fast-Loading
+:PROPERTIES:
+:CUSTOM_ID: fast-loading
+:END:
+
+Быстрая загрузка модуля.
+
+#+begin_src emacs-lisp
+;; -*- lexical-binding: t; -*-
+#+end_src
+
+* Usb-Mount
+:PROPERTIES:
+:CUSTOM_ID: usb-mount
+:END:
+
+#+begin_src emacs-lisp
+(defun usb-mount (&rest _)
+  (interactive)
+  (shell-command "usb-wofi-mount --mount"))
+
+(defun usb-umount (&rest _)
+  (interactive)
+  (shell-command "usb-wofi-mount --umount"))
+
+
+(leader-key
+  "u" '(:ignore t :wk "Usb")
+  "uu" '(usb-umount :wk "Umount")
+  "um" '(usb-mount :wk "Mount"))
+#+end_src
+
+#+RESULTS:
+
+* Provide
+:PROPERTIES:
+:CUSTOM_ID: provide
+:END:
+#+begin_src emacs-lisp
+(provide 'usb-package)
+#+end_src

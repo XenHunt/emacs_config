@@ -18,8 +18,10 @@
   - [[#other][Other]]
   - [[#programming][Programming]]
   - [[#ai][AI]]
+  - [[#usb][USB]]
   - [[#telega][Telega]]
   - [[#irc][IRC]]
+  - [[#elfeed][Elfeed]]
 - [[#provide][Provide]]
 :END:
 
@@ -123,6 +125,16 @@
 (add-to-list 'load-path "~/.emacs.d/lisp/conf-files/ai/")
 (require 'ai)
 #+end_src
+** USB
+:PROPERTIES:
+:CUSTOM_ID: usb
+:END:
+
+Эта часть подключает =usb-wofi-mount= - скрипт для подключения usb девайсов в мою систему горячиъ клваши в Emacs. Подробнее: [[./usb-mount/README.org][README для usb]], [[https://github.com/luyves/polybar-rofi-usb-mount/blob/master/rofi-usb-mount.sh][Ссылка на оригинальный скрипт (вместо rofi надо замсенить на wofi и все будет работать)]].
+#+begin_src emacs-lisp
+(add-to-list 'load-path "~/.emacs.d/lisp/conf-files/telega/")
+(require 'telega-package)
+#+end_src
 ** Telega
 :PROPERTIES:
 :CUSTOM_ID: telega
@@ -143,6 +155,20 @@
 (add-to-list 'load-path "~/.emacs.d/lisp/conf-files/irc/")
 (require 'irc-package)
 #+end_src
+** Elfeed
+:PROPERTIES:
+:CUSTOM_ID: elfeed
+:END:
+
+Эта часть подключает =RSS= клиент - =elfeed=. Подробнее: [[./elfeed/README.org][README для elfeed]].
+#+begin_src emacs-lisp
+(add-to-list 'load-path "~/.emacs.d/lisp/conf-files/elfeed/")
+(require 'elfeed-package)
+#+end_src
+
+#+RESULTS:
+: elfeed-package
+
 * Provide
 :PROPERTIES:
 :CUSTOM_ID: provide

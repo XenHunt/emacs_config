@@ -10,8 +10,8 @@
 :CONTENTS:
 - [[#введение][Введение]]
 - [[#fast-loading][Fast-Loading]]
-- [[#bufler][Bufler]]
 - [[#activities][Activities]]
+- [[#easysession][Easysession]]
 - [[#beacon][Beacon]]
 - [[#completion][Completion]]
   - [[#flycheck][Flycheck]]
@@ -32,7 +32,6 @@
 - [[#nov-mode][Nov-mode]]
 - [[#djvu][Djvu]]
 - [[#fb2][FB2]]
-- [[#elfeed][Elfeed]]
 - [[#imenu][Imenu]]
   - [[#imenu-list][Imenu-List]]
 - [[#ibuffer][IBuffer]]
@@ -64,51 +63,60 @@
 ;; -*- lexical-binding: t; -*-
 #+end_src
 
-* Bufler 
-:PROPERTIES:
-:CUSTOM_ID: bufler
-:END:
-#+begin_src emacs-lisp
-(use-package bufler
-  :ensure (bufler :fetcher github :repo "alphapapa/bufler.el"
-                  :files (:defaults (:exclude "helm-bufler.el")))
-  :config
-  (bufler-mode)
-  ;; (bufler-tabs-mode)
-  (setq bufler-face-prefix "prism-level-")
-  (leader-key
-    "TAB" '(:ignore t :wk "Tab")
-    "TAB s" '(bufler-switch-buffer :wk "Switch buffer in tabs")
-    "TAB w" '(bufler-workspace-frame-set :wk "Set frame")
-    )
-  )
-#+end_src
-
 * Activities
 :PROPERTIES:
 :CUSTOM_ID: activities
 :END:
 #+begin_src emacs-lisp
-(use-package activities
-  :init
-  (activities-mode)
-  ;; (activities-tabs-mode)
-  ;; Prevent `edebug' default bindings from interfering.
-  (setq edebug-inhibit-emacs-lisp-mode-bindings t)
-  :config
-  (leader-key
-    "TAB" '(:ignore t :wk "Activities")
-    "TAB n" '(activities-new :wk "New")
-    "TAB d" '(activities-define :wk "Define")
-    "TAB a" '(activities-resume :wk "Resume")
-    "TAB s" '(activities-suspend :wk "Suspend")
-    "TAB k" '(activities-kill :wk "Kill")
-    "TAB RET" '(activities-switch :wk "Switch")
-    "TAB b" '(activities-switch-buffer :wk "Switch buffer")
-    "TAB g" '(activities-revert :wk "Revert")
-    "TAB l" '(activities-list :wk "List")
-    ))
+;; (use-package activities
+;;   :init
+;;   (activities-mode)
+;;   ;; (activities-tabs-mode)
+;;   ;; Prevent `edebug' default bindings from interfering.
+;;   (setq edebug-inhibit-emacs-lisp-mode-bindings t)
+;;   :config
+;;   (leader-key
+;;     "TAB" '(:ignore t :wk "Activities")
+;;     "TAB n" '(activities-new :wk "New")
+;;     "TAB d" '(activities-define :wk "Define")
+;;     "TAB a" '(activities-resume :wk "Resume")
+;;     "TAB s" '(activities-suspend :wk "Suspend")
+;;     "TAB k" '(activities-kill :wk "Kill")
+;;     "TAB RET" '(activities-switch :wk "Switch")
+;;     "TAB b" '(activities-switch-buffer :wk "Switch buffer")
+;;     "TAB g" '(activities-revert :wk "Revert")
+;;     "TAB l" '(activities-list :wk "List")
+;;     ))
 #+end_src
+
+* Easysession
+:PROPERTIES:
+:CUSTOM_ID: easysession
+:END:
+#+begin_src emacs-lisp
+(use-package easysession
+  :defer 2
+  ;; :commands
+  ;; (easysession-switch-to easysession-save-as)
+  ;; :general
+  ;; (:states 'normal '("TAB"))
+  :config
+  (defun my-setup-easy-session ()
+    ;; (easysession-load-including-geometry)
+    (easysession-save-mode)
+    (remove-hook 'server-after-make-frame-hook #'my-setup-easy-session))
+
+  (add-hook 'server-after-make-frame-hook #'my-setup-easy-session)
+  (leader-key
+    "TAB" '(:ignore t :wk "Session")
+    "TAB TAB" '(easysession-switch-to :wk "Switch")
+    "TAB s" '(easysession-save-as :wk "Save")
+    "TAB d" '(easysession-delete :wk "Delete")))
+#+end_src
+
+#+RESULTS:
+: [nil 26444 1065 868595 nil elpaca-process-queues nil nil 730000 nil]
+
 * Beacon
 :PROPERTIES:
 :CUSTOM_ID: beacon
@@ -578,95 +586,6 @@
   (fb2-reader-image-max-width 400)
   (fb2-reader-image-max-height 400))
 #+end_src
-* Elfeed
-:PROPERTIES:
-:CUSTOM_ID: elfeed
-:END:
-#+begin_src emacs-lisp
-
-(defvar my/elfeed-original-search-pattern "@2-week-ago +habr" "Original search pattern for my elfeed")
-
-(defvar my/elfeed-original-search-pattern "@2-week-ago +habr" "Original search pattern for my elfeed")
-
-(defvar my/elfeed-original-search-pattern "@2-week-ago +habr" "Original search pattern for my elfeed")
-
-(use-package elfeed
-  :commands elfeed
-  :init
-  (setq elfeed-db-directory (concat user-emacs-directory "elfeed/db/")
-        elfeed-enclosure-default-dir (concat user-emacs-directory "elfeed/enclosures/"))
-  :config
-
-  (add-hook 'elfeed-search-mode-hook #'elfeed-update)
-  (make-directory elfeed-db-directory t)
-
-  (setq elfeed-search-filter "#100 +habr +article"
-        elfeed-show-entry-switch #'pop-to-buffer
-        ;; elfeed-show-entry-delete #'+rss/delete-pane
-        shr-max-image-proportion 0.8)
-
-  (setq elfeed-search-feed-face ":foreground #ffffff :weight bold")
-  ;; elfeed-feeds 
-  ;; '(
-  ;;   ("https://www.reddit.com/r/linux.rss" eng reddit linux)
-  ;;   ;; ("https://www.reddit.com/r/commandline.rss" reddit commandline)
-  ;;   ;; ("https://www.reddit.com/r/distrotube.rss" reddit distrotube)
-  ;;   ("https://www.reddit.com/r/emacs.rss" eng reddit emacs)
-
-  ;;   ("https://www.reddit.com/r/org-mode.rss" eng reddit emacs org-mode)
-  ;;   ;; ("https://www.gamingonlinux.com/article_rss.php" gaming linux)
-  ;;   ;; ("https://hackaday.com/blog/feed/" hackaday linux)
-  ;;   ;; ("https://opensource.com/feed" opensource linux)
-  ;;   ;; ("https://linux.softpedia.com/backend.xml" softpedia linux)
-  ;;   ;; ("https://itsfoss.com/feed/" itsfoss linux)
-  ;;   ;; ("https://www.zdnet.com/topic/linux/rss.xml" zdnet linux)
-  ;;   ;; ("https://www.phoronix.com/rss.php" phoronix linux)
-  ;;   ;; ("http://feeds.feedburner.com/d0od" omgubuntu linux)
-  ;;   ;; ("https://www.computerworld.com/index.rss" computerworld linux)
-  ;;   ;; ("https://www.networkworld.com/category/linux/index.rss" networkworld linux)
-  ;;   ;; ("https://www.techrepublic.com/rssfeeds/topic/open-source/" techrepublic linux)
-  ;;   ;; ("https://betanews.com/feed" betanews linux)
-  ;;   ;; ("http://lxer.com/module/newswire/headlines.rss" lxer linux)
-  ;;   ;; ("https://distrowatch.com/news/dwd.xml" distrowatch linux)
-  ;;   ;; ("habrahabr.ru/rss/hubs/webdev/articles/all" habr web-development)
-  ;;   ;; ("habrahabr.ru/rss/hubs/all" habr test)
-  ;;   ;; ("habrahabr.ru/rss/hubs/open_source/articles/rated25" habr opensource)
-  ;;   ("https://habr.com/ru/rss/hubs/python/articles/rated25/?fl=ru" rus habr python)
-  ;;   ("https://habr.com/ru/rss/hubs/open_source/articles/rated25/?fl=ru" rus habr open_source)
-  ;;   ("https://habr.com/ru/rss/hubs/machine_learning/articles/rated25/?fl=ru" rus habr machine_learning)
-  ;;   ("https://habr.com/ru/rss/hubs/artificial_intelligence/articles/rated25/?fl=ru" rus habr ai)
-  ;;   ("https://habr.com/ru/rss/hubs/linux/articles/rated25/?fl=ru" rus habr linux)
-  ;;   ("https://habr.com/ru/rss/hubs/algorithms/articles/rated25/?fl=ru" rus habr algorithms)
-  ;;   ("https://habr.com/ru/rss/hubs/linux_dev/articles/rated25/?fl=ru" rus habr linux)
-  ;;   ("https://habr.com/ru/rss/hubs/webdev/articles/rated25/?fl=ru" rus habr web_development)
-  ;;   ("https://habr.com/ru/rss/hubs/reactjs/articles/rated25/?fl=ru" rus habr web_development react)
-  ;;   ("https://habr.com/ru/rss/hubs/angular/articles/rated25/?fl=ru" rus habr web_development angular)
-  ;;   ("https://habr.com/ru/rss/hubs/vuejs/articles/rated25/?fl=ru" rus habr web_development vuejs)
-  ;;   ("https://habr.com/ru/rss/hubs/javascript/articles/rated25/?fl=ru" rus habr web_development javascript)
-  ;;   ("https://habr.com/ru/rss/hubs/typescript/articles/rated25/?fl=ru" rus habr web_development typescript)
-  ;;   ))
-  (leader-key
-    "E" '(:ignore t :wk "Elfeed")
-    "E e" '(elfeed :wk "Start")
-    "E u" '(elfeed-update :wk "Update")
-    )
-  )
-
-
-(use-package elfeed-goodies
-  :init
-  (elfeed-goodies/setup)
-  :config
-  (setq elfeed-goodies/entry-pane-size 0.5))
-(use-package elfeed-org
-  :config
-  (elfeed-org)
-  (setq rmh-elfeed-org-files (list "~/.emacs.d/elfeed.org"))
-  )
-#+end_src
-
-#+RESULTS:
-
 * Imenu 
 :PROPERTIES:
 :CUSTOM_ID: imenu

@@ -222,11 +222,69 @@ Guidelines:
 #+begin_src emacs-lisp
 (use-package evedel
   ;; :ensure (evedel :host github :repo "daedsidog/evedel" :branch "master" :files ("*.el"))
-  :defer 5
+  :defer 1
+  :init
+  
+  (transient-define-prefix evedel-tmenu--directive ()
+    "Transient menu for directive"
+    [["Create/Modify"
+      ("c" "Create directive" evedel-create-directive
+       :transient nil)
+      ("m" "Modify" evedel-modify-directive :transient t)
+      ("M" "Modify tag query" evedel-modify-directive-tag-query :transient t)]
+
+     ["Navigation"
+      ("n" "Next Directive" evedel-next-directive :transient t)
+      ("p" "Previous Directive" evedel-previous-directive :transient t)]]
+    [:class transient-row
+            (casual-lib-quit-one)]
+    )
+
+  (transient-define-prefix evedel-tmenu--references ()
+    "Transient menu for references"
+    [["Create/Modify"
+      ("c" "Create" evedel-create-reference
+       :transient nil)
+      ("m" "Modify" evedel-modify-reference-commentary :transient t)]
+
+     ["Navigation"
+      ("n" "Next Reference" evedel-next-reference :transient t)
+      ("p" "Previous Reference" evedel-previous-reference :transient t)]]
+    [:class transient-row
+            (casual-lib-quit-one)]
+    )
+  
+  (transient-define-prefix evedel-tmenu ()
+    "Transient menu for Evedel"
+    [["Objects"
+      ("d" "Directive>" evedel-tmenu--directive :transient nil)
+      ("p" "Process" evedel-process-directives :transient t)
+      ("P" "Previe" evedel-preview-directive-prompt :transient nil)
+      ("r" "References>" evedel-tmenu--references :transient nil)
+      ("s" "Convert one to another" evedel-convert-instructions :transient t) 
+      ("D" "Delete instruction" evedel-delete-instructions :transient t)
+      ]
+     ["Navigation"
+      ("j" "Next Instruction" evedel-next-instruction :transient t)
+      ("k" "Previous Instruction" evedel-previous-instruction :transient t)]
+     ["Tags"
+      ("t" "Add tag" evedel-add-tags :transient t)
+      ("T" "Remove tag" evedel-remove-tags :transient t)]
+     ]
+    [["Save/Load"
+      ("S" "Save instructions" evedel-save-instructions :transient nil)
+      ("L" "Load instructions" evedel-load-instructions :transient t)]]
+    [:class transient-row
+            (casual-lib-quit-one)
+            ("C-d" "Delete all instructions" evedel-delete-all-instructions
+             :transient nil
+             :if (lambda() (< 0 (evedel-instruction-count))))]
+    )
   :config
 
   (let ((roles '((python-ts-mode . "a Python programmer")
                  (python-mode . "a Python programmer")
+                 (web-mode . "Web developer")
                  (clojure-mode . "a Clojure programmer")
                  (clojure-ts-mode . "a Clojure programmer")
                  (vue-mode . "a Vue programmer")
@@ -240,46 +298,12 @@ Guidelines:
    :states 'normal
    :keymaps '(global-map)
    :prefix "C-e"
-   "" '(:ignore t :wk "Evedel")
-   "D" '(evedel-delete-all-instructions :wk "Delete All")
-
-   ;; Instructions
-   "i" '(:ignore t :wk "Instructions")
-   "i n" '(evedel-next-instruction :wk "Next")
-   "i p" '(evedel-previous-instruction :wk "Previous")
-   "i d" '(evedel-delete-instructions :wk "Delete (point/region)")
-   "i s" '(evedel-save-instructions :wk "Save")
-   "i l" '(evedel-load-instructions :wk "Load")
-
-   ;; Directives
-   "d" '(:ignore t :wk "Directive")
-   "d c" '(evedel-create-directive :wk "Create")
-   "d n" '(evedel-next-directive :wk "Next")
-   "d p" '(evedel-previous-directive :wk "Previous")
-   "d m" '(evedel-modify-directive :wk "Modify")
-
-   ;; References
-   "r" '(:ignore t :wk "References")
-   "r n" '(evedel-next-reference :wk "Next")
-   "r p" '(evedel-previous-reference :wk "Previous")
-   "r c" '(evedel-create-reference :wk "Create")
-   "r m" '(evedel-modify-reference-commentary :wk "Modify commentary")
-   
-   ;; Tags
-   "t" '(:ignore t :wk "Tags")
-   "t a" '(evedel-add-tags :wk "Add")
-   "t d" '(evedel-remove-tags :wk "Delete")
-   "t q" '(evedel-modify-directive-tag-query :wk "Query")
-
-   ;; Prompt
-   "p" '(:ignore t :wk "Prompt")
-   "p p" '(evedel-process-directives :wk "Send")
-   "p P" '(evedel-preview-directive-prompt :wk "Preview")
+   "" '(evedel-tmenu :wk "Evedel")
    ))
 #+end_src
 
 #+RESULTS:
-: [nil 26384 53875 277358 nil elpaca-process-queues nil nil 857000 nil]
+: [nil 26444 9329 31631 nil elpaca-process-queues nil nil 868000 nil]
 
 ** Corsair
 :PROPERTIES:

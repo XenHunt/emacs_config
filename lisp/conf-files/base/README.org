@@ -265,33 +265,6 @@
     )
 
   (general-define-key
-   :states 'normal
-   :keymaps 'prog-mode-map
-   :prefix "SPC"
-   "c" '(:ignore t :wk "Code")
-   "c s" '(consult-lsp-symbols :wk "Search symbol")
-   "c a" '(:ignore t :wk "Actions")
-   "c =" '(:ignore t :wk "Format")
-   "c F" '(:ignore t :wk "Workspace Folders")
-   "c g" '(:ignore t :wk "Find")
-   "c G" '(:ignore t :wk "UI Peek")
-   "c h" '(:ignore t :wk "Help?")
-   "c r" '(:ignore t :wk "Organize/Rename")
-   "c T" '(:ignore t :wk "Toggle")
-   "c w" '(:ignore t :wk "Maintenance")
-   
-   "c c" '(compile :wk "Compile code")
-   ;; "c r" '(lsp-rename :wk "Rename object")
-   ;; "c d" '(lsp-find-definition :wk "Find definition")
-   ;; "c x" '(consult-flycheck :wk "List errors")
-   ;; "c R" '(lsp-workspace-restart :wk "Restart LSP")
-   "c ." '(i-really-want-to-dumb-jump :wk "Find definition")
-   "c x" '(:ignore t :wk "Consult")
-   "c x x" '(consult-flycheck :wk "Flycheck")
-   "c x s" '(consult-lsp-symbols :wk "Symbols")
-   "c x d" '(consult-lsp-diagnostics :wk "Diagnostics"))
-
-  (general-define-key
    :keymaps 'projectile-command-map
    ;; :prefix "SPC p" ; Префикс для доступа к ключам projectile-command-map
    "f" 'consult-projectile-find-file
@@ -491,6 +464,7 @@
                                     (image image-mode)
                                     daemons
                                     cider
+                                    cmake-mode
                                     image+
                                     image-dired
 				                    devdocs

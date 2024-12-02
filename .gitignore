@@ -58,3 +58,5 @@
 /lisp/conf-files/irc/irc-package.el
 /eshell/
 /.chatgpt-shell.el
+/lisp/conf-files/elfeed/elfeed-package.el
+/lisp/conf-files/usb-mount/usb-package.el

@@ -23,6 +23,7 @@
 - [[#dumb-jump][Dumb-Jump]]
 - [[#direnv][Direnv]]
 - [[#programming-language][Programming Language]]
+  - [[#eldoc-box][Eldoc-Box]]
   - [[#lsp-mode][LSP-Mode]]
   - [[#dap-mode][DAP-Mode]]
   - [[#formater][Formater]]
@@ -316,6 +317,19 @@
 :PROPERTIES:
 :CUSTOM_ID: programming-language
 :END:
+** Eldoc-Box
+:PROPERTIES:
+:CUSTOM_ID: eldoc-box
+:END:
+#+begin_src emacs-lisp
+;; (use-package eldoc-box
+;;   :hook
+;;   (corfu-mode . eldoc-box-hover-at-point-mode))
+#+end_src
+
+#+RESULTS:
+: [nil 26445 46043 925195 nil elpaca-process-queues nil nil 465000 nil]
+
 ** LSP-Mode 
 :PROPERTIES:
 :CUSTOM_ID: lsp-mode
@@ -362,13 +376,13 @@
     (or
      (when (equal (following-char) ?#)
        (let ((bytecode (read (current-buffer))))
-	 (when (byte-code-function-p bytecode)
+	     (when (byte-code-function-p bytecode)
            (funcall bytecode))))
      (apply old-fn args)))
   (advice-add (if (progn (require 'json)
-			 (fboundp 'json-parse-buffer))
+			             (fboundp 'json-parse-buffer))
                   'json-parse-buffer
-		'json-read)
+		        'json-read)
               :around
               #'lsp-booster--advice-json-parse)
 
@@ -383,7 +397,7 @@
           (progn
             (message "Using emacs-lsp-booster for %s!" orig-result)
             (cons "emacs-lsp-booster" orig-result))
-	orig-result)))
+	    orig-result)))
   (advice-add 'lsp-resolve-final-command :around #'lsp-booster--advice-final-command)
 
   (defun my/orderless-dispatch-flex-first (_pattern index _total)
@@ -398,36 +412,64 @@
 
   (advice-add 'lsp--select-action :filter-args
               (defun get-rid-of/refactor.move (actions_args)
-		(list 
-		 (seq-remove (lambda (action)
+		        (list 
+		         (seq-remove (lambda (action)
                                (string= "refactor.move" (plist-get action :kind)))
                              (seq-first actions_args)))))
   :hook (
 
-	 (lsp-completion-mode . fv--lsp-mode-capf-setup)
-	 ;; replace XXX-mode with concrete major-mode(e. g. python-mode)
-	 (python-mode . lsp)
-         (python-ts-mode . lsp)
-	 (json-mode . lsp)
-	 (yaml-mode . lsp)
-	 (javascript-mode . lsp)
-	 ;; (vue-mode . lsp)
+	     (lsp-completion-mode . fv--lsp-mode-capf-setup)
+	     ;; replace XXX-mode with concrete major-mode(e. g. python-mode)
+	     ;; (python-mode . lsp)
+         ;;     (python-ts-mode . lsp)
+	     (json-mode . lsp)
+	     (yaml-mode . lsp)
+	     (javascript-mode . lsp)
+	     ;; (vue-mode . lsp)
          ;; (clojure-mode . lsp)
          ;; (clojurescript-mode . lsp)
          ;; (clojurec-mode . lsp)
-	 ;; (web-mode . lsp)
-	 ;; (typescript-mode . lsp)
-	 (css-mode . lsp)
-	 (lsp-completion-mode . lsp-enable-which-key-integration)
-	 ;; (emacs-lisp-mode . lsp)
-	 (lisp-interaction-mode . lsp)
+	     ;; (web-mode . lsp)
+	     ;; (typescript-mode . lsp)
+	     (css-mode . lsp)
+	     (lsp-completion-mode . lsp-enable-which-key-integration)
+	     ;; (emacs-lisp-mode . lsp)
+	     (lisp-interaction-mode . lsp)
          ;; (lsp . (lambda () (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)))
-	 )
+	     )
   ;; :commands lsp
   :config
   ;; (add-hook 'lsp-mode-hook #'lsp-completion-mode)
   (general-def 'normal lsp-mode :definer 'minor-mode
     "SPC c" lsp-command-map)
+
+  (general-define-key
+   :states 'normal
+   :keymaps 'lsp-mode-map
+   :prefix "SPC"
+
+   "c" '(:ignore t :wk "Code")
+   "c s" '(consult-lsp-symbols :wk "Search symbol")
+   "c a" '(:ignore t :wk "Actions")
+   "c =" '(:ignore t :wk "Format")
+   "c F" '(:ignore t :wk "Workspace Folders")
+   "c g" '(:ignore t :wk "Find")
+   "c G" '(:ignore t :wk "UI Peek")
+   "c h" '(:ignore t :wk "Help?")
+   "c r" '(:ignore t :wk "Organize/Rename")
+   "c T" '(:ignore t :wk "Toggle")
+   "c w" '(:ignore t :wk "Maintenance")
+   
+   "c c" '(compile :wk "Compile code")
+   ;; "c r" '(lsp-rename :wk "Rename object")
+   ;; "c d" '(lsp-find-definition :wk "Find definition")
+   ;; "c x" '(consult-flycheck :wk "List errors")
+   ;; "c R" '(lsp-workspace-restart :wk "Restart LSP")
+   "c ." '(i-really-want-to-dumb-jump :wk "Find definition")
+   "c x" '(:ignore t :wk "Consult")
+   "c x x" '(consult-flycheck :wk "Flycheck")
+   "c x s" '(consult-lsp-symbols :wk "Symbols")
+   "c x d" '(consult-lsp-diagnostics :wk "Diagnostics"))
   ;; (setq lsp-enabled-clients '(ts-ls pyright angular-ls vue-semantic-server json-ls html-ls eslint css-ls bash-ls))
   )
 (elpaca-wait)
@@ -438,15 +480,28 @@
   (lsp-ui-sideline-show-code-actions t)
   (lsp-ui-doc-enable t)
   (lsp-ui-doc-position 'at-point)
+  (lsp-ui-doc-show-with-cursor t )
   :after lsp-mode
-  :init
-  (add-hook 'lsp-mode-hook 'lsp-ui-mode)
-
+  ;; :init
+  ;; (add-hook 'lsp-mode-hook 'lsp-ui-mode)
+  :hook
+  (lsp-mode . lsp-ui-mode)
+  (lsp-ui-mode . lsp-ui-doc-mode)
+  :config
+  
+  (general-define-key
+   :states 'normal
+   :keymaps '(lsp-ui-doc-mode-map lsp-ui-doc-frame-mode-map)
+   :prefix "SPC"
+   "c" '(:ignore t :wk "Code")
+   "c '" '(lsp-ui-doc-focus-frame :wk "Focus doc frame")
+   "c \"" '(lsp-ui-doc-unfocus-frame :wk "Unfocus doc frame"))
   )
 (use-package consult-lsp)
          #+end_src
 
 #+RESULTS:
+: [nil 26445 62659 19937 nil elpaca-process-queues nil nil 426000 nil]
 
 ** DAP-Mode 
 :PROPERTIES:
@@ -578,9 +633,10 @@
 #+begin_src emacs-lisp
 (use-package lsp-pyright
   :ensure t
+  :custom (lsp-pyright-langserver-command "pyright") ;; or basedpyright
   :hook ((python-mode python-ts-mode) . (lambda ()
-			 (require 'lsp-pyright)
-			 (lsp))))
+			                              (require 'lsp-pyright)
+			                              (lsp))))
 #+end_src
 *** Pip-env
 :PROPERTIES:

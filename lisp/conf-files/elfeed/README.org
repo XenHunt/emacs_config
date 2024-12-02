@@ -1,0 +1,140 @@
+#+TITLE:XenHunt Config (elfeed)
+#+AUTHOR: Evgeny Berlizov (XenHunt)
+#+DESCRIPTION: XenHunt's config of elfeed
+#+STARTUP: content
+#+PROPERTY: header-args :tangle elfeed-package.el
+* Содержание
+:PROPERTIES:
+:TOC:      :include all :depth 100 :force (nothing) :ignore (this) :local (nothing)
+:END:
+:CONTENTS:
+- [[#введение][Введение]]
+- [[#fast-loading][Fast-Loading]]
+- [[#elfeed][Elfeed]]
+- [[#elfeed-goodies][Elfeed-Goodies]]
+- [[#elfeed-org][Elfeed-Org]]
+- [[#elfeed-tube][Elfeed-Tube]]
+- [[#provide][Provide]]
+:END:
+* Введение
+:PROPERTIES:
+:CUSTOM_ID: введение
+:END:
+
+Эта часть конфига посвящена настройке =telega.el= - клиента =Telegram= для =Emacs=.
+
+* Fast-Loading
+:PROPERTIES:
+:CUSTOM_ID: fast-loading
+:END:
+
+Быстрая загрузка модуля.
+
+#+begin_src emacs-lisp
+;; -*- lexical-binding: t; -*-
+#+end_src
+
+* Elfeed
+:PROPERTIES:
+:CUSTOM_ID: elfeed
+:END:
+#+begin_src emacs-lisp
+
+(defvar my/elfeed-original-search-pattern "@2-week-ago +habr" "Original search pattern for my elfeed")
+
+(use-package elfeed
+  :commands elfeed
+  :init
+  (setq elfeed-db-directory (concat user-emacs-directory "elfeed/db/")
+        elfeed-enclosure-default-dir (concat user-emacs-directory "elfeed/enclosures/"))
+  :config
+
+  (add-hook 'elfeed-search-mode-hook #'elfeed-update)
+  (make-directory elfeed-db-directory t)
+
+  (setq elfeed-search-filter "#100 +habr +article"
+        elfeed-show-entry-switch #'pop-to-buffer
+        ;; elfeed-show-entry-delete #'+rss/delete-pane
+        shr-max-image-proportion 0.8)
+
+  (setq elfeed-search-feed-face ":foreground #ffffff :weight bold")
+  (leader-key
+    "E" '(:ignore t :wk "Elfeed")
+    "E e" '(elfeed :wk "Start")
+    "E u" '(elfeed-update :wk "Update")
+    )
+  )
+
+
+
+
+#+end_src
+
+#+RESULTS:
+
+* Elfeed-Goodies
+:PROPERTIES:
+:CUSTOM_ID: elfeed-goodies
+:END:
+#+begin_src emacs-lisp
+(use-package elfeed-goodies
+  :init
+  (elfeed-goodies/setup)
+  :config
+  (setq elfeed-goodies/entry-pane-size 0.5))
+#+end_src
+* Elfeed-Org
+:PROPERTIES:
+:CUSTOM_ID: elfeed-org
+:END:
+#+begin_src emacs-lisp
+(use-package elfeed-org
+  :config
+  (elfeed-org)
+  (setq rmh-elfeed-org-files (list "~/.emacs.d/elfeed.org"))
+  )
+#+end_src
+* Elfeed-Tube
+:PROPERTIES:
+:CUSTOM_ID: elfeed-tube
+:END:
+#+begin_src emacs-lisp
+(use-package elfeed-tube
+  :ensure t ;; or :straight t
+  :after elfeed
+  :demand t
+  :config
+  ;; (setq elfeed-tube-auto-save-p nil) ; default value
+  ;; (setq elfeed-tube-auto-fetch-p t)  ; default value
+  (elfeed-tube-setup)
+
+  :bind (:map elfeed-show-mode-map
+              ("F" . elfeed-tube-fetch)
+              ([remap save-buffer] . elfeed-tube-save)
+              :map elfeed-search-mode-map
+              ("F" . elfeed-tube-fetch)
+              ([remap save-buffer] . elfeed-tube-save)))
+
+(use-package elfeed-tube-mpv
+  :ensure t ;; or :straight t
+  :config
+  (elfeed-tube-add-feeds '("https://www.youtube.com/@SystemCrafters"
+                           "https://www.youtube.com/playlist?list=PLEoMzSkcN8oNxnj7jm5V2ZcGc52002pQU"
+                           "https://www.youtube.com/playlist?list=PLEoMzSkcN8oMc34dTjyFmTUWbXTKrNfZA"
+                           "https://www.youtube.com/playlist?list=PLEoMzSkcN8oPQtn7FQEF3D7sroZbXuPZ7"
+                           "https://www.youtube.com/playlist?list=PLEoMzSkcN8oNB7Xm3RNKMy_vygbDlj666"))
+  :bind (:map elfeed-show-mode-map
+              ("C-c C-f" . elfeed-tube-mpv-follow-mode)
+              ("C-c C-w" . elfeed-tube-mpv-where)))
+#+end_src
+
+#+RESULTS:
+: [nil 26445 38572 305734 nil elpaca-process-queues nil nil 81000 nil]
+
+* Provide
+:PROPERTIES:
+:CUSTOM_ID: provide
+:END:
+#+begin_src emacs-lisp
+(provide 'elfeed-package)
+#+end_src
