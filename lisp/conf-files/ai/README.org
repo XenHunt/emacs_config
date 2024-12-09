@@ -37,7 +37,7 @@
 Быстрая загрузка модуля.
 
 #+begin_src emacs-lisp
-;; -*- lexical-binding: t; -*-
+;; -*- lexical-binding: t;  no-byte-compile: t -*-
 #+end_src
 
 * Gptel
@@ -295,7 +295,7 @@ Guidelines:
   
   (general-define-key
    ;; :definer 'minor-mode
-   :states 'normal
+   :states '(normal visual)
    :keymaps '(global-map)
    :prefix "C-e"
    "" '(evedel-tmenu :wk "Evedel")

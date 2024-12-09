@@ -28,7 +28,7 @@
 Быстрая загрузка модуля.
 
 #+begin_src emacs-lisp
-;; -*- lexical-binding: t; -*-
+;; -*- lexical-binding: t;  no-byte-compile: t -*-
 #+end_src
 
 * Telega.el
@@ -41,6 +41,9 @@
   :init
   (setq telega-use-image t
         telega-emoji-use-image t)
+  :custom
+  (telega-use-image t)
+  (telega-emoji-use-image t)
   :config
   (add-hook 'telega-load-hook 'telega-notifications-mode)
   (let ((libs '(telega-dired-dwim telega-dashboard telega-mnz telega-transient)))

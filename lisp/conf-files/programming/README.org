@@ -35,12 +35,13 @@
     - [[#раскладка][Раскладка]]
   - [[#go][Go]]
   - [[#jupyter][Jupyter]]
+    - [[#code-cells][Code-Cells]]
   - [[#web][WEB]]
     - [[#vue][Vue]]
     - [[#add-node-modules-path][add-node-modules-path]]
     - [[#js2-xref][JS2-xref]]
     - [[#web-mode][WEB-Mode]]
-    - [[#npm-mode][NPM-Mode]]
+    - [[#js-pkg-mode][JS-PKG-Mode]]
     - [[#prettier-js][Prettier-JS]]
     - [[#js2-mode][JS2-Mode]]
     - [[#typescript][Typescript]]
@@ -92,7 +93,7 @@
 Быстрая загрузка модуля.
 
 #+begin_src emacs-lisp
-;; -*- lexical-binding: t; -*-
+;; -*- lexical-binding: t;  no-byte-compile: t -*-
 #+end_src
 
 * Multi-Compile
@@ -364,11 +365,14 @@
   (lsp-completion--enable t)
   (lsp-restart 'auto-restart)
   (lsp-enable-snippet t)
-  (lsp-diagnostics-provider :flymake)
+  (lsp-diagnostics-provider :flycheck)
   (lsp-disabled-clients '(eslint))
   (lsp-auto-execute-action nil)
-  (lsp-log-max 250)
+  (lsp-log-max 100)
   ;; (lsp-keymap-prefix "SPC c l")
+  (lsp-ui-sideline-enable nil)
+  (lsp-ui-sideline-show-code-actions nil)
+  (lsp-eldoc-enable-hover nil)
   :init
   ;; (evil-define-minor-mode-key 'normal lsp-mode (kbd "SPC c l") lsp-command-map)
   (defun lsp-booster--advice-json-parse (old-fn &rest args)
@@ -422,20 +426,9 @@
 	     ;; replace XXX-mode with concrete major-mode(e. g. python-mode)
 	     ;; (python-mode . lsp)
          ;;     (python-ts-mode . lsp)
-	     (json-mode . lsp)
-	     (yaml-mode . lsp)
-	     (javascript-mode . lsp)
-	     ;; (vue-mode . lsp)
-         ;; (clojure-mode . lsp)
-         ;; (clojurescript-mode . lsp)
-         ;; (clojurec-mode . lsp)
-	     ;; (web-mode . lsp)
-	     ;; (typescript-mode . lsp)
-	     (css-mode . lsp)
+	     ((json-mode  yaml-mode javascript-mode js-ts-mode js-mode typescript-mode typescript-ts-mode css-mode tsx-ts-mode  vue-mode js2-mode) . lsp-deferred)
 	     (lsp-completion-mode . lsp-enable-which-key-integration)
-	     ;; (emacs-lisp-mode . lsp)
 	     (lisp-interaction-mode . lsp)
-         ;; (lsp . (lambda () (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)))
 	     )
   ;; :commands lsp
   :config
@@ -475,6 +468,7 @@
 (elpaca-wait)
 (use-package lsp-ui 
   :custom
+  (lsp-ui-doc-use-childframe nil)
   (lsp-ui-sideline-show-diagnostics t)
   (lsp-ui-sideline-show-hover t)
   (lsp-ui-sideline-show-code-actions t)
@@ -491,13 +485,19 @@
   
   (general-define-key
    :states 'normal
-   :keymaps '(lsp-ui-doc-mode-map lsp-ui-doc-frame-mode-map)
-   :prefix "SPC"
-   "c" '(:ignore t :wk "Code")
-   "c '" '(lsp-ui-doc-focus-frame :wk "Focus doc frame")
-   "c \"" '(lsp-ui-doc-unfocus-frame :wk "Unfocus doc frame"))
-  )
-(use-package consult-lsp)
+   :keymaps '(lsp-ui-doc-mode-map)
+   ;; :prefix "SPC"
+   ;; "c" '(:ignore t :wk "Code")
+   "C-'" '(lsp-ui-doc-focus-frame :wk "Focus doc frame")
+   )
+  (general-define-key
+   :states 'normal
+   :keymaps '(lsp-ui-doc-frame-mode-map)
+   ;; :prefix "SPC"
+   ;; "c" '(:ignore t :wk "Code")
+   "C-'" '(lsp-ui-doc-unfocus-frame :wk "Unfocus doc frame")))
+(use-package consult-lsp
+  :defer 3)
          #+end_src
 
 #+RESULTS:
@@ -810,7 +810,13 @@
    )
   )
 #+end_src
-
+*** Code-Cells
+:PROPERTIES:
+:CUSTOM_ID: code-cells
+:END:
+#+begin_src emacs-lisp
+(use-package code-cells)
+#+end_src
 ** WEB
 :PROPERTIES:
 :CUSTOM_ID: web
@@ -826,7 +832,6 @@
   :custom
   (vue-html-tab-width 2)
   (indent-tabs-mode nil)
-  :hook ((vue-mode . lsp))
   :mode "\\.vue\\'"
   :config
   (add-to-list 'apheleia-mode-alist '(vue-mode . prettier))
@@ -914,16 +919,24 @@
 ;;           :append #'lsp!)
 
 #+end_src
-*** NPM-Mode 
+*** JS-PKG-Mode 
 :PROPERTIES:
-:CUSTOM_ID: npm-mode
+:CUSTOM_ID: js-pkg-mode
 :END:
 #+begin_src emacs-lisp
-(use-package npm-mode
-  :ensure t
-  :config
-  (npm-global-mode))
+(use-package js-pkg-mode
+  :defer 2
+
+  :ensure '(js-pkg-mode :type git :host github :repo "ovistoica/js-pkg-mode")
+  ;; :custom
+  ;; (js-pkg-mode-keymap-prefix "SPC c j")
+
+  :init (js-pkg-global-mode 1))
 #+end_src
+
+#+RESULTS:
+: [nil 26448 41937 468486 nil elpaca-process-queues nil nil 756000 nil]
+
 *** Prettier-JS 
 :PROPERTIES:
 :CUSTOM_ID: prettier-js
@@ -954,7 +967,7 @@
 (use-package js2-mode
   :mode (
          ("\\.js\\'" . js2-mode))
-  :hook ((js2-mode . lsp-mode))
+  ;; :hook ((js2-mode . lsp-mode))
   :config
   (setq js-indent-level 2)
   )
@@ -971,7 +984,6 @@
 #+begin_src emacs-lisp
 (use-package typescript-mode
   :mode ("\.ts$")
-  :hook (typescript-mode . lsp)
   :config
   ;; we choose this instead of tsx-mode so that eglot can automatically figure out language for server
   ;; see https://github.com/joaotavora/eglot/issues/624 and https://github.com/joaotavora/eglot#handling-quirky-servers
@@ -1130,8 +1142,10 @@
   (setq org-babel-clojure-backend 'cider))
 (use-package cider-eval-sexp-fu)
 (use-package flycheck-clj-kondo)
-(use-package clojure-mode)
+(use-package clojure-mode
+  :defer 2)
 (use-package clojure-ts-mode
+  :defer 2
   :after clojure-mode
   :preface
   (defun clojure-lsp-start()
@@ -1351,14 +1365,16 @@
 :CUSTOM_ID: dockerfile-mode
 :END:
 #+begin_src emacs-lisp
-(use-package dockerfile-mode)
+(use-package dockerfile-mode
+  :defer 5)
 #+end_src
 *** Docker
 :PROPERTIES:
 :CUSTOM_ID: docker-0
 :END:
 #+begin_src emacs-lisp
-(use-package docker)
+(use-package docker
+  :defer 5)
 #+end_src
 ** XKB-Mode
 :PROPERTIES:
@@ -1417,6 +1433,7 @@
 :END:
 #+begin_src emacs-lisp
 (use-package treesit-auto
+  :defer 2
   :config
   (global-treesit-auto-mode))
 #+end_src
@@ -1444,13 +1461,13 @@
 :CUSTOM_ID: codemetrics
 :END:
 #+begin_src emacs-lisp
-(use-package codemetrics
-  :ensure (codemetrics :type git :host github :repo "jcs-elpa/codemetrics")
-  :after tree-sitter
-  :hook
-  ((python-mode js2-mode clojure-mode) . codemetrics-mode)
-  :config
-  (codemetrics-mode 1))
+;; (use-package codemetrics
+;;   :ensure (codemetrics :type git :host github :repo "jcs-elpa/codemetrics")
+;;   :after tree-sitter
+;;   :hook
+;;   ((python-mode js2-mode clojure-mode) . codemetrics-mode)
+;;   :config
+;;   (codemetrics-mode 1))
 #+end_src
 
 #+RESULTS:

@@ -1,4 +1,4 @@
-;; -*- lexical-binding: t; -*-
+;; -*- lexical-binding: t; no-byte-compile: t -*-
 ;;; Code:
 
 (defvar elpaca-installer-version 0.8)

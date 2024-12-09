@@ -55,7 +55,7 @@
 Быстрая загрузка модуля.
 
 #+begin_src emacs-lisp
-;; -*- lexical-binding: t; -*-
+;; -*- lexical-binding: t;  no-byte-compile: t -*-
 #+end_src
 
 * Org-Mode
@@ -165,6 +165,7 @@
 
 #+begin_src emacs-lisp
 (use-package org-make-toc
+  :defer 2
   :config
   (setq org-make-toc-insert-custom-ids t)
   (add-hook 'org-mode-hook #'org-make-toc-mode)
@@ -299,6 +300,7 @@
 
 #+begin_src emacs-lisp
 (use-package org-roam
+  :defer 3
   :custom
   (org-roam-complete-everywhere t)
   :config
@@ -432,6 +434,7 @@
 
 #+begin_src emacs-lisp 
 (use-package org-roam-ql
+  :defer 3
   :after (org-roam)
   )
 #+end_src
@@ -495,6 +498,7 @@
 
 #+begin_src emacs-lisp
 (use-package org-download
+  :defer 4
   :config
   (add-hook 'dired-mode-hook 'org-download-enable)
   (setq org-download-image-dir "./.images")

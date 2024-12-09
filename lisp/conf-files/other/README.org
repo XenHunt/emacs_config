@@ -43,6 +43,7 @@
 - [[#disk-usage][Disk-Usage]]
 - [[#daemons][Daemons]]
 - [[#command-log-mode][Command-log-mode]]
+- [[#trashed][Trashed]]
 - [[#provide][Provide]]
 :END:
 * Введение
@@ -60,7 +61,7 @@
 Быстрая загрузка модуля.
 
 #+begin_src emacs-lisp
-;; -*- lexical-binding: t; -*-
+;; -*- lexical-binding: t;  no-byte-compile: t -*-
 #+end_src
 
 * Activities
@@ -684,6 +685,17 @@
 #+begin_src emacs-lisp
 (use-package command-log-mode)
 #+end_src
+
+* Trashed
+:PROPERTIES:
+:CUSTOM_ID: trashed
+:END:
+#+begin_src emacs-lisp
+(use-package trashed)
+#+end_src
+
+#+RESULTS:
+: [nil 26446 47162 87282 nil elpaca-process-queues nil nil 918000 nil]
 
 * Provide
 :PROPERTIES:

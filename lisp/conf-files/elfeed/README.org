@@ -31,7 +31,7 @@
 Быстрая загрузка модуля.
 
 #+begin_src emacs-lisp
-;; -*- lexical-binding: t; -*-
+;; -*- lexical-binding: t;  no-byte-compile: t -*-
 #+end_src
 
 * Elfeed
@@ -102,8 +102,8 @@
 (use-package elfeed-tube
   :ensure t ;; or :straight t
   :after elfeed
-  :demand t
-  :config
+  :defer 4
+  :init
   ;; (setq elfeed-tube-auto-save-p nil) ; default value
   ;; (setq elfeed-tube-auto-fetch-p t)  ; default value
   (elfeed-tube-setup)

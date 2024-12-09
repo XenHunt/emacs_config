@@ -70,7 +70,7 @@
 Быстрая загрузка модуля.
 
 #+begin_src emacs-lisp
-;; -*- lexical-binding: t; -*-
+;; -*- lexical-binding: t;  no-byte-compile: t -*-
 #+end_src
 
 * По-умолчанию
@@ -82,11 +82,14 @@
 
 #+begin_src emacs-lisp
 ;; (setq use-package-verbose t)
+(setq load-prefer-newer t)
+(setq native-comp-jit-compilation t)
 (setq native-comp-async-report-warnings-errors nil)
 (delete-selection-mode 1)    ;; You can select text and delete it by typing.
 ;; (electric-indent-mode -1)    ;; Turn off the weird indenting that Emacs does by default.
 (setq recentf-max-menu-items 100)
 (setq recentf-max-saved-items 150)
+
 (electric-pair-mode -1)       ;; Turns on automatic parens pairing
 (global-auto-revert-mode t)  ;; Automatically show changes if the file has changed
 (setq org-edit-src-content-indentation 0) ;; Set src block automatic indent to 0 instead of 2.
@@ -94,9 +97,9 @@
 (setq indent-tabs-mode nil)
 (setq confirm-kill-emacs 'y-or-n-p)
 (add-hook 'org-mode-hook (lambda ()
-			   (setq-local electric-pair-inhibit-predicate
-				       `(lambda (c)
-					  (if (char-equal c ?<) t (,electric-pair-inhibit-predicate c))))))
+			               (setq-local electric-pair-inhibit-predicate
+				                       `(lambda (c)
+					                      (if (char-equal c ?<) t (,electric-pair-inhibit-predicate c))))))
 ;; (defun my-scroll-precision-mode ()
 
 ;;   (unless (memq major-mode '(pdf-view-mode)) ; замените mode1 и mode2 на режимы, в которых не нужно включать display-line-numbers-mode
@@ -108,8 +111,10 @@
 (setq echo-keystrokes 0.01)
 (setq pixel-scroll-precision-mode 1)
 (setq user-cache-dir (concat user-emacs-directory ".local/cache/"))
+(setq delete-by-moving-to-trash 1)
 (setq backup-by-copying t)
 #+end_src
+
 * Elpaca Fixes
 :PROPERTIES:
 :CUSTOM_ID: elpaca-fixes
@@ -450,75 +455,74 @@
 (use-package evil-collection :ensure t :demand t
   :after evil
   :config
-  (setq evil-collection-mode-list '(
-                                    arc-mode
-                                    evil-mc
-                                    (custom cus-edit)
+  (setq evil-collection-mode-list '((pdf pdf-view)
+				                    devdocs
+				                    doc-view
+				                    elfeed
+				                    elisp-mode
+				                    elpaca
+				                    embark
+				                    evil-mc
+				                    flycheck
+				                    flymake
+				                    imenu
+				                    imenu-list
+				                    js2-mode
+				                    org
+				                    org-roam
+				                    pass
+				                    python
+				                    rjsx-mode
+				                    typescript-mode
+				                    which-key
+				                    xref
+				                    yaml-mode
+ 				                    bookmark
+ 				                    bufler
+ 				                    compile
+ 				                    consult
+ 				                    corfu
  				                    dashboard
-                                    docker
  				                    dired
  				                    dired-sidebar
-				                    pass
-				                    doc-view
-                                    disk-usage
-                                    (image image-mode)
-                                    daemons
-                                    cider
-                                    cmake-mode
-                                    image+
-                                    image-dired
-				                    devdocs
-                                    help
-                                    scheme
+ 				                    forge
+ 				                    git-timemachine
  				                    ibuffer
+ 				                    indent
  				                    minibuffer
  				                    sh-script
- 				                    compile
-                                    helpful
- 				                    bookmark
+ 				                    vertico
+ 				                    vterm
+                                    (custom cus-edit)
+                                    (image image-mode)
                                     (magit magit-submodule)
+                                    arc-mode
+                                    cider
+                                    cmake-mode
+                                    daemons
+                                    disk-usage
+                                    docker
+                                    evil-mc
+                                    guix
+                                    help
+                                    helpful
+                                    image+
+                                    image-dired
+                                    lsp-ui-imenu
                                     magit-repos
                                     magit-section
                                     magit-todos
- 				                    forge
- 				                    git-timemachine
- 				                    vterm
- 				                    bufler
- 				                    indent
+                                    man
+                                    nov
+                                    scheme
+                                    smerge-mode
+                                    tar-mode
                                     telega
- 				                    corfu
- 				                    consult
- 				                    vertico
-                                    guix
-                                    bufler 
-				                    embark
+                                    trashed
                                     wdired
                                     wgrep
-                                    xwidget
-				                    which-key
-				                    (pdf pdf-view)
-				                    elpaca
-				                    imenu
-				                    imenu-list
-                                    nov
-				                    org
-				                    org-roam
-				                    python
-				                    elisp-mode
-				                    typescript-mode
-				                    evil-mc
-				                    yaml-mode
-				                    flycheck
-				                    flymake
-				                    elfeed
-				                    js2-mode
-                                    smerge-mode
-				                    rjsx-mode
-				                    xref
-                                    lsp-ui-imenu
-                                    man
                                     woman
- 				                    ))
+                                    xwidget))
   (evil-collection-init)
   )
 (elpaca-wait)
@@ -854,8 +858,6 @@
     (let ((path (or args "")))
       (dired path)))
   ;; (dired-spawn)
-  (setq delete-by-moving-to-trash 1
-	trash-directory "/home/berlizoves/.Trash/files/")
   (setq
    dired-async-mode 1
    insert-directory-program "ls" 
@@ -878,6 +880,10 @@
 	 image-dired-thumb-size 150)
   )
 #+end_src
+
+#+RESULTS:
+: t
+
 ** Dired-open 
 :PROPERTIES:
 :CUSTOM_ID: dired-open
@@ -968,6 +974,7 @@
 :END:
 #+begin_src emacs-lisp
 (use-package projectile
+  :defer 2
   :custom
   (projectile-ignore-projects '("~/.emacs.d/" "~/.emacs.d/*" "~/"))
   :config
@@ -994,12 +1001,15 @@
   )
 ;; (use-package auto-sudoedit
 ;;   :custom
-;;   (auto-sudoedit-mode 1))
+;;   (auto-sudoedit-mode -1))
 (use-package ssh-config-mode)
 ;; (use-package ssh)
 ;; (setq tramp-default-method "ssh"
 ;;       tramp-verbose 6)
 #+end_src
+
+#+RESULTS:
+: [nil 26447 5333 45019 nil elpaca-process-queues nil nil 232000 nil]
 
 ** SSH-Machine
 :PROPERTIES:

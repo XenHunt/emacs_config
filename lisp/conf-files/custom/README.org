@@ -44,7 +44,7 @@
 Быстрая загрузка модуля.
 
 #+begin_src emacs-lisp
-;; -*- lexical-binding: t; -*-
+;; -*- lexical-binding: t;  no-byte-compile: t -*-
 #+end_src
 
 * Graphical Beauty
@@ -342,8 +342,8 @@
 (use-package prism
   ;; :elpaca (prism :fetcher github :repo "alphapapa/prism.el")
   :hook (
-	 ((python-mode python-ts-mode html-mode) . prism-whitespace-mode)
-	 ((javascript-mode js-ts-mode js-mode js2-mode css-mode typescript-mode json-mode yaml-mode html-mode markdown-mode  latex-mode bash-mode scheme-mode janet-mode janet-ts-mode go-mode go-ts-mode lisp-mode sh-mode bash-ts-mode) . prism-mode)
+	 ((python-mode python-ts-mode html-mode vue-html-mode) . prism-whitespace-mode)
+	 ((javascript-mode js-ts-mode js-mode js2-mode css-mode typescript-mode typescript-ts-mode tsx-ts-mode json-mode yaml-mode html-mode markdown-mode  latex-mode bash-mode scheme-mode janet-mode janet-ts-mode go-mode go-ts-mode lisp-mode sh-mode bash-ts-mode) . prism-mode)
 	 )
   :mode
   (("\\.html\\'" . (lambda () (prism-whitespace-mode) (setq-local prism-whitespace-indent-offset 2))))
