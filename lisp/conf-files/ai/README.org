@@ -237,8 +237,7 @@ Guidelines:
       ("n" "Next Directive" evedel-next-directive :transient t)
       ("p" "Previous Directive" evedel-previous-directive :transient t)]]
     [:class transient-row
-            (casual-lib-quit-one)]
-    )
+            (casual-lib-quit-one)])
 
   (transient-define-prefix evedel-tmenu--references ()
     "Transient menu for references"
@@ -251,16 +250,15 @@ Guidelines:
       ("n" "Next Reference" evedel-next-reference :transient t)
       ("p" "Previous Reference" evedel-previous-reference :transient t)]]
     [:class transient-row
-            (casual-lib-quit-one)]
-    )
+            (casual-lib-quit-one)])
   
   (transient-define-prefix evedel-tmenu ()
     "Transient menu for Evedel"
     [["Objects"
       ("d" "Directive>" evedel-tmenu--directive :transient nil)
-      ("p" "Process" evedel-process-directives :transient t)
-      ("P" "Previe" evedel-preview-directive-prompt :transient nil)
       ("r" "References>" evedel-tmenu--references :transient nil)
+      ("p" "Process" evedel-process-directives :transient t)
+      ("P" "Preview" evedel-preview-directive-prompt :transient nil)
       ("s" "Convert one to another" evedel-convert-instructions :transient t) 
       ("D" "Delete instruction" evedel-delete-instructions :transient t)
       ]
@@ -278,8 +276,7 @@ Guidelines:
             (casual-lib-quit-one)
             ("C-d" "Delete all instructions" evedel-delete-all-instructions
              :transient nil
-             :if (lambda() (< 0 (evedel-instruction-count))))]
-    )
+             :if (lambda() (< 0 (evedel-instruction-count))))])
   :config
 
   (let ((roles '((python-ts-mode . "a Python programmer")
@@ -481,7 +478,8 @@ Guidelines:
 :END:
 #+begin_src emacs-lisp
 (use-package chatgpt-shell
-  :defer 5
+  ;; :defer 5
+  :commands chatgpt-shell
   :init
   (defun remove-model-by-tag (tag name)
     "Remove a model from `chatgpt-shell-models` that matches the specified TAG and NAME.
@@ -495,7 +493,9 @@ TAG should be a string key in each model's assoc list, and NAME is the value ass
   :config
   (let ((filter-list '((:label "Ollama")
                        (:provider "Anthropic")
-                       (:provider "Google"))))
+                       (:provider "Google")
+                       (:provider "Kagi")
+                       (:provider "Perplexity"))))
     (mapc (lambda (filter) (remove-model-by-tag (car filter)
                                                 (cadr filter)))
           filter-list))

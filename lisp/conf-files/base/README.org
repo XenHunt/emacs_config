@@ -14,6 +14,7 @@
 - [[#elpaca-fixes][Elpaca Fixes]]
   - [[#closql][Closql]]
   - [[#jsonrpc][Jsonrpc]]
+- [[#benchmark-init][Benchmark-Init]]
 - [[#startup-time-boost][Startup time boost]]
 - [[#alias-for-yesno][Alias for yes/no]]
 - [[#emacs][Emacs]]
@@ -37,9 +38,10 @@
   - [[#evil-fold][Evil-Fold]]
   - [[#evil-args][Evil-Args]]
   - [[#evil-org][Evil-Org]]
+  - [[#evil-lion][Evil-Lion]]
 - [[#diminish][Diminish]]
 - [[#exec-path-from-shell][Exec-path-from-shell]]
-- [[#editor-config][Editor-Config]]
+- [[#editorconfig][Editorconfig]]
 - [[#shell][Shell]]
   - [[#vterm][VTerm]]
 - [[#which-key][Which-key]]
@@ -49,6 +51,7 @@
   - [[#peep-dired][Peep-Dired]]
   - [[#image-dired][Image-Dired+]]
   - [[#dired-open-with][Dired-Open-With]]
+  - [[#dired-du][Dired-DU]]
 - [[#projectile][Projectile]]
 - [[#tramp][Tramp]]
   - [[#ssh-machine][SSH-Machine]]
@@ -137,6 +140,18 @@
   :ensure (jsonrpc :depth 1)
   :defer t)
 #+end_src
+
+* Benchmark-Init
+:PROPERTIES:
+:CUSTOM_ID: benchmark-init
+:END:
+#+begin_src emacs-lisp
+(use-package benchmark-init
+  :ensure t
+  :config
+  ;; To disable collection of benchmark data after init is done.
+  (add-hook 'after-init-hook 'benchmark-init/deactivate))
+#+end_src
 * Startup time boost
 :PROPERTIES:
 :CUSTOM_ID: startup-time-boost
@@ -167,7 +182,7 @@
   (custom-file (concat user-emacs-directory "secrets.el"))
   (tab-width 4)
   :config
-  (setq gc-cons-threshold 100000000)
+  (setq gc-cons-threshold (* 100 1024 1024))
   (setq ring-bel-functuin #'ignore)  
   (setq text-mode-ispell-word-completion nil)
   (setq tab-always-indent 'complete)
@@ -428,6 +443,7 @@
   
   (setq evil-want-C-i-jump nil)
   (setq evil-want-c-i-jump nil)
+  (setq evil-want-fine-undo t)
 
   :config
   (evil-define-key 'normal 'global (kbd "g c") 'comment-line)
@@ -728,6 +744,23 @@
   (require 'evil-org-agenda)
   (evil-org-agenda-set-keys))
 #+end_src
+
+** Evil-Lion
+:PROPERTIES:
+:CUSTOM_ID: evil-lion
+:END:
+#+begin_src emacs-lisp
+(use-package evil-lion
+  :after evil
+  :config
+  (setq evil-lion-left-align-key (kbd "g a")
+        evil-lion-right-align-key (kbd "g A"))
+  (evil-lion-mode))
+#+end_src
+
+#+RESULTS:
+: [nil 26456 21103 27832 nil elpaca-process-queues nil nil 352000 nil]
+
 * Diminish 
 :PROPERTIES:
 :CUSTOM_ID: diminish
@@ -750,9 +783,9 @@
     ;; )
   )
 #+end_src
-* Editor-Config 
+* Editorconfig 
 :PROPERTIES:
-:CUSTOM_ID: editor-config
+:CUSTOM_ID: editorconfig
 :END:
 #+begin_src emacs-lisp
 (use-package editorconfig
@@ -967,7 +1000,15 @@
 
 #+RESULTS:
 : [nil 26345 34307 967024 nil elpaca-process-queues nil nil 467000 nil]
-
+** Dired-DU
+:PROPERTIES:
+:CUSTOM_ID: dired-du
+:END:
+#+begin_src emacs-lisp
+(use-package dired-du
+  :commands (dired-du-mode)
+  :custom (dired-du-size-format t))
+#+end_src
 * Projectile 
 :PROPERTIES:
 :CUSTOM_ID: projectile

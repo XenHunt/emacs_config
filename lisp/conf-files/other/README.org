@@ -44,6 +44,9 @@
 - [[#daemons][Daemons]]
 - [[#command-log-mode][Command-log-mode]]
 - [[#trashed][Trashed]]
+- [[#screenshot][Screenshot]]
+- [[#gnuplot][Gnuplot]]
+- [[#colorful][Colorful]]
 - [[#provide][Provide]]
 :END:
 * Введение
@@ -642,7 +645,8 @@
 :CUSTOM_ID: markdown-mode
 :END:
 #+begin_src emacs-lisp
-(use-package markdown-ts-mode)
+(use-package markdown-ts-mode
+  :mode ("README\\.md\\'" . gfm-mode))
 (use-package markdown-soma)
 #+end_src
 * Guix
@@ -696,6 +700,44 @@
 
 #+RESULTS:
 : [nil 26446 47162 87282 nil elpaca-process-queues nil nil 918000 nil]
+
+* Screenshot
+:PROPERTIES:
+:CUSTOM_ID: screenshot
+:END:
+#+begin_src emacs-lisp
+(use-package screenshot
+  :ensure (screenshot :type git :host github :repo "tecosaur/screenshot" :build (:not compile))
+  :if (display-graphic-p)
+  :commands (screenshot)
+  :init
+  (leader-key "S" 'screenshot))
+#+end_src
+
+#+RESULTS:
+: [nil 26456 23223 773106 nil elpaca-process-queues nil nil 923000 nil]
+
+* Gnuplot
+:PROPERTIES:
+:CUSTOM_ID: gnuplot
+:END:
+#+begin_src emacs-lisp
+(use-package gnuplot
+  :config
+  (general-define-key
+   :states '(normal)
+   :keymaps 'gnuplot-mode-map
+   "RET" #'gnuplot-send-buffer-to-gnuplot))
+#+end_src
+
+* Colorful
+:PROPERTIES:
+:CUSTOM_ID: colorful
+:END:
+#+begin_src emacs-lisp
+(use-package colorful-mode
+  :hook (prog-mode text-mode))
+#+end_src
 
 * Provide
 :PROPERTIES:

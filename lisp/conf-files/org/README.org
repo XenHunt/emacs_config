@@ -26,7 +26,8 @@
   - [[#org-headings-size][Org Headings Size]]
   - [[#org-auto-tangle][Org-Auto-Tangle]]
   - [[#org-roam][Org-Roam]]
-  - [[#org-ql-roam][Org-QL-Roam]]
+    - [[#org-ql-roam][Org-QL-Roam]]
+    - [[#org-roam-menu-transient][Org-Roam-Menu (Transient)]]
   - [[#org-fragtog][Org-Fragtog]]
   - [[#ob-async][OB-Async]]
   - [[#org-babel-load-languages][ORG-Babel-Load-Languages]]
@@ -94,6 +95,7 @@
 
 
 (evil-define-key 'normal org-mode-map (kbd "RET") 'my/ret-keybindings)
+(add-hook 'org-mode-hook #'auto-fill-mode)
 
 #+end_src
 
@@ -260,7 +262,13 @@
 
 #+begin_src emacs-lisp
 (require 'org-tempo)
+(add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+(add-to-list 'org-structure-template-alist '("py" . "src python"))
+(add-to-list 'org-structure-template-alist '("sq" . "src sql"))
 #+end_src
+
+#+RESULTS:
+: ((sq . src sql) (py . src python) (el . src emacs-lisp) (a . export ascii) (c . center) (C . comment) (e . example) (E . export) (h . export html) (l . export latex) (q . quote) (s . src) (v . verse))
 
 ** Org Headings Size 
 :PROPERTIES:
@@ -359,46 +367,46 @@
           ("d" "default" plain
            "%?"
            :if-new (file+head "%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
-                              "#+title: ${title}\n#+date: %U\n")
+                              "#+title: ${title}\n#+category: ${title}\n#+date: %U\n")
            :unnarrowed t)
           ("b" "book notes" plain
            (file "~/.org/roam/templates/book_notes_template.org")
            :if-new (file+head "%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
-                              "#+title: ${title}\n#+date: %U\n#+filetags: :Book_notes:\n#+pers_rating:\n")
+                              "#+title: ${title}\n#+category: ${title}\n#+date: %U\n#+filetags: :Book_notes:\n#+pers_rating:\n")
            :unnarrowed t)
           ("m" "library or module of pr-ing language" plain
            (file "~/.org/roam/templates/programming_module_template.org")
            :if-new (file+head "%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
-                              "#+title: ${title}\n#+date: %U\n#+filetags: :Library:Programming:\n")
+                              "#+title: ${title}\n#+category: ${title}\n#+date: %U\n#+filetags: :Library:Programming:\n")
            :unnarrowed t
            )
           ("l" "lecture" plain
            (file "~/.org/roam/templates/lecture_template.org")
            :if-new (file+head "%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
-                              "#+title: ${title}\n#+date: %U\n#+filetags: :Lecture:\n")
+                              "#+title: ${title}\n#+category: ${title}\n#+date: %U\n#+filetags: :Lecture:\n")
            :unnarrowed t
            )
           ("B" "programming book notes" plain
            (file "~/.org/roam/templates/programming_book_template.org")
            :if-new (file+head "%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
-                              "#+title: ${title}\n#+date: %U\n#+filetags: :Book_notes:Programming:\n#+pers_rating:\n")
+                              "#+title: ${title}\n#+category: ${title}\n#+date: %U\n#+filetags: :Book_notes:Programming:\n#+pers_rating:\n")
            :unnarrowed t
            )
           ("h" "habr article" plain
            (file "~/.org/roam/templates/habr_article_template.org")
            :if-new (file+head "%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
-                              "#+title: ${title}\n#+date: %U\n#+filetags: :Article:Programming:Habr:\n#+pers_rating:\n")
+                              "#+title: ${title}\n#+category: ${title}\n#+date: %U\n#+filetags: :Article:Programming:Habr:\n#+pers_rating:\n")
            :unnarrowed t
            )
           ("o" "definition" plain
            (file "~/.org/roam/templates/definition.org")
            :if-new (file+head "%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
-                              "#+title: ${title}\n#+date: %U\n")
+                              "#+title: ${title}\n#+category: ${title}\n#+date: %U\n")
            :unnarrowed t)
           ("t" "data type" plain
            (file "~/.org/roam/templates/data_type.org")
            :if-new (file+head "%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
-                              "#+title: ${title}\n#+date: %U\n#+filetags: :Data_Type:Programming:")
+                              "#+title: ${title}\n#+category: ${title}\n#+date: %U\n#+filetags: :Data_Type:Programming:")
            :unnarrowed t)
           )         
         )
@@ -425,7 +433,7 @@
 #+RESULTS:
 | d | default | entry | * %<%I:%M %p> |
 
-** Org-QL-Roam
+*** Org-QL-Roam
 :PROPERTIES:
 :CUSTOM_ID: org-ql-roam
 :END:
@@ -438,6 +446,91 @@
   :after (org-roam)
   )
 #+end_src
+
+*** Org-Roam-Menu (Transient)
+:PROPERTIES:
+:CUSTOM_ID: org-roam-menu-transient
+:HEADER-ARGS: :tangle org-roam-menu.el
+:END:
+
+Я решил сделать =transient= меню для org-roam.
+
+#+begin_src emacs-lisp
+;; -*- lexical-binding: t;  no-byte-compile: t -*-
+(transient-define-prefix org-roam-ui-tmenu ()
+  "Transient menu for org-roam-ui"
+  [["Start/etc"
+    ("s" "Start" org-roam-ui-mode :transient nil)
+    ("S" "Start and Open Browser" org-roam-ui-open :transient nil)
+    ("t" "Sync theme" org-roam-ui-sync-theme :transient t)]
+   ["Local Node"
+    ("a" "Add" org-roam-ui-add-to-local-graph :transient nil)
+    ("r" "Remove" org-roam-ui-remove-from-local-graph :transient nil)
+    ("l" "Current" org-roam-ui-node-local :transient nil)]]
+  [:class transient-row
+          (casual-lib-quit-one)])
+
+(transient-define-prefix org-roam-dailies-tmenu ()
+  "Transient menu for org-roam-dailies"
+  [["Capture"
+    ("c" "Today entry" org-roam-dailies-capture-today :transient nil)
+    ("t" "Tomorrow entry" org-roam-dailies-capture-tomorrow :transient nil)
+    ("y" "Yesterday" org-roam-dailies-capture-yesterday :transient nil)
+    ("d" "Specific date" org-roam-dailies-capture-date :transient nil)]
+   ["Goto"
+    ("]" "Next by date" org-roam-dailies-goto-next-note :transient t)
+    ("[" "Previous by date" org-roam-dailies-goto-previous-note :transient t)
+    ("C" "Current" org-roam-dailies-goto-today :transient t)
+    ("T" "Tomorrow" org-roam-dailies-capture-tomorrow :transient t)
+    ("Y" "Yesterday" org-roam-dailies-goto-yesterday :transient t)]]
+  [:class transient-row
+          (casual-lib-quit-one)])
+
+(transient-define-prefix org-roam-tmenu ()
+  "Transient menu for org-roam"
+  [["Node"
+    ("f" "Find" org-roam-node-find :transient nil)
+    ("I" "Create id for heading" org-id-get-create :transient t)
+    ("c" "Capture" org-roam-capture :transient nil)
+    ("e" "Extract subtree" org-roam-extract-subtree :transient nil)
+    ("R" "Refile current (caution!!!)" org-roam-refile :transient nil)
+    ("d" "Dailies>" org-roam-dailies-tmenu)]]
+   [["Tag"
+    ("t" "Add" org-roam-tag-add :transient t)
+    ("T" "Remove" org-roam-tag-remove :transient t)]
+   ["Alias"
+    ("a" "Add" org-roam-alias-add :transient t)
+    ("A" "Remove" org-roam-alias-remove :transient t)]
+   ["Headings"
+    ("[" "Previous" org-previous-visible-heading :transient t)
+    ("]" "Next" org-next-visible-heading :transient t)
+    ]
+   ["Links"
+    ("i" "Insert" org-roam-node-insert :transient nil)
+    ("f" "Forward" consult-org-roam-forward-links :transient nil)
+    ("b" "Backlinks" consult-org-roam-backlinks :transient nil)
+    ]]
+
+  [["Extra"
+    ("u" "Org-Roam-UI>" org-roam-ui-tmenu :if (lambda () (require 'org-roam-ui nil 'no-error)))]]
+  [:class transient-row
+            (casual-lib-quit-one)])
+#+end_src
+
+
+Предоставляем пакет пакет.
+
+#+begin_src emacs-lisp
+(provide 'org-roam-menu)
+#+end_src
+
+Импортируем пакет
+#+begin_src emacs-lisp :tangle org-mine.el
+(after! '(org-roam transient)
+  (require 'org-roam-menu))
+#+end_src
+
+#+RESULTS:
 
 ** Org-Fragtog
 :PROPERTIES:
@@ -663,6 +756,9 @@
  "m b c" '(:ignore :wk "Clock")
  "m b c c" '(org-clock-cancel :wk "org-clock-cancel")
  )
+
+(leader-key
+  "nm" '(org-roam-tmenu :wk "Menu"))
 
 ;; (general-def 'normal 'override "C-x C-x" """)
 #+end_src

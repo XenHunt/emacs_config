@@ -61,3 +61,6 @@
 /lisp/conf-files/elfeed/elfeed-package.el
 /lisp/conf-files/usb-mount/usb-package.el
 ./*.elc
+*.elc
+/lisp/conf-files/org/org-roam-menu.el
+/lisp/conf-files/base/.nrepl-port

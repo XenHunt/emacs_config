@@ -19,11 +19,12 @@
   - [[#magit][Magit]]
   - [[#magit-todos][Magit-TODOS]]
   - [[#git-modes][Git-Modes]]
+  - [[#git-gutter][Git-Gutter]]
+  - [[#abridged-diff][Abridged-Diff]]
 - [[#dash-docs][Dash-Docs]]
 - [[#dumb-jump][Dumb-Jump]]
 - [[#direnv][Direnv]]
-- [[#programming-language][Programming Language]]
-  - [[#eldoc-box][Eldoc-Box]]
+- [[#programming][Programming]]
   - [[#lsp-mode][LSP-Mode]]
   - [[#dap-mode][DAP-Mode]]
   - [[#formater][Formater]]
@@ -31,7 +32,8 @@
     - [[#blacken][Blacken]]
     - [[#py-isort][Py-Isort]]
     - [[#lsp-pyright][LSP-Pyright]]
-    - [[#pip-env][Pip-env]]
+    - [[#pipenv][Pipenv]]
+    - [[#numpydoc][Numpydoc]]
     - [[#раскладка][Раскладка]]
   - [[#go][Go]]
   - [[#jupyter][Jupyter]]
@@ -66,12 +68,15 @@
   - [[#nix-mode][Nix-Mode]]
   - [[#hyprlang-ts-mode][Hyprlang-ts-mode]]
   - [[#ansible][Ansible]]
+  - [[#jenkins][Jenkins]]
+  - [[#nginx][Nginx]]
   - [[#cmake][Cmake]]
   - [[#docker][Docker]]
     - [[#docker-compose][Docker-Compose]]
     - [[#dockerfile-mode][Dockerfile-mode]]
     - [[#docker-0][Docker]]
   - [[#xkb-mode][XKB-Mode]]
+  - [[#env][.env]]
   - [[#treesitter][Treesitter]]
     - [[#treesitter-auto][Treesitter-auto]]
     - [[#treesitter-0][Treesitter]]
@@ -233,6 +238,28 @@
 #+begin_src emacs-lisp
 (use-package git-modes)
 #+end_src
+** Git-Gutter
+:PROPERTIES:
+:CUSTOM_ID: git-gutter
+:END:
+#+begin_src emacs-lisp
+(use-package git-gutter
+  :config
+  (global-git-gutter-mode +1))
+#+end_src
+
+#+RESULTS:
+: [nil 26456 21504 104318 nil elpaca-process-queues nil nil 94000 nil]
+
+** Abridged-Diff
+:PROPERTIES:
+:CUSTOM_ID: abridged-diff
+:END:
+#+begin_src emacs-lisp
+(use-package abridge-diff
+  :after magit ;; optional, if you'd like to use with magit
+  :init (abridge-diff-mode 1))
+#+end_src
 * Dash-Docs
 :PROPERTIES:
 :CUSTOM_ID: dash-docs
@@ -314,23 +341,10 @@
   (direnv-mode))
 #+end_src
 
-* Programming Language 
+* Programming 
 :PROPERTIES:
-:CUSTOM_ID: programming-language
+:CUSTOM_ID: programming
 :END:
-** Eldoc-Box
-:PROPERTIES:
-:CUSTOM_ID: eldoc-box
-:END:
-#+begin_src emacs-lisp
-;; (use-package eldoc-box
-;;   :hook
-;;   (corfu-mode . eldoc-box-hover-at-point-mode))
-#+end_src
-
-#+RESULTS:
-: [nil 26445 46043 925195 nil elpaca-process-queues nil nil 465000 nil]
-
 ** LSP-Mode 
 :PROPERTIES:
 :CUSTOM_ID: lsp-mode
@@ -339,6 +353,7 @@
 
 (add-to-list 'load-path (expand-file-name "lib/lsp-mode" user-emacs-directory))
 (add-to-list 'load-path (expand-file-name "lib/lsp-mode/clients" user-emacs-directory))
+(setq lsp-pyright-multi-root nil)
 (use-package lsp-mode
   :commands (lsp lsp-deferred)
   :custom
@@ -370,8 +385,6 @@
   (lsp-auto-execute-action nil)
   (lsp-log-max 100)
   ;; (lsp-keymap-prefix "SPC c l")
-  (lsp-ui-sideline-enable nil)
-  (lsp-ui-sideline-show-code-actions nil)
   (lsp-eldoc-enable-hover nil)
   :init
   ;; (evil-define-minor-mode-key 'normal lsp-mode (kbd "SPC c l") lsp-command-map)
@@ -380,13 +393,13 @@
     (or
      (when (equal (following-char) ?#)
        (let ((bytecode (read (current-buffer))))
-	     (when (byte-code-function-p bytecode)
+         (when (byte-code-function-p bytecode)
            (funcall bytecode))))
      (apply old-fn args)))
   (advice-add (if (progn (require 'json)
-			             (fboundp 'json-parse-buffer))
+                         (fboundp 'json-parse-buffer))
                   'json-parse-buffer
-		        'json-read)
+                'json-read)
               :around
               #'lsp-booster--advice-json-parse)
 
@@ -399,9 +412,11 @@
                (not (functionp 'json-rpc-connection))  ;; native json-rpc
                (executable-find "emacs-lsp-booster"))
           (progn
+            (when-let ((command-from-exec-path (executable-find (car orig-result))))  ;; resolve command from exec-path (in case not found in $PATH)
+              (setcar orig-result command-from-exec-path))
             (message "Using emacs-lsp-booster for %s!" orig-result)
             (cons "emacs-lsp-booster" orig-result))
-	    orig-result)))
+        orig-result)))
   (advice-add 'lsp-resolve-final-command :around #'lsp-booster--advice-final-command)
 
   (defun my/orderless-dispatch-flex-first (_pattern index _total)
@@ -426,7 +441,7 @@
 	     ;; replace XXX-mode with concrete major-mode(e. g. python-mode)
 	     ;; (python-mode . lsp)
          ;;     (python-ts-mode . lsp)
-	     ((json-mode  yaml-mode javascript-mode js-ts-mode js-mode typescript-mode typescript-ts-mode css-mode tsx-ts-mode  vue-mode js2-mode) . lsp-deferred)
+	     ((json-mode  yaml-mode javascript-mode js-ts-mode js-mode js-jsx-mode js2-jsx-mode typescript-mode typescript-ts-mode css-mode tsx-ts-mode  vue-mode js2-mode) . lsp-deferred)
 	     (lsp-completion-mode . lsp-enable-which-key-integration)
 	     (lisp-interaction-mode . lsp)
 	     )
@@ -452,6 +467,8 @@
    "c r" '(:ignore t :wk "Organize/Rename")
    "c T" '(:ignore t :wk "Toggle")
    "c w" '(:ignore t :wk "Maintenance")
+
+   "c d" '(org-babel-detangle :wk "Org-Detangle")
    
    "c c" '(compile :wk "Compile code")
    ;; "c r" '(lsp-rename :wk "Rename object")
@@ -471,7 +488,6 @@
   (lsp-ui-doc-use-childframe nil)
   (lsp-ui-sideline-show-diagnostics t)
   (lsp-ui-sideline-show-hover t)
-  (lsp-ui-sideline-show-code-actions t)
   (lsp-ui-doc-enable t)
   (lsp-ui-doc-position 'at-point)
   (lsp-ui-doc-show-with-cursor t )
@@ -498,7 +514,7 @@
    "C-'" '(lsp-ui-doc-unfocus-frame :wk "Unfocus doc frame")))
 (use-package consult-lsp
   :defer 3)
-         #+end_src
+#+end_src
 
 #+RESULTS:
 : [nil 26445 62659 19937 nil elpaca-process-queues nil nil 426000 nil]
@@ -525,9 +541,9 @@
 (use-package dap-mode
   :after lsp-mode
   :hook ((dap-mode . dap-tooltip-mode)
-	 (dap-mode . dap-ui-mode)
-	 (dap-ui-mode . dap-ui-controls-mode)
-	 )
+	     (dap-mode . dap-ui-mode)
+	     (dap-ui-mode . dap-ui-controls-mode)
+	     )
   :init
   (setq dap-breakpoints-file (concat user-emacs-directory "dap-breakpoints")
         dap-utils-extension-path (concat user-emacs-directory "dap-extension/"))
@@ -638,9 +654,9 @@
 			                              (require 'lsp-pyright)
 			                              (lsp))))
 #+end_src
-*** Pip-env
+*** Pipenv
 :PROPERTIES:
-:CUSTOM_ID: pip-env
+:CUSTOM_ID: pipenv
 :END:
 #+begin_src emacs-lisp
 (use-package pipenv
@@ -649,6 +665,19 @@
   (setq
    pipenv-projectile-after-switch-function
    #'pipenv-projectile-after-switch-extended))
+#+end_src
+*** Numpydoc
+:PROPERTIES:
+:CUSTOM_ID: numpydoc
+:END:
+#+begin_src emacs-lisp
+(use-package numpydoc
+  :after python
+  :commands (numpydoc-generate)
+  :init
+  (leader-key
+    :keymaps '(python-mode-map python-ts-mode-map)
+    "md" '(numpydoc-generate :wk "Generate doc-string")))
 #+end_src
 *** Раскладка
 :PROPERTIES:
@@ -801,6 +830,7 @@
   )
 (use-package ein
   :mode "\\.ipynb\\'"
+  :commands (ein:run)
   :config
   (general-define-key
    :states 'normal
@@ -815,7 +845,8 @@
 :CUSTOM_ID: code-cells
 :END:
 #+begin_src emacs-lisp
-(use-package code-cells)
+(use-package code-cells
+  :commands (code-cells-mode code-cells-convert-ipynb))
 #+end_src
 ** WEB
 :PROPERTIES:
@@ -1162,7 +1193,7 @@
     (smartparens-mode)            
     (lsp-deferred)
     )
-  :hook ((clojure-ts-mode clojure-mode) . clojure-lsp-start))
+  :hook ((clojure-ts-mode clojure-mode clojurescript-mode) . clojure-lsp-start))
 ;; (use-package clj-refactor
 ;;   :init
 ;;   (defun start-clojure-refactor ()
@@ -1341,6 +1372,22 @@
   :defer 5)
 #+end_src
 
+** Jenkins
+:PROPERTIES:
+:CUSTOM_ID: jenkins
+:END:
+#+begin_src emacs-lisp
+(use-package jenkinsfile-mode
+  :mode "Jenkinsfile\\'")
+#+end_src
+
+** Nginx
+:PROPERTIES:
+:CUSTOM_ID: nginx
+:END:
+#+begin_src emacs-lisp
+(use-package nginx-mode)
+#+end_src
 ** Cmake
 :PROPERTIES:
 :CUSTOM_ID: cmake
@@ -1383,12 +1430,23 @@
 #+begin_src emacs-lisp
 (use-package xkb-mode)
 #+end_src
+** .env
+:PROPERTIES:
+:CUSTOM_ID: env
+:END:
+#+begin_src emacs-lisp
+(use-package dotenv-mode
+  :mode "\\.env\\..*\\'")
+#+end_src
 ** Treesitter
 :PROPERTIES:
 :CUSTOM_ID: treesitter
 :END:
 #+begin_src emacs-lisp
-(after! tree-sitter
+(use-package treesit
+  :ensure nil
+  :if (featurep 'treesit)
+  :config
   (setq treesit-language-source-alist
 	'((bash . ("https://github.com/tree-sitter/tree-sitter-bash"))
 	  (c . ("https://github.com/tree-sitter/tree-sitter-c"))
@@ -1426,6 +1484,9 @@
           tree-langs))
   )
 #+end_src
+
+#+RESULTS:
+: t
 
 **** Treesitter-auto
 :PROPERTIES:

@@ -38,16 +38,14 @@
 #+begin_src emacs-lisp
 (use-package telega
   :defer 4
-  :init
-  (setq telega-use-image t
-        telega-emoji-use-image t)
   :custom
   (telega-use-image t)
   (telega-emoji-use-image t)
+  (telega-use-images t)
   :config
-  (add-hook 'telega-load-hook 'telega-notifications-mode)
   (let ((libs '(telega-dired-dwim telega-dashboard telega-mnz telega-transient)))
     (mapc (lambda (x) (require x)) libs))
+  (telega-notifications-mode 1)
   (global-telega-mnz-mode 1))
 #+end_src
 

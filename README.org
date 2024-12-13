@@ -27,6 +27,8 @@
 + Jinx (авто проверка правописания);
 + LSP и другие программистские штуки:
   + Treesitter;
+  + Lsp-mode
+  + Lsp-UI
   + Python;
   + Docker;
   + Clojure;
@@ -34,8 +36,11 @@
   + Direnv;
   + Web:
     + Angular;
+    + Vue;
+    + Javascsript;
     + Typescript;
     + HTML;
     + CSS;
   + Nix;
-+ Telega (not finished)
+  + Hyprconfig;
++ Telega 
