@@ -13,7 +13,7 @@
 - [[#fast-loading][Fast-Loading]]
 - [[#org-mode][Org-Mode]]
   - [[#ret---open-link-or-exec-src-block][RET - open link or exec src block]]
-  - [[#org-agenda][Org-Agenda]]
+  - [[#auto-fill-mode][Auto-Fill-Mode]]
   - [[#hover-links][Hover Links]]
   - [[#org-inline-images][Org Inline Images]]
   - [[#org-appear][Org-Appear]]
@@ -28,6 +28,8 @@
   - [[#org-roam][Org-Roam]]
     - [[#org-ql-roam][Org-QL-Roam]]
     - [[#org-roam-menu-transient][Org-Roam-Menu (Transient)]]
+      - [[#extra-functions][Extra functions]]
+      - [[#само-меню][Само меню]]
   - [[#org-fragtog][Org-Fragtog]]
   - [[#ob-async][OB-Async]]
   - [[#org-babel-load-languages][ORG-Babel-Load-Languages]]
@@ -71,9 +73,11 @@
 Мое решение (и =gptel=) для объединения открытия ссылки или запуска src block'а в Emacs одно клавишой =RET=.
 
 #+begin_src emacs-lisp
+
 (defun my/org-babel-execute-maybe ()
   "If point is at a source code block, execute it with org-babel."
   (interactive)
+  (require 'org)
   (let ((context (org-element-context)))
     (when (and context
                (eq (car context) 'src-block))
@@ -82,6 +86,7 @@
 (defun my/org-link-maybe ()
   "If point is at an org-mode link, open it."
   (interactive)
+  (require 'org)
   (let ((context (org-element-context)))
     (when (and context
                (eq (car context) 'link)
@@ -96,20 +101,18 @@
   (my/org-link-maybe))
 
 (evil-define-key 'normal org-mode-map (kbd "RET") 'my/ret-keybindings)
-(add-hook 'org-mode-hook #'auto-fill-mode)
-
+;; (add-hook 'org-mode-hook #'auto-fill-mode)
+;; (setq org-agenda-files '("~/.org/roam/2024-08-28-22:33:31-список.org"))
 #+end_src
 
 #+RESULTS:
-
-** Org-Agenda
+** Auto-Fill-Mode
 :PROPERTIES:
-:CUSTOM_ID: org-agenda
+:CUSTOM_ID: auto-fill-mode
 :END:
 #+begin_src emacs-lisp
-(setq org-agenda-files (list "~/.org/roam/2024-08-21-22:56:38-планы.org"))
+(add-hook 'org-mode-hook #'auto-fill-mode)
 #+end_src
-
 ** Hover Links 
 :PROPERTIES:
 :CUSTOM_ID: hover-links
@@ -118,6 +121,10 @@
 (setq org-mouse-1-follows-link t)
 (setq org-descriptive-links t)
 #+end_src
+
+#+RESULTS:
+: t
+
 ** Org Inline Images
 :PROPERTIES:
 :CUSTOM_ID: org-inline-images
@@ -455,10 +462,102 @@
 :END:
 
 Я решил сделать =transient= меню для org-roam.
-
+Включаем lexical-binding
 #+begin_src emacs-lisp
 ;; -*- lexical-binding: t;  no-byte-compile: t -*-
-(transient-define-prefix org-roam-ui-tmenu ()
+#+end_src
+**** Extra functions
+:PROPERTIES:
+:CUSTOM_ID: extra-functions
+:END:
+
+Доп функции от =System Crafters=: [[https://systemcrafters.net/build-a-second-brain-in-emacs/5-org-roam-hacks/]]
+
+:PROPERTIES:
+:CUSTOM_ID: extra-functions
+:END:
+#+begin_src emacs-lisp
+(defun my/org-roam-filter-by-tag (tag-name)
+  (message (format "tag-name - %s" tag-name))
+  (lambda (node)
+    (member tag-name (org-roam-node-tags node))))
+
+(defun my/org-roam-list-notes-by-tag (tag-name)
+  (mapcar #'org-roam-node-file
+          (seq-filter
+           (my/org-roam-filter-by-tag tag-name)
+           (org-roam-node-list))))
+
+(defun my/org-roam-refresh-agenda-list ()
+  (interactive)
+  (setq org-agenda-files (my/org-roam-list-notes-by-tag "Project")))
+
+;; Build the agenda list the first time for the session
+(my/org-roam-refresh-agenda-list)
+#+end_src
+
+#+RESULTS:
+
+#+begin_src emacs-lisp
+(defun my/org-roam-project-finalize-hook ()
+  "Adds the captured project file to `org-agenda-files' if the
+capture was not aborted."
+  ;; Remove the hook since it was added temporarily
+  (remove-hook 'org-capture-after-finalize-hook #'my/org-roam-project-finalize-hook)
+
+  ;; Add project file to the agenda list if the capture was confirmed
+  (unless org-note-abort
+    (with-current-buffer (org-capture-get :buffer)
+      (add-to-list 'org-agenda-files (buffer-file-name)))))
+
+(defun my/org-roam-find-project ()
+  (interactive)
+  ;; Add the project file to the agenda after capture is finished
+  (add-hook 'org-capture-after-finalize-hook #'my/org-roam-project-finalize-hook)
+
+  ;; Select a project file to open, creating it if necessary
+  (org-roam-node-find
+   nil
+   nil
+   (my/org-roam-filter-by-tag "Project")
+   nil
+   :templates
+   '(("p" "project" plain "* Описание\n\n%?\n\n* Tasks\n\n** TODO Add initial tasks"
+      :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+category: ${title}\n#+filetags: Project")
+      :unnarrowed t))))
+#+end_src
+
+#+RESULTS:
+: my/org-roam-find-project
+
+#+begin_src emacs-lisp
+(defun my/org-roam-capture-task ()
+  (interactive)
+  ;; Add the project file to the agenda after capture is finished
+  (add-hook 'org-capture-after-finalize-hook #'my/org-roam-project-finalize-hook)
+
+  ;; Capture the new task, creating the project file if necessary
+  (org-roam-capture- :node (org-roam-node-read
+                            nil
+                            (my/org-roam-filter-by-tag "Project"))
+                     :templates '(("p" "project" plain "** TODO %?"
+                                   :if-new (file+head+olp "%<%Y%m%d%H%M%S>-${slug}.org"
+                                                          "#+title: ${title}\n#+category: ${title}\n#+filetags: Project\n* Описание\n\n"
+                                                          ("Tasks"))))))
+
+#+end_src
+
+#+RESULTS:
+: my/org-roam-capture-task
+
+**** Само меню
+:PROPERTIES:
+:CUSTOM_ID: само-меню
+:END:
+Создаем меню для =org-roam-ui=.
+
+#+begin_src emacs-lisp
+(transient-define-prefix my/org-roam-ui-tmenu ()
   "Transient menu for org-roam-ui"
   [["Start/etc"
     ("s" "Start" org-roam-ui-mode :transient nil)
@@ -470,8 +569,13 @@
     ("l" "Current" org-roam-ui-node-local :transient nil)]]
   [:class transient-row
           (casual-lib-quit-one)])
+#+end_src
 
-(transient-define-prefix org-roam-dailies-tmenu ()
+Создаем меню для =org-roam-dailies=.
+
+#+begin_src emacs-lisp
+
+(transient-define-prefix my/org-roam-dailies-tmenu ()
   "Transient menu for org-roam-dailies"
   [["Capture"
     ("c" "Today entry" org-roam-dailies-capture-today :transient nil)
@@ -486,8 +590,12 @@
     ("Y" "Yesterday" org-roam-dailies-goto-yesterday :transient t)]]
   [:class transient-row
           (casual-lib-quit-one)])
+#+end_src
 
-(transient-define-prefix org-roam-tmenu ()
+Создаем меню для =org-roam= самого.
+
+#+begin_src emacs-lisp
+(transient-define-prefix my/org-roam-tmenu ()
   "Transient menu for org-roam"
   [["Node"
     ("f" "Find" org-roam-node-find :transient nil)
@@ -495,7 +603,10 @@
     ("c" "Capture" org-roam-capture :transient nil)
     ("e" "Extract subtree" org-roam-extract-subtree :transient nil)
     ("R" "Refile current (caution!!!)" org-roam-refile :transient nil)
-    ("d" "Dailies>" org-roam-dailies-tmenu)]]
+    ("d" "Dailies>" org-roam-dailies-tmenu :if (lambda () (require 'org-roam-dailies nil 'no-error)))]
+   ["Projects"
+    ("C" "Capture" my/org-roam-capture-task :transient nil)
+    ("p" "Find" my/org-roam-find-project :transient t)]]
    [["Tag"
     ("t" "Add" org-roam-tag-add :transient t)
     ("T" "Remove" org-roam-tag-remove :transient t)]
@@ -518,7 +629,6 @@
             (casual-lib-quit-one)])
 #+end_src
 
-
 Предоставляем пакет пакет.
 
 #+begin_src emacs-lisp
@@ -527,7 +637,8 @@
 
 Импортируем пакет
 #+begin_src emacs-lisp :tangle org-mine.el
-(after! '(org-roam transient)
+(after! org-roam
+  (message "Loading org-roam-menu")
   (require 'org-roam-menu))
 #+end_src
 
@@ -645,11 +756,12 @@
 :CUSTOM_ID: org-sticky-header
 :END:
 #+begin_src emacs-lisp
-(use-package org-sticky-header)
+(use-package org-sticky-header
+  :hook (org-mode . org-sticky-header-mode))
 #+end_src
 
 #+RESULTS:
-: [nil 26321 39101 48239 nil elpaca-process-queues nil nil 512000 nil]
+: [nil 26461 11419 612426 nil elpaca-process-queues nil nil 791000 nil]
 ** Org-Transclusion
 :PROPERTIES:
 :CUSTOM_ID: org-transclusion
@@ -759,7 +871,7 @@
  )
 
 (leader-key
-  "nm" '(org-roam-tmenu :wk "Menu"))
+  "nm" '(my/org-roam-tmenu :wk "Menu"))
 
 ;; (general-def 'normal 'override "C-x C-x" """)
 #+end_src
@@ -771,6 +883,4 @@
 :END:
 #+begin_src emacs-lisp
 (provide 'org-mine)
-
-
 #+end_src
