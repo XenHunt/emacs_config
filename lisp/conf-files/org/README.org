@@ -84,15 +84,16 @@
   (interactive)
   (let ((context (org-element-context)))
     (when (and context
-               (eq (car context) 'link))
+               (eq (car context) 'link)
+               ;; Ensure the link is not part of a src-block
+               (not (eq (org-element-property :parent context) 'src-block)))
       (org-open-at-point))))
 
 (defun my/ret-keybindings ()
-  "It combines mine maybe commands together"
+  "It combines my maybe commands together."
   (interactive)
   (my/org-babel-execute-maybe)
   (my/org-link-maybe))
-
 
 (evil-define-key 'normal org-mode-map (kbd "RET") 'my/ret-keybindings)
 (add-hook 'org-mode-hook #'auto-fill-mode)
