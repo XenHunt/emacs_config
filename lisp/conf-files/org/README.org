@@ -107,11 +107,20 @@
                (not (eq (org-element-property :parent context) 'src-block)))
       (org-open-at-point))))
 
+(defun my/org-dynamic-block-maybe ()
+  "Update org dynamic block if point is at a line starting with #+BEGIN:."
+  (interactive)
+  (require 'org)
+  (save-excursion
+    (beginning-of-line)
+    (when (looking-at-p "^\\s-*#\\+BEGIN:")
+      (org-update-dblock))))
 (defun my/ret-keybindings ()
   "It combines my maybe commands together."
   (interactive)
   (my/org-babel-execute-maybe)
-  (my/org-link-maybe))
+  (my/org-link-maybe)
+  (my/org-dynamic-block-maybe))
 
 (evil-define-key 'normal org-mode-map (kbd "RET") 'my/ret-keybindings)
 ;; (add-hook 'org-mode-hook #'auto-fill-mode)
@@ -488,8 +497,6 @@
 (my/org-roam-refresh-agenda-list)
 #+end_src
 
-#+RESULTS:
-
 #+begin_src emacs-lisp
 (defun my/org-roam-project-finalize-hook ()
   "Adds the captured project file to `org-agenda-files' if the
@@ -514,13 +521,10 @@ capture was not aborted."
    (my/org-roam-filter-by-tag "Project")
    nil
    :templates
-   '(("p" "project" plain "* Описание\n\n%?\n\n* Tasks\n\n** TODO Add initial tasks"
+   '(("p" "project" plain "* Описание\n\n%^{Описание}\n\n* Tasks\n\n** TODO Add initial tasks %?"
       :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+category: ${title}\n#+filetags: Project")
       :unnarrowed t))))
 #+end_src
-
-#+RESULTS:
-: my/org-roam-find-project
 
 #+begin_src emacs-lisp
 (defun my/org-roam-capture-task ()
@@ -534,13 +538,11 @@ capture was not aborted."
                             (my/org-roam-filter-by-tag "Project"))
                      :templates '(("p" "project" plain "** TODO %?"
                                    :if-new (file+head+olp "%<%Y%m%d%H%M%S>-${slug}.org"
-                                                          "#+title: ${title}\n#+category: ${title}\n#+filetags: Project\n* Описание\n\n"
+                                                          "#+title: ${title}\n#+category: ${title}\n#+filetags: Project\n* Описание\n\n%^{Описание}"
                                                           ("Tasks"))))))
 
 #+end_src
 
-#+RESULTS:
-: my/org-roam-capture-task
 
 **** Само меню
 :PROPERTIES:
