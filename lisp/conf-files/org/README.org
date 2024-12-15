@@ -65,6 +65,19 @@
 :PROPERTIES:
 :CUSTOM_ID: org-mode
 :END:
+
+#+begin_src emacs-lisp
+;; (use-package org-mode
+;;   :ensure nil
+;;   :config
+;;   (require 'org-crypt)
+;;   (org-crypt-use-before-save-magic)
+;;   (setq org-tags-exclude-from-inheritance '("crypt")))
+#+end_src
+
+#+RESULTS:
+: t
+
 ** RET - open link or exec src block
 :PROPERTIES:
 :CUSTOM_ID: ret---open-link-or-exec-src-block
@@ -347,27 +360,6 @@
   ;;                :desc "Go to note by date"     "D" #'org-roam-dailies-goto-date
   ;;                :desc "Find note in directory" "f" #'org-roam-dailies-find-directory
   ;;                ))
-  (leader-key
-    "n" '(:ignore t :wk "Org-Roam/Notes")
-    ;; "n f" '(org-roam-node-find :wk "Find Node")
-    "n g" '(org-roam-graph :wk "Show Graph")
-    "n i" '(org-roam-node-insert :wk "Insert Node")
-    "n I" '(org-id-get-create :wk "Create id for header")
-    "n n" '(org-roam-node-find :wk "Find Node")
-    "n r" '(org-roam-buffer-toggle :wk "Toggle roam buffer")
-    "n u" '(org-roam-ui-mode :wk "Start org-roam-ui in web")
-    "n d" '(org-roam-db-sync :wk "Reaload org-roam db")
-    "n t" '(org-roam-tag-add :wk "Insert tag")
-    "n T" '(org-roam-tag-remove :wk "Remove tag")
-    "n a" '(org-roam-alias-add :wk "Add alias")
-    "n A" '(org-roam-alias-remove :wk "Remove alias")
-    ;; Dailies
-    "n j" '(:ignore t :wk "Org-Roam-Dailies")
-    "n j a" '(org-roam-dailies-capture-today :wk "Add today note entry")
-    "n j A" '(org-roam-dailies-goto-today :wk "Go to today note")
-    "n j d" '(org-roam-dailies-capture-date :wk "Add note entry by date")
-    "n j D" '(org-roam-dailies-goto-date :wk "Go to note by date")
-    )
 
   
   (setq org-roam-capture-templates
@@ -603,11 +595,12 @@ capture was not aborted."
     ("c" "Capture" org-roam-capture :transient nil)
     ("e" "Extract subtree" org-roam-extract-subtree :transient nil)
     ("R" "Refile current (caution!!!)" org-roam-refile :transient nil)
-    ("d" "Dailies>" org-roam-dailies-tmenu :if (lambda () (require 'org-roam-dailies nil 'no-error)))]
+    ("s" "Search ripgrep" consult-org-roam-search :transient nil)
+    ("d" "Dailies>" my/org-roam-dailies-tmenu :if (lambda () (require 'org-roam-dailies nil 'no-error)))]
    ["Projects"
     ("C" "Capture" my/org-roam-capture-task :transient nil)
     ("p" "Find" my/org-roam-find-project :transient t)]]
-   [["Tag"
+  [["Tag"
     ("t" "Add" org-roam-tag-add :transient t)
     ("T" "Remove" org-roam-tag-remove :transient t)]
    ["Alias"
@@ -619,14 +612,14 @@ capture was not aborted."
     ]
    ["Links"
     ("i" "Insert" org-roam-node-insert :transient nil)
-    ("f" "Forward" consult-org-roam-forward-links :transient nil)
-    ("b" "Backlinks" consult-org-roam-backlinks :transient nil)
+    ("F" "Forward" consult-org-roam-forward-links :transient nil)
+    ("B" "Backlinks" consult-org-roam-backlinks :transient nil)
     ]]
 
   [["Extra"
-    ("u" "Org-Roam-UI>" org-roam-ui-tmenu :if (lambda () (require 'org-roam-ui nil 'no-error)))]]
+    ("u" "Org-Roam-UI>" my/org-roam-ui-tmenu :if (lambda () (require 'org-roam-ui nil 'no-error)))]]
   [:class transient-row
-            (casual-lib-quit-one)])
+          (casual-lib-quit-one)])
 #+end_src
 
 Предоставляем пакет пакет.
@@ -871,7 +864,7 @@ capture was not aborted."
  )
 
 (leader-key
-  "nm" '(my/org-roam-tmenu :wk "Menu"))
+  "n" '(my/org-roam-tmenu :wk "Note menu"))
 
 ;; (general-def 'normal 'override "C-x C-x" """)
 #+end_src

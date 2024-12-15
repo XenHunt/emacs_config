@@ -447,13 +447,6 @@
    consult-org-roam-forward-links
    :preview-key "M-.")
 
-  (leader-key
-    "n f" '(consult-org-roam-file-find :wk "Find Node")
-    "n s" '(consult-org-roam-search :wk "Search inside Nodes")
-    "n b" '(consult-org-roam-backlinks :wk "Search back links")
-    "n B" '(consult-org-roam-backlinks-recursive :wk "Search back links (recursively)")
-    "n F" '(consult-org-roam-forward-links :wk "Search forward links")
-    )
   ;; :bind
   ;; ;; Define some convenient keybindings as an addition
   ;; ("C-c n e" . consult-org-roam-file-find)

@@ -99,33 +99,33 @@
 :CUSTOM_ID: elfeed-tube
 :END:
 #+begin_src emacs-lisp
-(use-package elfeed-tube
-  :ensure t ;; or :straight t
-  :after elfeed
-  :defer 4
-  :init
-  ;; (setq elfeed-tube-auto-save-p nil) ; default value
-  ;; (setq elfeed-tube-auto-fetch-p t)  ; default value
-  (elfeed-tube-setup)
+;; (use-package elfeed-tube
+;;   :ensure t ;; or :straight t
+;;   :after elfeed
+;;   :defer 4
+;;   :init
+;;   ;; (setq elfeed-tube-auto-save-p nil) ; default value
+;;   ;; (setq elfeed-tube-auto-fetch-p t)  ; default value
+;;   (elfeed-tube-setup)
 
-  :bind (:map elfeed-show-mode-map
-              ("F" . elfeed-tube-fetch)
-              ([remap save-buffer] . elfeed-tube-save)
-              :map elfeed-search-mode-map
-              ("F" . elfeed-tube-fetch)
-              ([remap save-buffer] . elfeed-tube-save)))
+;;   :bind (:map elfeed-show-mode-map
+;;               ("F" . elfeed-tube-fetch)
+;;               ([remap save-buffer] . elfeed-tube-save)
+;;               :map elfeed-search-mode-map
+;;               ("F" . elfeed-tube-fetch)
+;;               ([remap save-buffer] . elfeed-tube-save)))
 
-(use-package elfeed-tube-mpv
-  :ensure t ;; or :straight t
-  :config
-  (elfeed-tube-add-feeds '("https://www.youtube.com/@SystemCrafters"
-                           "https://www.youtube.com/playlist?list=PLEoMzSkcN8oNxnj7jm5V2ZcGc52002pQU"
-                           "https://www.youtube.com/playlist?list=PLEoMzSkcN8oMc34dTjyFmTUWbXTKrNfZA"
-                           "https://www.youtube.com/playlist?list=PLEoMzSkcN8oPQtn7FQEF3D7sroZbXuPZ7"
-                           "https://www.youtube.com/playlist?list=PLEoMzSkcN8oNB7Xm3RNKMy_vygbDlj666"))
-  :bind (:map elfeed-show-mode-map
-              ("C-c C-f" . elfeed-tube-mpv-follow-mode)
-              ("C-c C-w" . elfeed-tube-mpv-where)))
+;; (use-package elfeed-tube-mpv
+;;   :ensure t ;; or :straight t
+;;   :config
+;;   (elfeed-tube-add-feeds '("https://www.youtube.com/@SystemCrafters"
+;;                            "https://www.youtube.com/playlist?list=PLEoMzSkcN8oNxnj7jm5V2ZcGc52002pQU"
+;;                            "https://www.youtube.com/playlist?list=PLEoMzSkcN8oMc34dTjyFmTUWbXTKrNfZA"
+;;                            "https://www.youtube.com/playlist?list=PLEoMzSkcN8oPQtn7FQEF3D7sroZbXuPZ7"
+;;                            "https://www.youtube.com/playlist?list=PLEoMzSkcN8oNB7Xm3RNKMy_vygbDlj666"))
+;;   :bind (:map elfeed-show-mode-map
+;;               ("C-c C-f" . elfeed-tube-mpv-follow-mode)
+;;               ("C-c C-w" . elfeed-tube-mpv-where)))
 #+end_src
 
 #+RESULTS:
