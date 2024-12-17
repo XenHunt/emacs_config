@@ -962,7 +962,18 @@
   ;; :custom
   ;; (js-pkg-mode-keymap-prefix "SPC c j")
 
-  :init (js-pkg-global-mode 1))
+  :init (js-pkg-global-mode 1)
+  :config
+  (leader-key
+    "cj" '(:ignore t :wk "Js-Pkg")
+    "cjr" '(js-pkg-run :wk "Run pkg manager's run command")
+    "cjj" '(js-pkg-init :wk "Init new project")
+    "cji" '(js-pkg-install :wk "Run install command")
+    "cju" '(js-pkg-uninstall :wk "Run uninstall command")
+    "cjl" '(js-pkg-list ::wk "List installed dependencies")
+    "cjs" '(js-pkg-install-save :wk "Install and save as dependencies")
+    "cjD" '(js-pkg-install-save-dev :wk "Install and save as dev dep")
+    "cjv" '(js-pkg-visit-project-file :wk "Visit project file")))
 #+end_src
 
 #+RESULTS:

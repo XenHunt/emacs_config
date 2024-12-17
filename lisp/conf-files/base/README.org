@@ -472,6 +472,7 @@
   :after evil
   :config
   (setq evil-collection-mode-list '((pdf pdf-view)
+                                    calendar
 				                    devdocs
 				                    doc-view
 				                    elfeed

@@ -502,10 +502,14 @@
   (:states 'normal :keymaps 'calc-mode-map "C-o" 'casual-calc-tmenu)
   (:states 'normal :keymaps 'dired-mode-map "C-o" 'casual-dired-tmenu)
   (:states 'normal :keymaps 'Info-mode-map "C-o" 'casual-info-tmenu))
+
+(use-package casual-avy
+  :general
+  (:states 'normal "SPC j" 'casual-avy-tmenu))
 #+end_src
 
 #+RESULTS:
-: [nil 26442 2503 96825 nil elpaca-process-queues nil nil 858000 nil]
+: [nil 26464 9225 305972 nil elpaca-process-queues nil nil 523000 nil]
 
 * SUDO EDIT 
 :PROPERTIES:

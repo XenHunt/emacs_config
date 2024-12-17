@@ -25,6 +25,7 @@
   - [[#org-tempo][Org Tempo]]
   - [[#org-headings-size][Org Headings Size]]
   - [[#org-auto-tangle][Org-Auto-Tangle]]
+  - [[#org-detangle-fix][Org-Detangle-Fix]]
   - [[#org-roam][Org-Roam]]
     - [[#org-ql-roam][Org-QL-Roam]]
     - [[#org-roam-menu-transient][Org-Roam-Menu (Transient)]]
@@ -70,7 +71,7 @@
 ;; (use-package org-mode
 ;;   :ensure nil
 ;;   :config
-;;   (require 'org-crypt)
+  ;; (require 'org-crypt)
 ;;   (org-crypt-use-before-save-magic)
 ;;   (setq org-tags-exclude-from-inheritance '("crypt")))
 #+end_src
@@ -327,6 +328,24 @@
   :hook (org-mode . org-auto-tangle-mode)
   :config
   (setq org-auto-tangle-default t))
+#+end_src
+
+** Org-Detangle-Fix
+:PROPERTIES:
+:CUSTOM_ID: org-detangle-fix
+:END:
+
+Меня очень раздражает, что при вызове =org-babel-detangle= открывается
+org файл, где находится tangled src blocks. К счастью, я нашел
+решение:
+#+begin_src emacs-lisp
+(defun org-babel-detangle-no-buffer-pop-up (orig-fun &rest args)
+  (save-excursion
+    (let ((display-buffer-alist
+           '((".*" (display-buffer-no-window) (allow-no-window . t)))))
+      (apply orig-fun args))))
+
+(advice-add 'org-babel-detangle :around #'org-babel-detangle-no-buffer-pop-up)
 #+end_src
 
 ** Org-Roam 
