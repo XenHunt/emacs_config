@@ -56,6 +56,7 @@
 - [[#tramp][Tramp]]
   - [[#ssh-machine][SSH-Machine]]
 - [[#pass][Pass]]
+- [[#comment-dwim-2][Comment-Dwim-2]]
 - [[#provide][Provide]]
 :END:
 * Введение
@@ -335,7 +336,8 @@
     "t" '(:ignore t :wk "Toggle")
     "t l" '(display-line-numbers-mode :wk "Toggle line numbers")
     "t t" '(visual-line-mode :wk "Toggle truncated lines")
-    "t t" '(indent-tabs-mode :wk "Tab Mode")
+    "t f" '(focus-mode :wk "Focus Mode")
+    "t T" '(indent-tabs-mode :wk "Tab Mode")
     )
 
   (leader-key
@@ -446,15 +448,15 @@
   (setq evil-want-fine-undo t)
 
   :config
-  (evil-define-key 'normal 'global (kbd "g c") 'comment-line)
-  (evil-define-key 'visual 'global (kbd "g c") 'comment-dwim)
+  ;; (evil-define-key 'normal 'global (kbd "g c") 'comment-line)
+  ;; (evil-define-key 'visual 'global (kbd "g c") 'comment-dwim)
+  (evil-define-key '(normal visual) 'global (kbd "g c") 'comment-dwim-2)
   (evil-define-key 'normal org-mode-map (kbd "RET") 'org-babel-execute-src-block)
   (evil-define-key 'normal org-mode-map (kbd "C-M-<down>") 'org-promote-subtree)
   (evil-set-leader nil (kbd "SPC"))
   (evil-define-key 'normal org-mode-map (kbd "C-M-<up>") 'org-demote-subtree)
   (evil-set-undo-system 'undo-redo)
-  (evil-mode)
-  )
+  (evil-mode))
 
 ;; (use-package evil-tutor :ensure t :demand t)
 (elpaca-wait)
@@ -740,11 +742,15 @@
 (use-package evil-org
   :ensure t
   :after org
-  :hook (org-mode . (lambda () evil-org-mode))
+  :hook (org-mode . evil-org-mode)
   :config
+  (evil-org-set-key-theme '(navigation insert textobjects additional calendar))
   (require 'evil-org-agenda)
   (evil-org-agenda-set-keys))
 #+end_src
+
+#+RESULTS:
+: [nil 26475 55213 840354 nil elpaca-process-queues nil nil 718000 nil]
 
 ** Evil-Lion
 :PROPERTIES:
@@ -931,7 +937,8 @@
                                 ("png" . "sxiv")
                                 ("mkv" . "mpv")
                                 ("mp4" . "mpv")
-                                ("exe" . "portproton"))))
+                                ("exe" . "portproton")
+                                ("AppImage" . "AppImageLauncher"))))
 #+end_src
 ** Peep-Dired 
 :PROPERTIES:
@@ -1083,6 +1090,16 @@
 
 #+RESULTS:
 : [nil 26423 21558 891351 nil elpaca-process-queues nil nil 273000 nil]
+* Comment-Dwim-2
+:PROPERTIES:
+:CUSTOM_ID: comment-dwim-2
+:END:
+#+begin_src emacs-lisp
+(use-package comment-dwim-2)
+#+end_src
+
+#+RESULTS:
+: [nil 26472 19689 121914 nil elpaca-process-queues nil nil 468000 nil]
 
 * Provide
 :PROPERTIES:

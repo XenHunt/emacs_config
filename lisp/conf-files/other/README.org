@@ -47,6 +47,7 @@
 - [[#screenshot][Screenshot]]
 - [[#gnuplot][Gnuplot]]
 - [[#colorful][Colorful]]
+- [[#grip][Grip]]
 - [[#provide][Provide]]
 :END:
 * Введение
@@ -457,6 +458,10 @@
   )
 
 (use-package consult-projectile)
+(use-package consult-recoll
+  :config
+  (leader-key
+    "sd" '(consult-recoll :wk "Documents")))
 #+end_src
 
 ** Yasnippet 
@@ -692,7 +697,8 @@
 :CUSTOM_ID: trashed
 :END:
 #+begin_src emacs-lisp
-(use-package trashed)
+(use-package trashed
+  :commands (trashed))
 #+end_src
 
 #+RESULTS:
@@ -736,6 +742,13 @@
   :hook (prog-mode text-mode))
 #+end_src
 
+* Grip
+:PROPERTIES:
+:CUSTOM_ID: grip
+:END:
+#+begin_src emacs-lisp
+(use-package grip-mode)
+#+end_src
 * Provide
 :PROPERTIES:
 :CUSTOM_ID: provide

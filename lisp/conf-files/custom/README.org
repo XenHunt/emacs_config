@@ -12,6 +12,7 @@
 - [[#fast-loading][Fast-Loading]]
 - [[#graphical-beauty][Graphical Beauty]]
   - [[#doom-theme][Doom Theme]]
+  - [[#themes][Themes]]
   - [[#doom-modeline][Doom Modeline]]
   - [[#fonts][Fonts]]
   - [[#removing-bars][Removing Bars]]
@@ -69,6 +70,25 @@
                     '(doom-modeline-evil-visual-state ((t (:inherit doom-modeline-warning :foreground "purple2")))))
   )
 #+end_src
+** Themes
+:PROPERTIES:
+:CUSTOM_ID: themes
+:END:
+#+begin_src emacs-lisp
+(use-package autothemer)
+(use-package neofusion-emacs
+  :after autothemer
+  ;; :load-path "themes"
+  :ensure (:type git :host github :repo "konrad1977/neofusion-emacs" :branch "main" :main "neofusion-theme.el"))
+;; (use-package rose-pine-emacs
+;;   :ensure (:type git :host github :repo "thongpv87/rose-pine-emacs" :branch "main" :main "rose-pine-color-theme.el" :files ("*.el"))
+;;   :init
+;;   (add-to-list 'custom-theme-load-path (concat elpaca-builds-directory "/rose-pine-emacs")))
+#+end_src
+
+#+RESULTS:
+: [nil 26474 45152 278817 nil elpaca-process-queues nil nil 252000 nil]
+
 ** Doom Modeline 
 :PROPERTIES:
 :CUSTOM_ID: doom-modeline
@@ -234,6 +254,17 @@
   (defvar dashboard-books-alist nil
     "List of books for dashboard")
 
+  (defun my/reload-dashboard ()
+    (remove-hook 'server-after-make-frame-hook 'my/reload-dashboard)
+    (remove-hook 'after-make-frame-functions 'my/reload-dashboard)
+    (let ((original-buffer (current-buffer)))
+      (dashboard--with-buffer
+        (revert-buffer t t))
+      (switch-to-buffer original-buffer)))
+  (if (daemonp)
+      (add-hook 'server-after-make-frame-hook 'my/reload-dashboard)
+    (add-hook 'after-make-frame-functions 'my/reload-dashboard))
+
   (defun get-recent-books (&optional list-size)
     "Returns a list of recent books (PDF, EPUB, DJVU) based on LIST-SIZE"
     (let ((list-size (or list-size 10))
@@ -242,11 +273,8 @@
       (dolist (element recentf-list)
         (when (and (file-name-extension element) (or (string= (downcase (file-name-extension element)) "pdf")
                                                      (string= (downcase (file-name-extension element)) "epub")
-                                                     (string= (downcase (file-name-extension element)) "djvu")
-                                                     ))
-          (add-to-list 'result element)
-          )
-        )
+                                                     (string= (downcase (file-name-extension element)) "djvu")))
+          (add-to-list 'result element)))
       (nreverse (cl-subseq result 0 (min (length result) list-size)))
       )
     )
@@ -262,24 +290,23 @@
         (find-file-existing (dashboard-expand-path-alist ,el dashboard-books-alist))
         (dashboard-refresh-buffer)
         )
-     (format "%s" el)
-     ))
+     (format "%s" el)))
   
   :custom
   (dashboard-modify-heading-icons '((recents . "file-text")
                                     (bookmarks . "book")))
   (dashboard-items '(
-		     (recents . 5)
-		     (bookmarks . 5)
-		     (projects . 5)
-		     (agenda . 5)
+		             (recents . 5)
+		             (bookmarks . 5)
+		             (projects . 5)
+		             (agenda . 5)
                      ;; (books . 5)
                      ))
   (dashboard-item-shortcuts '(
-			      (recents   . "r")
+			                  (recents   . "r")
                               (bookmarks . "m")
                               (projects  . "p")
-			      (agenda . "a")
+			                  (agenda . "a")
                               ;; (books . "b")
                               ))
   (dashboard-projects-backend 'projectile)

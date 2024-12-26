@@ -26,6 +26,7 @@
 - [[#direnv][Direnv]]
 - [[#programming][Programming]]
   - [[#lsp-mode][LSP-Mode]]
+    - [[#lsp-focus][Lsp-Focus]]
   - [[#dap-mode][DAP-Mode]]
   - [[#formater][Formater]]
   - [[#python][Python]]
@@ -518,6 +519,17 @@
 
 #+RESULTS:
 : [nil 26445 62659 19937 nil elpaca-process-queues nil nil 426000 nil]
+*** Lsp-Focus
+:PROPERTIES:
+:CUSTOM_ID: lsp-focus
+:END:
+#+begin_src emacs-lisp
+(use-package lsp-focus
+  :hook ( focus-mode lsp-focus ))
+#+end_src
+
+#+RESULTS:
+: [nil 26475 54808 859409 nil elpaca-process-queues nil nil 2000 nil]
 
 ** DAP-Mode 
 :PROPERTIES:
@@ -962,8 +974,7 @@
   ;; :custom
   ;; (js-pkg-mode-keymap-prefix "SPC c j")
 
-  :init (js-pkg-global-mode 1)
-  :config
+  :init
   (leader-key
     "cj" '(:ignore t :wk "Js-Pkg")
     "cjr" '(js-pkg-run :wk "Run pkg manager's run command")
@@ -973,7 +984,8 @@
     "cjl" '(js-pkg-list ::wk "List installed dependencies")
     "cjs" '(js-pkg-install-save :wk "Install and save as dependencies")
     "cjD" '(js-pkg-install-save-dev :wk "Install and save as dev dep")
-    "cjv" '(js-pkg-visit-project-file :wk "Visit project file")))
+    "cjv" '(js-pkg-visit-project-file :wk "Visit project file"))
+  (js-pkg-global-mode 1))
 #+end_src
 
 #+RESULTS:
@@ -1364,7 +1376,6 @@
 :END:
 #+begin_src emacs-lisp
 (use-package hyprlang-ts-mode
-  :ensure (:type git :host github :repo "Nathan-Melaku/hyprlang-ts-mode")
   :hook
   (hyprlang-ts-mode . prism-mode)
   :custom

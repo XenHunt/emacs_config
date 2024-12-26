@@ -14,6 +14,7 @@
 - [[#elfeed-goodies][Elfeed-Goodies]]
 - [[#elfeed-org][Elfeed-Org]]
 - [[#elfeed-tube][Elfeed-Tube]]
+- [[#elfeed-summary][Elfeed-Summary]]
 - [[#provide][Provide]]
 :END:
 * Введение
@@ -130,6 +131,20 @@
 
 #+RESULTS:
 : [nil 26445 38572 305734 nil elpaca-process-queues nil nil 81000 nil]
+* Elfeed-Summary
+:PROPERTIES:
+:CUSTOM_ID: elfeed-summary
+:END:
+#+begin_src emacs-lisp
+(use-package elfeed-summary
+  :commands (elfeed-summary)
+  :config
+  (setq elfeed-summary-filter-by-title t)
+  (setq elfeed-summary-skip-sync-tag 'skip))
+#+end_src
+
+#+RESULTS:
+: [nil 26470 40528 320858 nil elpaca-process-queues nil nil 200000 nil]
 
 * Provide
 :PROPERTIES:

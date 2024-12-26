@@ -479,7 +479,7 @@ Guidelines:
 #+begin_src emacs-lisp
 (use-package chatgpt-shell
   ;; :defer 5
-  :commands chatgpt-shell
+  :commands (chatgpt-shell)
   :init
   (defun remove-model-by-tag (tag name)
     "Remove a model from `chatgpt-shell-models` that matches the specified TAG and NAME.
