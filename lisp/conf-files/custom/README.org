@@ -28,6 +28,7 @@
   - [[#prismel][Prism.el]]
   - [[#ligatures][Ligatures]]
   - [[#highlight-indent][Highlight indent]]
+  - [[#ultra-scroll][Ultra-Scroll]]
 - [[#provide][Provide]]
 :END:
 * Введение
@@ -59,7 +60,7 @@
 #+begin_src emacs-lisp
 (use-package doom-themes
   :config
-  (load-theme 'doom-moonlight t)
+  ;; (load-theme 'doom-moonlight t)
   (setq doom-themes-enable-bold t    ; Включаем bold
         doom-themes-enable-italic t); Включаем italic
   (set-frame-parameter nil 'alpha-background 90) ; Set transparency to 85%
@@ -67,8 +68,8 @@
   (doom-themes-org-config)
   (custom-set-faces '(region ((t (:inherit nil :background "purple4"))))
                     '(doom-modeline-evil-insert-state ((t (:foreground "firebrick4"))))
-                    '(doom-modeline-evil-visual-state ((t (:inherit doom-modeline-warning :foreground "purple2")))))
-  )
+                    '(doom-modeline-evil-visual-state ((t (:inherit doom-modeline-warning :foreground "purple2"))))
+                    '(isearch-fail ((t (:foreground "white" :background "red"))))))
 #+end_src
 ** Themes
 :PROPERTIES:
@@ -76,10 +77,15 @@
 :END:
 #+begin_src emacs-lisp
 (use-package autothemer)
-(use-package neofusion-emacs
-  :after autothemer
-  ;; :load-path "themes"
-  :ensure (:type git :host github :repo "konrad1977/neofusion-emacs" :branch "main" :main "neofusion-theme.el"))
+;; (use-package neofusion-emacs
+;;   :after autothemer
+;;   ;; :load-path "themes"
+;;   :ensure (:type git :host github :repo "konrad1977/neofusion-emacs" :branch "main" :main "neofusion-theme.el"))
+(use-package exotica-theme
+  :config
+  (load-theme 'exotica t))
+;; (after! exotica-theme
+;; (load-theme 'exotica t))
 ;; (use-package rose-pine-emacs
 ;;   :ensure (:type git :host github :repo "thongpv87/rose-pine-emacs" :branch "main" :main "rose-pine-color-theme.el" :files ("*.el"))
 ;;   :init
@@ -432,6 +438,24 @@
   :hook (prog-mode . highlight-indent-guides-mode)
   )
 #+end_src
+
+** Ultra-Scroll
+:PROPERTIES:
+:CUSTOM_ID: ultra-scroll
+:END:
+#+begin_src emacs-lisp
+(use-package ultra-scroll
+  :ensure (ultra-scroll :host github :repo "jdtsmith/ultra-scroll")
+  :init
+  (setq scroll-conservatively 101 ; important!
+        scroll-margin 0)
+  :config
+  (ultra-scroll-mode 1))
+#+end_src
+
+#+RESULTS:
+: [nil 26495 36291 189800 nil elpaca-process-queues nil nil 888000 nil]
+
 * Provide
 :PROPERTIES:
 :CUSTOM_ID: provide

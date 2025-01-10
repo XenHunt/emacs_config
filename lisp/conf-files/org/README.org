@@ -498,7 +498,7 @@ org файл, где находится tangled src blocks. К счастью, �
 :END:
 #+begin_src emacs-lisp
 (defun my/org-roam-filter-by-tag (tag-name)
-  (message (format "tag-name - %s" tag-name))
+  ;; (message (format "tag-name - %s" tag-name))
   (lambda (node)
     (member tag-name (org-roam-node-tags node))))
 

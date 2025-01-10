@@ -66,6 +66,7 @@
       - [[#ajrepl][AJRepl]]
       - [[#flycheck][Flycheck]]
       - [[#раскладка-2][Раскладка]]
+    - [[#yuck][Yuck]]
   - [[#nix-mode][Nix-Mode]]
   - [[#hyprlang-ts-mode][Hyprlang-ts-mode]]
   - [[#ansible][Ansible]]
@@ -1360,6 +1361,16 @@
  "m a" '(ajrepl :wk "Start ajrepl")
  )
 #+end_src
+*** Yuck
+:PROPERTIES:
+:CUSTOM_ID: yuck
+:END:
+#+begin_src emacs-lisp
+(use-package yuck-mode)
+#+end_src
+
+#+RESULTS:
+: [nil 26496 61097 809363 nil elpaca-process-queues nil nil 33000 nil]
 
 ** Nix-Mode
 :PROPERTIES:

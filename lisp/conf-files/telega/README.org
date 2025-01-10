@@ -42,6 +42,7 @@
   (telega-use-image t)
   (telega-emoji-use-image t)
   (telega-use-images t)
+  (telega-symbol-heavy-checkmark "✔✔")
   :config
   (let ((libs '(telega-dired-dwim telega-dashboard telega-mnz telega-transient)))
     (mapc (lambda (x) (require x)) libs))
