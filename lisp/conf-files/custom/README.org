@@ -69,6 +69,7 @@
   (custom-set-faces '(region ((t (:inherit nil :background "purple4"))))
                     '(doom-modeline-evil-insert-state ((t (:foreground "firebrick4"))))
                     '(doom-modeline-evil-visual-state ((t (:inherit doom-modeline-warning :foreground "purple2"))))
+                    '(org-verbatim ((t (:foreground "green1"))))
                     '(isearch-fail ((t (:foreground "white" :background "red"))))))
 #+end_src
 ** Themes
