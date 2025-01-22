@@ -641,7 +641,8 @@ capture was not aborted."
     ]]
 
   [["Extra"
-    ("u" "Org-Roam-UI>" my/org-roam-ui-tmenu :if (lambda () (require 'org-roam-ui nil 'no-error)))]]
+    ("u" "Org-Roam-UI>" my/org-roam-ui-tmenu :if (lambda () (require 'org-roam-ui nil 'no-error)))
+    ("b" "Toggle org-roam-buffer" org-roam-buffer-toggle :transient t)]]
   [:class transient-row
           (casual-lib-quit-one)])
 #+end_src

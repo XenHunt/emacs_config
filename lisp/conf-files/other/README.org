@@ -48,6 +48,7 @@
 - [[#gnuplot][Gnuplot]]
 - [[#colorful][Colorful]]
 - [[#grip][Grip]]
+- [[#quick-sdcv][Quick-Sdcv]]
 - [[#provide][Provide]]
 :END:
 * Введение
@@ -749,6 +750,29 @@
 #+begin_src emacs-lisp
 (use-package grip-mode)
 #+end_src
+
+* Quick-Sdcv
+:PROPERTIES:
+:CUSTOM_ID: quick-sdcv
+:END:
+#+begin_src emacs-lisp
+(use-package quick-sdcv
+  :init
+  (leader-key
+    "sw" '(quick-sdcv-search-at-point :wk "Search word at point")
+    "sW" '(quick-sdcv-search-input :wk "Search word at input"))
+  :config
+  (add-hook 'markdown-mode-hook
+          #'(lambda()
+              (setq-local evil-lookup-func #'quick-sdcv-search-at-point)))
+  (add-hook 'quick-sdcv-mode-hook
+          #'(lambda()
+              (setq-local evil-lookup-func #'quick-sdcv-search-at-point))))
+#+end_src
+
+#+RESULTS:
+: [nil 26508 43412 335088 nil elpaca-process-queues nil nil 32000 nil]
+
 * Provide
 :PROPERTIES:
 :CUSTOM_ID: provide
