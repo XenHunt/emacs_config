@@ -26,6 +26,7 @@
   - [[#org-headings-size][Org Headings Size]]
   - [[#org-auto-tangle][Org-Auto-Tangle]]
   - [[#org-detangle-fix][Org-Detangle-Fix]]
+  - [[#org-noter][Org-Noter]]
   - [[#org-roam][Org-Roam]]
     - [[#org-ql-roam][Org-QL-Roam]]
     - [[#org-roam-menu-transient][Org-Roam-Menu (Transient)]]
@@ -33,6 +34,7 @@
       - [[#само-меню][Само меню]]
   - [[#org-fragtog][Org-Fragtog]]
   - [[#ob-async][OB-Async]]
+  - [[#ob-mermaid][OB-Mermaid]]
   - [[#org-babel-load-languages][ORG-Babel-Load-Languages]]
   - [[#org-download][Org-Download]]
   - [[#org-ref][Org-Ref]]
@@ -348,6 +350,34 @@ org файл, где находится tangled src blocks. К счастью, �
 (advice-add 'org-babel-detangle :around #'org-babel-detangle-no-buffer-pop-up)
 #+end_src
 
+** Org-Noter
+:PROPERTIES:
+:CUSTOM_ID: org-noter
+:END:
+#+begin_src emacs-lisp
+(use-package org-noter
+  :defer 6
+  :init
+  (setq org-noter-notes-path (file-truename "~/.org/roam"))
+  
+  (add-hook 'org-noter-doc-mode-hook (lambda ()
+                                       (evil-mode -1)
+                                       (evil-mode +1)))
+  :config
+  (general-define-key
+   :states 'normal
+   :keymaps 'org-noter-doc-mode-map
+   :prefix "SPC"
+   "m" '(:ignore t :wk "Mode keybindigs")
+   "mn" '(:ignore t :wk "Org-Noter")
+   "mn i" '(org-noter-insert-note :wk "Insert note")
+   "mn q" '(org-noter-kill-session :wk "Kill session")
+   "mn p" '(org-noter-insert-precise-note :wk "Insert precise note")
+   "mn j" '(org-noter-sync-next-note :wk "Sync next note")
+   "mn k" '(org-noter-sync-prev-note :wk "Sync prev note")
+   "mn ." '(org-noter-sync-current-note :wk "Sync current note"))
+  (org-noter-enable-org-roam-integration))
+#+end_src
 ** Org-Roam 
 :PROPERTIES:
 :CUSTOM_ID: org-roam
@@ -363,7 +393,7 @@ org файл, где находится tangled src blocks. К счастью, �
   :config
   (if (not (file-directory-p (file-truename "~/.org/roam")))
       (make-directory (file-truename "~/.org/roam")))
-  (setq org-roam-directory "/home/berlizoves/.org/roam/")
+  (setq org-roam-directory (file-truename "~/.org/roam"))
   (setq org-roam-node-display-template "${title:*} ${tags:45}")
   (org-roam-db-autosync-enable)
   ;; (map! :leader
@@ -455,6 +485,35 @@ org файл, где находится tangled src blocks. К счастью, �
         org-roam-ui-follow t
         org-roam-ui-update-on-save t
         org-roam-ui-open-on-start t))
+(use-package consult-org-roam
+  :ensure t
+  :after org-roam
+  :init
+  (require 'consult-org-roam)
+  ;; Activate the minor mode
+  (consult-org-roam-mode 1)
+  :custom
+  ;; Use `ripgrep' for searching with `consult-org-roam-search'
+  (consult-org-roam-grep-func #'consult-ripgrep)
+  ;; Configure a custom narrow key for `consult-buffer'
+  (consult-org-roam-buffer-narrow-key ?r)
+  ;; Display org-roam buffers right after non-org-roam buffers
+  ;; in consult-buffer (and not down at the bottom)
+  (consult-org-roam-buffer-after-buffers t)
+  :config
+  ;; Eventually suppress previewing for certain functions
+  (consult-customize
+   consult-org-roam-forward-links
+   :preview-key "M-.")
+
+  ;; :bind
+  ;; ;; Define some convenient keybindings as an addition
+  ;; ("C-c n e" . consult-org-roam-file-find)
+  ;; ("C-c n b" . consult-org-roam-backlinks)
+  ;; ("C-c n B" . consult-org-roam-backlinks-recursive)
+  ;; ("C-c n l" . consult-org-roam-forward-links)
+  ;; ("C-c n r" . consult-org-roam-search)
+  )
 (elpaca-wait)
 #+end_src
 
@@ -693,6 +752,18 @@ capture was not aborted."
 )
 #+end_src
 
+** OB-Mermaid
+:PROPERTIES:
+:CUSTOM_ID: ob-mermaid
+:END:
+#+begin_src emacs-lisp
+(use-package ob-mermaid)
+(elpaca-wait)
+#+end_src
+
+#+RESULTS:
+: [nil 26520 35704 297318 nil elpaca-process-queues nil nil 316000 nil]
+
 ** ORG-Babel-Load-Languages 
 :PROPERTIES:
 :CUSTOM_ID: org-babel-load-languages
@@ -706,6 +777,7 @@ capture was not aborted."
  '((emacs-lisp . t)
    (python . t)
    (shell . t)
+   (mermaid . t)
    (clojure . t)))
 
 #+end_src
@@ -794,7 +866,6 @@ capture was not aborted."
 
 #+RESULTS:
 : [nil 26321 40045 673291 nil elpaca-process-queues nil nil 408000 nil]
-
 ** TODO Раскладка
 :PROPERTIES:
 :CUSTOM_ID: раскладка

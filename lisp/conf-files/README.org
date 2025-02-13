@@ -14,8 +14,8 @@
   - [[#загрузка-скриптов][Загрузка скриптов]]
   - [[#base][Base]]
   - [[#custom][Custom]]
-  - [[#org][Org]]
   - [[#other][Other]]
+  - [[#org][Org]]
   - [[#programming][Programming]]
   - [[#ai][AI]]
   - [[#usb][USB]]
@@ -81,17 +81,6 @@
 (add-to-list 'load-path "~/.emacs.d/lisp/conf-files/custom/")
 (require 'beauty)
 #+end_src
-** Org
-:PROPERTIES:
-:CUSTOM_ID: org
-:END:
-
-Эта часть посвящена всем расширениям для =org-mode=. Подробнее: [[./org/README.org][README для org]]
-
-#+begin_src emacs-lisp
-(add-to-list 'load-path "~/.emacs.d/lisp/conf-files/org/")
-(require 'org-mine)
-#+end_src
 ** Other
 :PROPERTIES:
 :CUSTOM_ID: other
@@ -102,6 +91,17 @@
 #+begin_src emacs-lisp
 (add-to-list 'load-path "~/.emacs.d/lisp/conf-files/other/")
 (require 'other)
+#+end_src
+** Org
+:PROPERTIES:
+:CUSTOM_ID: org
+:END:
+
+Эта часть посвящена всем расширениям для =org-mode=. Подробнее: [[./org/README.org][README для org]]
+
+#+begin_src emacs-lisp
+(add-to-list 'load-path "~/.emacs.d/lisp/conf-files/org/")
+(require 'org-mine)
 #+end_src
 ** Programming
 :PROPERTIES:

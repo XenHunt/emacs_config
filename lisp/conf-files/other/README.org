@@ -157,6 +157,9 @@
   (add-hook 'after-init-hook #'global-flycheck-mode))
 (use-package flycheck-guile
   )
+;; (use-package flycheck-overlay
+;;   :after flycheck
+;;   :hook (flycheck-mode flycheck-overlay-mode))
 
 #+end_src
 ** Vertico 
@@ -428,35 +431,7 @@
 (use-package consult-flycheck
   :after (consult flycheck))
 
-(use-package consult-org-roam
-  :ensure t
-  :after org-roam
-  :init
-  (require 'consult-org-roam)
-  ;; Activate the minor mode
-  (consult-org-roam-mode 1)
-  :custom
-  ;; Use `ripgrep' for searching with `consult-org-roam-search'
-  (consult-org-roam-grep-func #'consult-ripgrep)
-  ;; Configure a custom narrow key for `consult-buffer'
-  (consult-org-roam-buffer-narrow-key ?r)
-  ;; Display org-roam buffers right after non-org-roam buffers
-  ;; in consult-buffer (and not down at the bottom)
-  (consult-org-roam-buffer-after-buffers t)
-  :config
-  ;; Eventually suppress previewing for certain functions
-  (consult-customize
-   consult-org-roam-forward-links
-   :preview-key "M-.")
 
-  ;; :bind
-  ;; ;; Define some convenient keybindings as an addition
-  ;; ("C-c n e" . consult-org-roam-file-find)
-  ;; ("C-c n b" . consult-org-roam-backlinks)
-  ;; ("C-c n B" . consult-org-roam-backlinks-recursive)
-  ;; ("C-c n l" . consult-org-roam-forward-links)
-  ;; ("C-c n r" . consult-org-roam-search)
-  )
 
 (use-package consult-projectile)
 (use-package consult-recoll
@@ -496,7 +471,7 @@
 :END:
 #+begin_src emacs-lisp
 (use-package casual ;; A collection of  user interfaces for various built-in Emacs modes.
-  :defer 4
+  :defer 2
   :custom
   (casual-lib-use-unicode t)
   (casual-dired-use-unicode-symbols t)
@@ -507,9 +482,16 @@
   (:states 'normal :keymaps 'ibuffer-mode-map "C-o" 'casual-ibuffer-tmenu)
   (:states 'normal :keymaps 'calc-mode-map "C-o" 'casual-calc-tmenu)
   (:states 'normal :keymaps 'dired-mode-map "C-o" 'casual-dired-tmenu)
-  (:states 'normal :keymaps 'Info-mode-map "C-o" 'casual-info-tmenu))
+  (:states 'normal :keymaps 'image-mode-map "C-o" 'casual-image-tmenu)
+  (:states 'normal :keymaps 'Info-mode-map "C-o" 'casual-info-tmenu)
+  :init
+  (require 'casual-image))
 
 (use-package casual-avy
+  :defer 2
+  :custom
+  (avy-ignored-modes
+   '(image-mode doc-view-mode pdf-view-mode exwm-mode))
   :general
   (:states 'normal "SPC j" 'casual-avy-tmenu))
 #+end_src
@@ -539,6 +521,7 @@
 (use-package pdf-tools
   :mode ("\\.pdf\\'" . pdf-view-mode)
   :magic ("%PDF" . pdf-view-mode)
+  :defer 5
   :config
   (pdf-tools-install)  ; Standard activation command
   (pdf-loader-install) ; On demand loading, leads to faster startup time

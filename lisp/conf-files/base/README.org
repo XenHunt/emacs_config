@@ -10,15 +10,17 @@
 :CONTENTS:
 - [[#введение][Введение]]
 - [[#fast-loading][Fast-Loading]]
+- [[#emacs][Emacs]]
 - [[#по-умолчанию][По-умолчанию]]
+- [[#compile-angel][Compile-Angel]]
 - [[#elpaca-fixes][Elpaca Fixes]]
   - [[#closql][Closql]]
   - [[#jsonrpc][Jsonrpc]]
 - [[#benchmark-init][Benchmark-Init]]
 - [[#startup-time-boost][Startup time boost]]
 - [[#alias-for-yesno][Alias for yes/no]]
-- [[#emacs][Emacs]]
 - [[#general-keybindigs][General Keybindigs]]
+  - [[#transient-window][Transient-Window]]
 - [[#wgrep][Wgrep]]
 - [[#smartparens][Smartparens]]
 - [[#helpful][Helpful]]
@@ -77,6 +79,33 @@
 ;; -*- lexical-binding: t;  no-byte-compile: t -*-
 #+end_src
 
+* Emacs 
+:PROPERTIES:
+:CUSTOM_ID: emacs
+:END:
+#+begin_src emacs-lisp
+(use-package emacs
+  :ensure nil
+  :custom
+  (custom-file (concat user-emacs-directory "secrets.el"))
+  (tab-width 4)
+  :config
+  (setq gc-cons-threshold (* 100 1024 1024))
+  (setq ring-bel-functuin #'ignore)  
+  (setq text-mode-ispell-word-completion nil)
+  (setq tab-always-indent 'complete)
+  (unless (or (file-exists-p (file-truename "~/.Trash/"))
+               (file-symlink-p (file-truename "~/.Trash/")))
+    (make-symbolic-link (file-truename "~/.local/share/Trash/")
+                        (file-truename "~/.Trash")))
+
+  (setq backup-directory-alist '((".*" . "~/.Trash/files/")))
+  (after! auth-source
+    (auth-source-pass-enable))
+  (setq read-process-output-max (* 1024 1024 10)))
+  (elpaca-wait)
+
+#+end_src
 * По-умолчанию
 :PROPERTIES:
 :CUSTOM_ID: по-умолчанию
@@ -119,6 +148,18 @@
 (setq backup-by-copying t)
 #+end_src
 
+* Compile-Angel
+:PROPERTIES:
+:CUSTOM_ID: compile-angel
+:END:
+#+begin_src emacs-lisp
+(use-package compile-angel
+  :config
+  (setq compile-angel-verbose t)
+  (push "/usr/share/emacs/.+" compile-angel-excluded-files-regexps)
+  (compile-angel-on-load-mode)
+  (add-hook 'emacs-lisp-mode-hook #'compile-angel-on-save-local-mode))
+#+end_src
 * Elpaca Fixes
 :PROPERTIES:
 :CUSTOM_ID: elpaca-fixes
@@ -141,7 +182,6 @@
   :ensure (jsonrpc :depth 1)
   :defer t)
 #+end_src
-
 * Benchmark-Init
 :PROPERTIES:
 :CUSTOM_ID: benchmark-init
@@ -171,33 +211,6 @@
 (ignore-errors
   (setq confirm-kill-emacs 'y-or-n-p)
   (defalias 'yes-or-no-p 'y-or-n-p))
-#+end_src
-* Emacs 
-:PROPERTIES:
-:CUSTOM_ID: emacs
-:END:
-#+begin_src emacs-lisp
-(use-package emacs
-  :ensure nil
-  :custom
-  (custom-file (concat user-emacs-directory "secrets.el"))
-  (tab-width 4)
-  :config
-  (setq gc-cons-threshold (* 100 1024 1024))
-  (setq ring-bel-functuin #'ignore)  
-  (setq text-mode-ispell-word-completion nil)
-  (setq tab-always-indent 'complete)
-  (unless (or (file-exists-p (file-truename "~/.Trash/"))
-               (file-symlink-p (file-truename "~/.Trash/")))
-    (make-symbolic-link (file-truename "~/.local/share/Trash/")
-                        (file-truename "~/.Trash")))
-
-  (setq backup-directory-alist '((".*" . "~/.Trash/files/")))
-  (after! auth-source
-    (auth-source-pass-enable))
-  (setq read-process-output-max (* 1024 1024 10)))
-  (elpaca-wait)
-
 #+end_src
 * General Keybindigs
 :PROPERTIES:
@@ -340,30 +353,32 @@
     "t T" '(indent-tabs-mode :wk "Tab Mode")
     )
 
+  ;; (leader-key
+  ;;   "w" '(:ignore t :wk "Windows")
+  ;;   ;; Window splits
+  ;;   "w c" '(evil-window-delete :wk "Close window")
+  ;;   "w n" '(evil-window-new :wk "New window")
+  ;;   "w s" '(evil-window-split :wk "Horizontal split window")
+  ;;   "w v" '(evil-window-vsplit :wk "Vertical split window")
+  ;;   ;; Window motions
+  ;;   "w h" '(evil-window-left :wk "Window left")
+  ;;   "w j" '(evil-window-down :wk "Window down")
+  ;;   "w k" '(evil-window-up :wk "Window up")
+  ;;   "w l" '(evil-window-right :wk "Window right")
+  ;;   "w <left>" '(evil-window-left :wk "Window left")
+  ;;   "w <down>" '(evil-window-down :wk "Window down")
+  ;;   "w <up>" '(evil-window-up :wk "Window up")
+  ;;   "w <right>" '(evil-window-right :wk "Window right")
+  ;;   "w w" '(evil-window-next :wk "Goto next window")
+  ;;   ;; Move Windows
+  ;;   "w H" '(buf-move-left :wk "Buffer move left")
+  ;;   "w J" '(buf-move-down :wk "Buffer move down")
+  ;;   "w K" '(buf-move-up :wk "Buffer move up")
+  ;;   "w L" '(buf-move-right :wk "Buffer move right")
+  ;;   "w q" '(kill-buffer-and-window :wk "Kill buffer with window")
+  ;;   )
   (leader-key
-    "w" '(:ignore t :wk "Windows")
-    ;; Window splits
-    "w c" '(evil-window-delete :wk "Close window")
-    "w n" '(evil-window-new :wk "New window")
-    "w s" '(evil-window-split :wk "Horizontal split window")
-    "w v" '(evil-window-vsplit :wk "Vertical split window")
-    ;; Window motions
-    "w h" '(evil-window-left :wk "Window left")
-    "w j" '(evil-window-down :wk "Window down")
-    "w k" '(evil-window-up :wk "Window up")
-    "w l" '(evil-window-right :wk "Window right")
-    "w <left>" '(evil-window-left :wk "Window left")
-    "w <down>" '(evil-window-down :wk "Window down")
-    "w <up>" '(evil-window-up :wk "Window up")
-    "w <right>" '(evil-window-right :wk "Window right")
-    "w w" '(evil-window-next :wk "Goto next window")
-    ;; Move Windows
-    "w H" '(buf-move-left :wk "Buffer move left")
-    "w J" '(buf-move-down :wk "Buffer move down")
-    "w K" '(buf-move-up :wk "Buffer move up")
-    "w L" '(buf-move-right :wk "Buffer move right")
-    "w q" '(kill-buffer-and-window :wk "Kill buffer with window")
-    )
+    "w" '(my/window-tmenu :wk "Windows"))
 
   (leader-key
     "C-c" '(:ignore t :wk "Codeium")
@@ -376,6 +391,51 @@
 #+end_src
 
 #+RESULTS:
+** Transient-Window
+:PROPERTIES:
+:CUSTOM_ID: transient-window
+:END:
+#+begin_src emacs-lisp
+(transient-define-prefix my/resize-window-tmenu ()
+  "Transient menu for resizing windows"
+  [["Width"
+    ("w" "+" evil-window-increase-width :transient t)
+    ("W" "-" evil-window-decrease-width :transient t)]
+   ["Height"
+    ("h" "+" evil-window-increase-height :transient t)
+    ("H" "-" evil-window-decrease-height :transient t)]]
+  [:class transient-row
+          (casual-lib-quit-one)])
+(transient-define-prefix my/window-tmenu ()
+  "Transient menu for managing windows"
+  [["Focus"
+    ("h" "←" evil-window-left :transient t)
+    ("<left>" "←" evil-window-left :transient t)
+    ("l" "→" evil-window-right :transient t)
+    ("<right>" "→" evil-window-right :transient t)
+    ("j" "↓" evil-window-down :transient t)
+    ("<down>" "↓" evil-window-down :transient t)
+    ("k" "↑" evil-window-up :transient t)
+    ("<up>" "↑" evil-window-up :transient t)]
+   ["Movement"
+    ("H" "←" buf-move-left :transient t)
+    ("S-<left>" "←" buf-move-left :transient t)
+    ("L" "→" buf-move-right :transient t)
+    ("S-<right>" "→" buf-move-right :transient t)
+    ("J" "↓" buf-move-down :transient t)
+    ("S-<down>" "↓" buf-move-down :transient t)
+    ("K" "↑" buf-move-up :transient t)
+    ("S-<up>" "↑" buf-move-up :transient t)]
+   ["Spliting"
+    ("s" "Horizontal" evil-window-split :transient nil)
+    ("v" "Vertical" evil-window-vsplit :transient nil)]]
+  [["Other"
+    ("r" "Resizing" my/resize-window-tmenu)
+    ("c" "Close" evil-window-delete :transient nil)
+    ("Q" "Close with buffer" kill-buffer-and-window :transient nil)]]
+  [:class transient-row
+          (casual-lib-quit-one)])
+#+end_src
 
 * Wgrep
 :PROPERTIES:
@@ -437,6 +497,7 @@
 :END:
 #+begin_src emacs-lisp
 (use-package evil
+  :defer 2
   :init
   (setq evil-want-integration t)
   (setq evil-want-keybinding nil)
@@ -637,6 +698,7 @@
 :END:
 #+begin_src emacs-lisp
 (use-package evil-visualstar
+  :after evil
   :commands (evil-visualstar/begin-search
              evil-visualstar/begin-search-forward
              evil-visualstar/begin-search-backward)
@@ -938,6 +1000,7 @@
                                 ("mkv" . "mpv")
                                 ("mp4" . "mpv")
                                 ("exe" . "portproton")
+                                ("torrent" . "ktorrent")
                                 ("AppImage" . "AppImageLauncher"))))
 #+end_src
 ** Peep-Dired 

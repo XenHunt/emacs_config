@@ -23,6 +23,7 @@
   - [[#abridged-diff][Abridged-Diff]]
 - [[#dash-docs][Dash-Docs]]
 - [[#dumb-jump][Dumb-Jump]]
+- [[#license-templates][License Templates]]
 - [[#direnv][Direnv]]
 - [[#programming][Programming]]
   - [[#lsp-mode][LSP-Mode]]
@@ -332,6 +333,16 @@
 
 #+RESULTS:
 : [nil 26427 12565 768089 nil elpaca-process-queues nil nil 667000 nil]
+* License Templates
+:PROPERTIES:
+:CUSTOM_ID: license-templates
+:END:
+#+begin_src emacs-lisp
+(use-package license-templates)
+#+end_src
+
+#+RESULTS:
+: [nil 26532 51194 804723 nil elpaca-process-queues nil nil 660000 nil]
 
 * Direnv
 :PROPERTIES:

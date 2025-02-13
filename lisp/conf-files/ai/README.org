@@ -20,6 +20,7 @@
 - [[#consult-omni][Consult-Omni]]
 - [[#chatgpt-shell][Chatgpt-Shell]]
 - [[#ob-chatgpt-shell][Ob-Chatgpt-Shell]]
+- [[#aidermacs][Aidermacs]]
 - [[#provide][Provide]]
 :END:
 * Введение
@@ -27,7 +28,7 @@
 :CUSTOM_ID: введение
 :END:
 
-Эта часть посвященна добавлению силы ИИ в мой =Emacs=.
+Эта часть посвящена добавлению силы ИИ в мой =Emacs=.
 
 * Fast-Loading
 :PROPERTIES:
@@ -434,7 +435,7 @@ Guidelines:
 #+begin_src emacs-lisp
 (use-package consult-omni
   :defer 1
-  :ensure (consult-omni :type git :host github :repo "armindarvish/consult-omni" :branch "main" :files (:defaults "sources/*.el"))
+  :ensure (consult-omni :type git :host github :repo "armindarvish/consult-omni" :branch "develop" :files (:defaults "sources/*.el"))
   :after consult
   :custom
   (consult-omni-gptel-model "llama3.1:8b")
@@ -471,7 +472,7 @@ Guidelines:
 #+end_src
 
 #+RESULTS:
-: [nil 26280 40971 7852 nil elpaca-process-queues nil nil 858000 nil]
+: [nil 26531 20782 325164 nil elpaca-process-queues nil nil 138000 nil]
 * Chatgpt-Shell
 :PROPERTIES:
 :CUSTOM_ID: chatgpt-shell
@@ -513,6 +514,28 @@ TAG should be a string key in each model's assoc list, and NAME is the value ass
 (use-package ob-chatgpt-shell
   :defer t)
 #+end_src
+
+* Aidermacs
+:PROPERTIES:
+:CUSTOM_ID: aidermacs
+:END:
+#+begin_src emacs-lisp
+(use-package aidermacs
+  :ensure (aidermacs :type git :host github :repo "MatthewZMD/aidermacs" :branch "main" :files ("*.el"))
+  :custom
+  (aidermacs-backend 'vterm)
+  (aidermacs-auto-commits nil)
+  (aidermacs-args '("--model" "ollama_chat/deepseek-r1"))
+  (aidermacs-auto-commits nil)
+  :commands (aidermacs-transient-menu)
+  :init
+  (setenv "OLLAMA_API_BASE" "https://127.0.0.1:11434")
+  )
+#+end_src
+
+#+RESULTS:
+: [nil 26541 47777 170221 nil elpaca-process-queues nil nil 973000 nil]
+
 * Provide
 :PROPERTIES:
 :CUSTOM_ID: provide
