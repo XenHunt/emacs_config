@@ -361,6 +361,7 @@
 :END:
 #+begin_src emacs-lisp
 (use-package gitignore-snippets
+  :after yasnippet
   :config
   (gitignore-snippets-init))
 #+end_src
