@@ -24,6 +24,8 @@
 - [[#dash-docs][Dash-Docs]]
 - [[#dumb-jump][Dumb-Jump]]
 - [[#license-templates][License Templates]]
+- [[#gitignore-templates][Gitignore-Templates]]
+- [[#gitignore-snippets][Gitignore-Snippets]]
 - [[#direnv][Direnv]]
 - [[#programming][Programming]]
   - [[#lsp-mode][LSP-Mode]]
@@ -343,6 +345,28 @@
 
 #+RESULTS:
 : [nil 26532 51194 804723 nil elpaca-process-queues nil nil 660000 nil]
+* Gitignore-Templates
+:PROPERTIES:
+:CUSTOM_ID: gitignore-templates
+:END:
+#+begin_src emacs-lisp
+(use-package gitignore-templates)
+#+end_src
+
+#+RESULTS:
+: [nil 26542 25892 536925 nil elpaca-process-queues nil nil 949000 nil]
+* Gitignore-Snippets
+:PROPERTIES:
+:CUSTOM_ID: gitignore-snippets
+:END:
+#+begin_src emacs-lisp
+(use-package gitignore-snippets
+  :config
+  (gitignore-snippets-init))
+#+end_src
+
+#+RESULTS:
+: [nil 26542 26130 43945 nil elpaca-process-queues nil nil 375000 nil]
 
 * Direnv
 :PROPERTIES:

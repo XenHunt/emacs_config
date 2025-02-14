@@ -530,7 +530,12 @@ TAG should be a string key in each model's assoc list, and NAME is the value ass
   :commands (aidermacs-transient-menu)
   :init
   (setenv "OLLAMA_API_BASE" "https://127.0.0.1:11434")
-  )
+  (let ((models '("ollama_chat/deepseek-r1"
+                  "ollama_chat/llama3.1:8b"
+                  "ollama_chat/deepseek-coder-v2"
+                  "ollama_chat/qwen2.5:3b"
+                  "ollama_chat/qwen2.5-coder:14b")))
+    (mapc (lambda (x) (add-to-list 'aidermacs-popular-models x)) models)))
 #+end_src
 
 #+RESULTS:
