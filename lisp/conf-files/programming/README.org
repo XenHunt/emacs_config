@@ -562,7 +562,7 @@
 :END:
 #+begin_src emacs-lisp
 (use-package lsp-focus
-  :hook ( focus-mode lsp-focus ))
+  :hook (focus-mode lsp-focus))
 #+end_src
 
 #+RESULTS:
@@ -698,7 +698,7 @@
 #+begin_src emacs-lisp
 (use-package lsp-pyright
   :ensure t
-  :custom (lsp-pyright-langserver-command "pyright") ;; or basedpyright
+  :custom (lsp-pyright-langserver-command "basedpyright") ;; or basedpyright
   :hook ((python-mode python-ts-mode) . (lambda ()
 			                              (require 'lsp-pyright)
 			                              (lsp))))

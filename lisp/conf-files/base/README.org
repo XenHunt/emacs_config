@@ -430,7 +430,7 @@
     ("s" "Horizontal" evil-window-split :transient nil)
     ("v" "Vertical" evil-window-vsplit :transient nil)]]
   [["Other"
-    ("r" "Resizing" my/resize-window-tmenu)
+    ("r" "Resizing>" my/resize-window-tmenu)
     ("c" "Close" evil-window-delete :transient nil)
     ("Q" "Close with buffer" kill-buffer-and-window :transient nil)]]
   [:class transient-row
