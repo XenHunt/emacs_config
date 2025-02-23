@@ -49,6 +49,7 @@
 - [[#colorful][Colorful]]
 - [[#grip][Grip]]
 - [[#quick-sdcv][Quick-Sdcv]]
+- [[#auto-dim-other-buffer][Auto-Dim-Other-Buffer]]
 - [[#provide][Provide]]
 :END:
 * Введение
@@ -239,7 +240,7 @@
   (corfu-preselect 'prompt)      ;; Preselect the prompt
   ;; (corfu-on-exact-match nil)     ;; Configure handling of exact matches
   (corfu-scroll-margin 5)        ;; Use scroll margin
-  (corfu-auto-delay 0.0)
+  (corfu-auto-delay 0.2)
   (corfu-popupinfo-delay '(0.0 . 0.0))
   ;; Enable Corfu only for certain modes.
 
@@ -401,8 +402,10 @@
   (add-to-list 'display-buffer-alist
                '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
                  nil
-                 (window-parameters (mode-line-format . none))))
-  )
+                 (window-parameters (mode-line-format . none)))))
+
+(use-package avy-embark-collect
+  :after (embark avy))
 
 (use-package embark-consult
   ;; :after '(em
@@ -426,18 +429,22 @@
   )
 (elpaca-wait)
 
-(use-package consult-dir)
+(use-package consult-dir
+  :after consult
+  :bind
+  (:map vertico-map
+        ("C-x C-d" . consult-dir)
+        ("C-x C-j" . consult-dir-jump-file)))
 
 (use-package consult-flycheck
   :after (consult flycheck))
-
 
 
 (use-package consult-projectile)
 (use-package consult-recoll
   :config
   (leader-key
-    "sd" '(consult-recoll :wk "Documents")))
+    "sr" '(consult-recoll :wk "Documents")))
 #+end_src
 
 ** Yasnippet 
@@ -756,6 +763,16 @@
 #+RESULTS:
 : [nil 26508 43412 335088 nil elpaca-process-queues nil nil 32000 nil]
 
+* Auto-Dim-Other-Buffer
+:PROPERTIES:
+:CUSTOM_ID: auto-dim-other-buffer
+:END:
+#+begin_src emacs-lisp
+(use-package auto-dim-other-buffers
+  :config
+  (auto-dim-other-buffers-mode t)
+  (custom-set-faces '(auto-dim-other-buffers ((t (:background "black"))))))
+#+end_src
 * Provide
 :PROPERTIES:
 :CUSTOM_ID: provide

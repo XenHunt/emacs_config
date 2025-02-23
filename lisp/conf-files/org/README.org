@@ -229,6 +229,9 @@
           ("REVIEW"     font-lock-keyword-face bold)
           ("NOTE"       success bold)
           ("DEPRECATED" font-lock-doc-face bold))))
+
+(use-package consult-todo
+  :after (consult hl-todo))
 #+end_src
 ** Org-Bullets
 :PROPERTIES:

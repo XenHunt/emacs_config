@@ -283,26 +283,67 @@
   :custom
   (devdocs-use-mathjax t)
   :config
-  (add-hook 'python-mode-hook
-            (lambda () (setq-local devdocs-current-docs '("python~3.12" "numpy~2.0"))))
-  (add-hook 'emacs-lisp-mode-hook
-            (lambda () (setq-local devdocs-current-docs '("elisp"))))
-  (add-hook 'typescript-mode-hook
-            (lambda () (setq-local devdocs-current-docs '("typescript" "typescript~5.1"))))
-  (add-hook 'css-mode-hook
-            (lambda () (setq-local devdocs-current-docs '("css"))))
-  (add-hook 'clojure-mode-hook
-            (lambda () (setq-local devdocs-current-docs '("clojure~1.1"))))
-  (add-hook 'html-mode-hook
-            (lambda () (setq-local devdocs-current-docs '("html" "bootstrap~5"))))
-  (add-hook 'vue-mode-hook
-            (lambda () (setq-local devdocs-current-docs '("vue~3" "vuex~4" "vue_router~4"))))
-  (add-hook 'bash-mode-hook
-            (lambda () (setq-local devdocs-current-docs '("bash"))))
-  (add-hook 'latex-mode-hook
-            (lambda () (setq-local devdocs-current-docs '("latex"))))  
-  (add-hook 'go-mode-hook
-            (lambda () (setq-local devdocs-current-docs '("go"))))
+
+  (defun set-devdocs-for-mode (mode-hooks &rest docs)
+    "Set the DevDocs for one or more specific modes.
+MODE-HOOKS is a mode hook or list of mode hooks to add the configuration to.
+DOCS are documentation strings to set."
+    (if (listp mode-hooks)
+        (mapc (lambda (hook) (add-hook hook (lambda () (setq-local devdocs-current-docs docs)))) mode-hooks)
+      (add-hook mode-hooks (lambda () (setq-local devdocs-current-docs docs)))))  
+  (set-devdocs-for-mode '(python-ts-mode-hook
+                          python-mode-hook) "python~3.13"
+                          "numpy~2.0"
+                          "pytorch~2"
+                          "django~5.0"
+                          "flask"
+                          "fastapi"
+                          "pandas~2"
+                          "jinja~2.11"
+                          "matplotlib"
+                          "tensorflow"
+                          "scikit_image"
+                          "scikit_learn")
+  
+  ;; (add-hook 'python-mode-hook
+  ;;           (lambda () (setq-local devdocs-current-docs '("python~3.12" "numpy~2.0"))))
+  (set-devdocs-for-mode 'emacs-lisp-mode-hook "elisp")
+  (set-devdocs-for-mode '(typescript-mode-hook
+                          typescript-ts-mode-hook) "typescript"
+                          "typescript~5.1"
+                          "angular"
+                          "rxjs")
+  (set-devdocs-for-mode '(javascript-mode-hook
+                          js-ts-mode-hook
+                          js-mode-hook) "javascript")
+  (set-devdocs-for-mode '(css-mode-hook
+                          css-ts-mode-hook) "css")
+  (set-devdocs-for-mode '(clojure-mode-hook
+                          clojure-ts-mode-hook) "clojure~1.11")
+  (set-devdocs-for-mode 'html-mode-hook "html"
+                        "bootstrap~5")
+  (set-devdocs-for-mode 'vue-mode-hook
+                        "vue~3"
+                        "vuex~4"
+                        "vue_router~4"
+                        "vite")
+  (set-devdocs-for-mode '(bash-mode-hook
+                          bash-ts-mode-hook) "bash")
+  (set-devdocs-for-mode 'latex-mode-hook "latex")
+  (set-devdocs-for-mode '(go-mode-hook
+                          go-ts-mode-hook) "go")
+  (set-devdocs-for-mode 'nix-mode-hook "nix")
+  (set-devdocs-for-mode 'cmake-mode-hook "cmake")
+  (set-devdocs-for-mode 'nginx-mode-hook "nginx")
+  (set-devdocs-for-mode 'ansible-mode-hook "ansible")
+  (set-devdocs-for-mode '(dockerfile-mode-hook
+                          docker-image-mode-hook
+                          docker-volume-mode-hook
+                          docker-compose-mode-hook
+                          docker-context-mode-hook
+                          docker-network-mode-hook
+                          docker-container-mode-hook) "docker")
+  (set-devdocs-for-mode 'markdown-mode-hook "markdown")
   )
 #+end_src
 
@@ -424,6 +465,8 @@
   (lsp-log-max 100)
   ;; (lsp-keymap-prefix "SPC c l")
   (lsp-eldoc-enable-hover nil)
+  ;; (lsp-signature-auto-activate nil)
+  (lsp-signature-function #'lsp-signature-posframe)
   :init
   ;; (evil-define-minor-mode-key 'normal lsp-mode (kbd "SPC c l") lsp-command-map)
   (defun lsp-booster--advice-json-parse (old-fn &rest args)
@@ -523,12 +566,13 @@
 (elpaca-wait)
 (use-package lsp-ui 
   :custom
-  (lsp-ui-doc-use-childframe nil)
+  (lsp-ui-doc-use-childframe t)
   (lsp-ui-sideline-show-diagnostics t)
   (lsp-ui-sideline-show-hover t)
   (lsp-ui-doc-enable t)
   (lsp-ui-doc-position 'at-point)
   (lsp-ui-doc-show-with-cursor t )
+  (lsp-ui-doc-delay 1)
   :after lsp-mode
   ;; :init
   ;; (add-hook 'lsp-mode-hook 'lsp-ui-mode)
@@ -537,15 +581,17 @@
   (lsp-ui-mode . lsp-ui-doc-mode)
   :config
   
+  (custom-set-faces '(lsp-signature-postframe  ((t (:inherit (lsp-ui-doc-background))))))
+  
   (general-define-key
-   :states 'normal
+   :states '(insert normal)
    :keymaps '(lsp-ui-doc-mode-map)
    ;; :prefix "SPC"
    ;; "c" '(:ignore t :wk "Code")
    "C-'" '(lsp-ui-doc-focus-frame :wk "Focus doc frame")
    )
   (general-define-key
-   :states 'normal
+   :states '(insert normal)
    :keymaps '(lsp-ui-doc-frame-mode-map)
    ;; :prefix "SPC"
    ;; "c" '(:ignore t :wk "Code")

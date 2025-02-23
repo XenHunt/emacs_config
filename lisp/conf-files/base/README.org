@@ -41,6 +41,7 @@
   - [[#evil-args][Evil-Args]]
   - [[#evil-org][Evil-Org]]
   - [[#evil-lion][Evil-Lion]]
+  - [[#enhanced-evil-paredit][Enhanced-Evil-Paredit]]
 - [[#diminish][Diminish]]
 - [[#exec-path-from-shell][Exec-path-from-shell]]
 - [[#editorconfig][Editorconfig]]
@@ -278,6 +279,12 @@
   (leader-key
     "s" '(:ignore t :wk "Search")
     "s b" '(consult-buffer :wk "Buffer")
+    "sd" '(:ignore t :wk "ToDo")
+    "sdb" '(consult-todo :wk "In buffers")
+    "sdd" '(consult-todo-all :wk "Everywhere")
+    "sdD" '(consult-todo-dir :wk "In current directory")
+    "sdp" '(consult-todo-project :wk "In project")
+    "sD" '(consult-dir :wk "Directory")
     "s i" '(consult-imenu :wk "Imenu")
     "s f" '(consult-omni-fd :wk "File")
     "s a" '(consult-omni-apps :wk "Apps")
@@ -829,6 +836,20 @@
 
 #+RESULTS:
 : [nil 26456 21103 27832 nil elpaca-process-queues nil nil 352000 nil]
+
+** TODO Enhanced-Evil-Paredit 
+:PROPERTIES:
+:CUSTOM_ID: enhanced-evil-paredit
+:END:
+#+begin_src emacs-lisp
+(use-package enhanced-evil-paredit
+  :ensure t
+  :config
+  (add-hook 'paredit-mode-hook #'enhanced-evil-paredit-mode))
+#+end_src
+
+#+RESULTS:
+: [nil 26551 25277 793758 nil elpaca-process-queues nil nil 35000 nil]
 
 * Diminish 
 :PROPERTIES:

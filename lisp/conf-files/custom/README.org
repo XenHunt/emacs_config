@@ -70,6 +70,8 @@
                     '(doom-modeline-evil-insert-state ((t (:foreground "firebrick4"))))
                     '(doom-modeline-evil-visual-state ((t (:inherit doom-modeline-warning :foreground "purple2"))))
                     '(org-verbatim ((t (:foreground "green1"))))
+                    '(lsp-signature-posframe ((t (:inherit lsp-ui-doc-background))))
+                    '(lsp-signature-postframe ((t (:inherit (lsp-ui-doc-background)))))
                     '(isearch-fail ((t (:foreground "white" :background "red"))))))
 #+end_src
 ** Themes

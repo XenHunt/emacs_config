@@ -522,14 +522,18 @@ TAG should be a string key in each model's assoc list, and NAME is the value ass
 #+begin_src emacs-lisp
 (use-package aidermacs
   :ensure (aidermacs :type git :host github :repo "MatthewZMD/aidermacs" :branch "main" :files ("*.el"))
+  :defer t
   :custom
   (aidermacs-backend 'vterm)
   (aidermacs-auto-commits nil)
-  (aidermacs-args '("--model" "ollama_chat/deepseek-r1"))
-  (aidermacs-auto-commits nil)
+  ;; (aidermacs-args '("--model" "ollama_chat/deepseek-r1"))
+  (aidermacs-default-model "ollama_chat/qwen2.5-coder:14b")
+  (aidermacs-use-architect-mode t)
+  (aidermacs-architect-model "ollama_chat/deepseek-r1")
+  (aidermacs-editor-model "ollama_chat/qwen2.5-coder:14b")
   :commands (aidermacs-transient-menu)
   :init
-  (setenv "OLLAMA_API_BASE" "https://127.0.0.1:11434")
+  (setenv "OLLAMA_API_BASE" "http://127.0.0.1:11434")
   (let ((models '("ollama_chat/deepseek-r1"
                   "ollama_chat/llama3.1:8b"
                   "ollama_chat/deepseek-coder-v2"
@@ -537,9 +541,6 @@ TAG should be a string key in each model's assoc list, and NAME is the value ass
                   "ollama_chat/qwen2.5-coder:14b")))
     (mapc (lambda (x) (add-to-list 'aidermacs-popular-models x)) models)))
 #+end_src
-
-#+RESULTS:
-: [nil 26541 47777 170221 nil elpaca-process-queues nil nil 973000 nil]
 
 * Provide
 :PROPERTIES:
