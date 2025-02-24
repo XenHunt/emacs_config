@@ -15,7 +15,6 @@
 - [[#compile-angel][Compile-Angel]]
 - [[#elpaca-fixes][Elpaca Fixes]]
   - [[#closql][Closql]]
-  - [[#jsonrpc][Jsonrpc]]
 - [[#benchmark-init][Benchmark-Init]]
 - [[#startup-time-boost][Startup time boost]]
 - [[#alias-for-yesno][Alias for yes/no]]
@@ -172,15 +171,6 @@
 #+begin_src emacs-lisp
 (use-package closql
   :ensure (closql :depth nil)
-  :defer t)
-#+end_src
-** Jsonrpc
-:PROPERTIES:
-:CUSTOM_ID: jsonrpc
-:END:
-#+begin_src emacs-lisp
-(use-package jsonrpc
-  :ensure (jsonrpc :depth 1)
   :defer t)
 #+end_src
 * Benchmark-Init
@@ -945,6 +935,7 @@
 :END:
 #+begin_src emacs-lisp
 (use-package which-key
+  :ensure nil
   :init
   (which-key-mode 1)
   :diminish
