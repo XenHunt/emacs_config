@@ -532,7 +532,7 @@ TAG should be a string key in each model's assoc list, and NAME is the value ass
   (aidermacs-architect-model "ollama_chat/deepseek-r1")
   (aidermacs-editor-model "ollama_chat/qwen2.5-coder:14b")
   :commands (aidermacs-transient-menu)
-  :init
+  :config
   (setenv "OLLAMA_API_BASE" "http://127.0.0.1:11434")
   (let ((models '("ollama_chat/deepseek-r1"
                   "ollama_chat/llama3.1:8b"
