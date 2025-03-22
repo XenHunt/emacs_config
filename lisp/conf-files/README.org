@@ -132,8 +132,8 @@
 
 Эта часть подключает =usb-wofi-mount= - скрипт для подключения usb девайсов в мою систему горячиъ клваши в Emacs. Подробнее: [[./usb-mount/README.org][README для usb]], [[https://github.com/luyves/polybar-rofi-usb-mount/blob/master/rofi-usb-mount.sh][Ссылка на оригинальный скрипт (вместо rofi надо замсенить на wofi и все будет работать)]].
 #+begin_src emacs-lisp
-(add-to-list 'load-path "~/.emacs.d/lisp/conf-files/telega/")
-(require 'telega-package)
+(add-to-list 'load-path "~/.emacs.d/lisp/conf-files/usb-mount/")
+(require 'usb-package)
 #+end_src
 ** Telega
 :PROPERTIES:

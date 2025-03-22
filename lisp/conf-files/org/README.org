@@ -42,6 +42,7 @@
   - [[#verb][Verb]]
   - [[#org-sticky-header][Org-Sticky-Header]]
   - [[#org-transclusion][Org-Transclusion]]
+  - [[#org-tag-beautify][Org-Tag-Beautify]]
   - [[#раскладка][Раскладка]]
 - [[#provide][Provide]]
 :END:
@@ -869,6 +870,16 @@ capture was not aborted."
 
 #+RESULTS:
 : [nil 26321 40045 673291 nil elpaca-process-queues nil nil 408000 nil]
+** Org-Tag-Beautify
+:PROPERTIES:
+:CUSTOM_ID: org-tag-beautify
+:END:
+#+begin_src emacs-lisp
+(use-package org-tag-beautify
+  :ensure t
+  :custom (org-tag-beautify-data-dir "~/.emacs.d/.cache/org-tag-beautify/data/")
+  :init (org-tag-beautify-mode 1))
+#+end_src
 ** TODO Раскладка
 :PROPERTIES:
 :CUSTOM_ID: раскладка

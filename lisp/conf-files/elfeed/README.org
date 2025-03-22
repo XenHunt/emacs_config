@@ -50,7 +50,7 @@
         elfeed-enclosure-default-dir (concat user-emacs-directory "elfeed/enclosures/"))
   :config
 
-  (add-hook 'elfeed-search-mode-hook #'elfeed-update)
+  ;; (add-hook 'elfeed-search-mode-hook #'elfeed-update)
   (make-directory elfeed-db-directory t)
 
   (setq elfeed-search-filter "#100 +habr +article"
