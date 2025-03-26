@@ -46,10 +46,11 @@
   (shell-command "usb-wofi-mount --umount"))
 
 
-(leader-key
-  "u" '(:ignore t :wk "Usb")
-  "uu" '(usb-umount :wk "Umount")
-  "um" '(usb-mount :wk "Mount"))
+(after! general
+  (leader-key
+    "u" '(:ignore t :wk "Usb")
+    "uu" '(usb-umount :wk "Umount")
+    "um" '(usb-mount :wk "Mount")))
 #+end_src
 
 #+RESULTS:
@@ -61,3 +62,6 @@
 #+begin_src emacs-lisp
 (provide 'usb-package)
 #+end_src
+
+#+RESULTS:
+: usb-package

@@ -135,6 +135,10 @@
 (add-to-list 'load-path "~/.emacs.d/lisp/conf-files/usb-mount/")
 (require 'usb-package)
 #+end_src
+
+#+RESULTS:
+: usb-package
+
 ** Telega
 :PROPERTIES:
 :CUSTOM_ID: telega
@@ -145,6 +149,10 @@
 (add-to-list 'load-path "~/.emacs.d/lisp/conf-files/telega/")
 (require 'telega-package)
 #+end_src
+
+#+RESULTS:
+: telega-package
+
 ** IRC
 :PROPERTIES:
 :CUSTOM_ID: irc
