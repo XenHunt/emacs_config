@@ -906,7 +906,7 @@ capture was not aborted."
  :states 'normal
  :keymaps 'org-mode-map
  :prefix "SPC"
- "m" '(:ignore :wk "Org-Mode Commands")
+ "m" '(:ignore :wk "Mode Commands")
  "m #" '(org-update-statistics-cookies :wk "org-update-statistics-cookies")
  "m '" '(org-edit-special :wk "org-edit-special")
  "m *" '(org-ctrl-c-star :wk "org-ctrl-c-star")

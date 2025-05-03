@@ -332,7 +332,9 @@
     "h v" '(helpful-variable :wk "Describe variable")
     "h ." '(helpful-at-point :wk "Help at point")
     "h m" '(helpful-macro :wk "Describe macro")
-    "h E" '(elpaca-manager :WK "Elpaca manager")
+    "h E" '(:ignore t :wk "Elpaca")
+    "h E e" '(elpaca-manager :wk "Manager")
+    "h E f" '(elpaca-fetch-all :wk "Fetch")
     "h t" '(consult-theme :wk "Change theme")
     "h M" '(describe-mode :wk "Describe mode")
     "h p" '(describe-package :wk "Describe package")
@@ -534,7 +536,9 @@
   (setq evil-collection-mode-list '((pdf pdf-view)
                                     calendar
 				                    devdocs
+                                    diff-mode
 				                    doc-view
+                                    ediff
 				                    elfeed
 				                    elisp-mode
 				                    elpaca

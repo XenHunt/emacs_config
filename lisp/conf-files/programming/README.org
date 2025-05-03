@@ -82,6 +82,7 @@
     - [[#docker-0][Docker]]
   - [[#xkb-mode][XKB-Mode]]
   - [[#env][.env]]
+  - [[#crontab][Crontab]]
   - [[#treesitter][Treesitter]]
     - [[#treesitter-auto][Treesitter-auto]]
     - [[#treesitter-0][Treesitter]]
@@ -881,7 +882,7 @@ DOCS are documentation strings to set."
 
   (after! ob-jupyter
     (org-babel-jupyter-aliases-from-kernelspecs))
-
+  (org-babel-jupyter-aliases-from-kernelspecs)
   (defun lc/org-load-jupyter ()
     (org-babel-do-load-languages 'org-babel-load-languages
                                  (append org-babel-load-languages
@@ -1333,7 +1334,7 @@ DOCS are documentation strings to set."
  :states 'normal
  :keymaps '(clojure-mode-map clojure-ts-mode-map)
  :prefix "SPC"
- "m" '(:ignore t :wk "Clojure commands")
+ "m" '(:ignore t :wk "Mode commands")
  "m i" '(:ignore t :wk "Imports")
  "m i i" '(lsp-clojure-add-import-to-namespace :wk "Add import")
  "m i f" '(clojure-insert-ns-form :wk "Insert ns form")
@@ -1553,6 +1554,18 @@ DOCS are documentation strings to set."
 (use-package dotenv-mode
   :mode "\\.env\\..*\\'")
 #+end_src
+** Crontab
+:PROPERTIES:
+:CUSTOM_ID: crontab
+:END:
+#+begin_src emacs-lisp
+(use-package crontab-mode
+  :mode "/crontab\\(\\.X*[[:alnum:]]+\\)?\\'")
+#+end_src
+
+#+RESULTS:
+: [nil 26637 5386 911332 nil elpaca-process-queues nil nil 222000 nil]
+
 ** Treesitter
 :PROPERTIES:
 :CUSTOM_ID: treesitter

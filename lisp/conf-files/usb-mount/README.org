@@ -18,7 +18,7 @@
 :CUSTOM_ID: введение
 :END:
 
-Эта часть конфига посвящена настройке =telega.el= - клиента =Telegram= для =Emacs=.
+Эта часть конфига посвящена настройке подключения usb флешек через =Emacs=.
 
 * Fast-Loading
 :PROPERTIES:
@@ -28,7 +28,7 @@
 Быстрая загрузка модуля.
 
 #+begin_src emacs-lisp
-;; -*- lexical-binding: t; -*-
+;; -*- lexical-binding: t;  no-byte-compile: t -*-
 #+end_src
 
 * Usb-Mount
@@ -44,7 +44,6 @@
 (defun usb-umount (&rest _)
   (interactive)
   (shell-command "usb-wofi-mount --umount"))
-
 
 (after! general
   (leader-key

@@ -50,6 +50,7 @@
 - [[#grip][Grip]]
 - [[#quick-sdcv][Quick-Sdcv]]
 - [[#auto-dim-other-buffer][Auto-Dim-Other-Buffer]]
+- [[#systemd][Systemd]]
 - [[#provide][Provide]]
 :END:
 * Введение
@@ -274,8 +275,12 @@
   (corfu-history-mode)
   (add-to-list 'savehist-additional-variables 'corfu-history)
   )
-(elpaca-wait)
+;;(elpaca-wait)
 #+end_src
+
+#+RESULTS:
+: [nil 26646 22564 99425 nil elpaca-process-queues nil nil 683000 nil]
+
 *** Nerd-Icons
 :PROPERTIES:
 :CUSTOM_ID: nerd-icons
@@ -492,7 +497,10 @@
   (:states 'normal :keymaps 'image-mode-map "C-o" 'casual-image-tmenu)
   (:states 'normal :keymaps 'Info-mode-map "C-o" 'casual-info-tmenu)
   :init
-  (require 'casual-image))
+  (require 'casual-image)
+  ;; :config
+  ;; (transient-append suffix )
+  )
 
 (use-package casual-avy
   :defer 2
@@ -528,7 +536,8 @@
 (use-package pdf-tools
   :mode ("\\.pdf\\'" . pdf-view-mode)
   :magic ("%PDF" . pdf-view-mode)
-  :defer 5
+  :hook (pdf-view-mode . pdf-view-fit-page-to-window)
+  :defer 1
   :config
   (pdf-tools-install)  ; Standard activation command
   (pdf-loader-install) ; On demand loading, leads to faster startup time
@@ -773,6 +782,15 @@
   (auto-dim-other-buffers-mode t)
   (custom-set-faces '(auto-dim-other-buffers ((t (:background "black"))))))
 #+end_src
+
+* Systemd
+:PROPERTIES:
+:CUSTOM_ID: systemd
+:END:
+#+begin_src emacs-lisp
+(use-package systemd)
+#+end_src
+
 * Provide
 :PROPERTIES:
 :CUSTOM_ID: provide
