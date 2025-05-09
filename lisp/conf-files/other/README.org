@@ -665,7 +665,12 @@
 :END:
 #+begin_src emacs-lisp
 (use-package leetcode
-  :defer 5)
+  :defer 5
+  :custom
+  (leetcode-prefer-language "python3")
+  (leetcode-prefer-sql "mysql")
+  (leetcode-save-solutions t)
+  :hook (leetcode-solution-mode lsp-deferred))
 #+end_src
 
 * Disk-Usage
