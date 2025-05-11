@@ -10,6 +10,7 @@
 :CONTENTS:
 - [[#введение][Введение]]
 - [[#fast-loading][Fast-Loading]]
+- [[#mine-indent-transient][Mine Indent Transient]]
 - [[#activities][Activities]]
 - [[#easysession][Easysession]]
 - [[#beacon][Beacon]]
@@ -69,6 +70,44 @@
 
 #+begin_src emacs-lisp
 ;; -*- lexical-binding: t;  no-byte-compile: t -*-
+#+end_src
+
+* Mine Indent Transient
+:PROPERTIES:
+:CUSTOM_ID: mine-indent-transient
+:END:
+#+begin_src emacs-lisp
+(defvar my/shift-size 4 "Number of spaces equivalent to one tab stop.")
+
+(transient-define-infix my/shift-set-size--tmenu-infix ()
+  "Set shift size."
+  :class 'transient-lisp-variable
+  :argument (lambda () (read-number "Enter shift size: "))
+  :variable 'my/shift-size)
+
+
+(defun my/indent-right ()
+  (interactive)
+  (let ((tab-width my/shift-size)
+        (deactivate-mark nil))
+    (call-interactively 'indent-rigidly-right-to-tab-stop)))
+
+(defun my/indent-left ()
+  (interactive)
+  (let ((tab-width my/shift-size)
+        (deactivate-mark nil))
+    (call-interactively 'indent-rigidly-left-to-tab-stop)))
+
+(transient-define-prefix my/shift-region-tmenu ()
+  "Shift region left or right with customizable shift size."
+  [["Shift"
+    ("<left>" "Left" my/indent-left :transient t)
+    ("<right>" "Right" my/indent-right :transient t)
+    ("h" "Left" my/indent-left :transient t)
+    ("l" "Right" my/indent-right :transient t)]]
+  [["Settings"
+    ("=" "Change shift size" my/shift-set-size--tmenu-infix)]])
+(keymap-global-set "<remap> <indent-rigidly>" 'my/shift-region-tmenu)
 #+end_src
 
 * Activities

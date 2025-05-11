@@ -40,11 +40,11 @@
   :defer t
   :commands (telega)
   :custom
-  (telega-use-image t)
   (telega-emoji-use-image t)
   (telega-use-images t)
   (telega-symbol-heavy-checkmark "✔✔")
   (telega-chat-send-message-on-ret 'if-at-the-end)
+  ;; (telega-emoji-font-family  "JetBrainsMono Nerd Font")
   :config
   (let ((libs '(telega-dired-dwim telega-dashboard telega-mnz telega-transient)))
     (mapc (lambda (x) (require x)) libs))

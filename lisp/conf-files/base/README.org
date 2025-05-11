@@ -126,7 +126,7 @@
 (electric-pair-mode -1)       ;; Turns on automatic parens pairing
 (global-auto-revert-mode t)  ;; Automatically show changes if the file has changed
 (setq org-edit-src-content-indentation 0) ;; Set src block automatic indent to 0 instead of 2.
-(setq tab-width 4)
+;; (setq tab-width 4)
 (setq indent-tabs-mode nil)
 (setq confirm-kill-emacs 'y-or-n-p)
 (add-hook 'org-mode-hook (lambda ()
