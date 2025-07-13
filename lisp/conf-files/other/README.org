@@ -52,6 +52,8 @@
 - [[#quick-sdcv][Quick-Sdcv]]
 - [[#auto-dim-other-buffer][Auto-Dim-Other-Buffer]]
 - [[#systemd][Systemd]]
+- [[#emojify][Emojify]]
+- [[#bufferfile][Bufferfile]]
 - [[#provide][Provide]]
 :END:
 * Введение
@@ -535,6 +537,8 @@
   (:states 'normal :keymaps 'dired-mode-map "C-o" 'casual-dired-tmenu)
   (:states 'normal :keymaps 'image-mode-map "C-o" 'casual-image-tmenu)
   (:states 'normal :keymaps 'Info-mode-map "C-o" 'casual-info-tmenu)
+  (:states 'normal :keymaps 'Man-mode-map "C-o" 'casual-man-tmenu)
+  (:states 'normal :keymaps 'help-mode-map "C-o" 'casual-help-tmenu)
   :init
   (require 'casual-image)
   ;; :config
@@ -834,6 +838,37 @@
 #+begin_src emacs-lisp
 (use-package systemd)
 #+end_src
+
+* Emojify
+:PROPERTIES:
+:CUSTOM_ID: emojify
+:END:
+#+begin_src emacs-lisp
+(use-package emojify
+  :defer 2
+  :init
+  (add-hook 'after-init-hook #'global-emojify-mode))
+#+end_src
+
+#+RESULTS:
+: [nil 26663 26692 614433 nil elpaca-process-queues nil nil 142000 nil]
+
+* Bufferfile
+:PROPERTIES:
+:CUSTOM_ID: bufferfile
+:END:
+#+begin_src emacs-lisp
+(use-package bufferfile
+  :config
+  (leader-key
+    "ff" '(:ignore t :wk "Current bufferfile")
+    "ffc" '(bufferfile-copy :wk "Copy")
+    "ffr" '(bufferfile-rename :wk "Rename")
+    "ffd" '(bufferfile-delete :wk "Delete")))
+#+end_src
+
+#+RESULTS:
+: [nil 26739 43080 518873 nil elpaca-process-queues nil nil 643000 nil]
 
 * Provide
 :PROPERTIES:

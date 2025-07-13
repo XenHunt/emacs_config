@@ -38,6 +38,8 @@
     - [[#lsp-pyright][LSP-Pyright]]
     - [[#pipenv][Pipenv]]
     - [[#numpydoc][Numpydoc]]
+    - [[#pyimport][PyImport]]
+    - [[#pydocstring][PyDocString]]
     - [[#раскладка][Раскладка]]
   - [[#go][Go]]
   - [[#jupyter][Jupyter]]
@@ -63,6 +65,7 @@
     - [[#clojure][Clojure]]
       - [[#neil][Neil]]
       - [[#jet][Jet]]
+      - [[#clj-refactor][Clj-Refactor]]
       - [[#раскладка-1][Раскладка]]
     - [[#guile][Guile]]
     - [[#janet][Janet]]
@@ -775,6 +778,22 @@ DOCS are documentation strings to set."
     :keymaps '(python-mode-map python-ts-mode-map)
     "md" '(numpydoc-generate :wk "Generate doc-string")))
 #+end_src
+*** PyImport
+:PROPERTIES:
+:CUSTOM_ID: pyimport
+:END:
+#+begin_src emacs-lisp
+(use-package pyimport
+  :commands (pyimport-remove-unused pyimport-insert-missing))
+#+end_src
+*** PyDocString
+:PROPERTIES:
+:CUSTOM_ID: pydocstring
+:END:
+#+begin_src emacs-lisp
+(use-package python-docstring)
+#+end_src
+
 *** Раскладка
 :PROPERTIES:
 :CUSTOM_ID: раскладка
@@ -787,8 +806,10 @@ DOCS are documentation strings to set."
  :prefix "SPC"
  "m" '(:ignore t :wk "Python commands")
  "m i" '(:ignore t :wk "Imports")
- "m i f" '(python-fix-imports :wk "Fix Imports")
+ "m i f" '(pyimport-insert-missing :wk "Fix Imports")
+ "m i r" '(pyimport-remove-unused :wk "Remove unused")
  "m i s" '(py-isort-buffer :wk "Sort Imports")
+ "m i i" '(pipenv-install :wk "Install package")
  "m s" '(:ignore t :wk "Shell")
  "m s s" '(python-shell-restart :wk "Start/Restart")
  "m s b" '(python-shell-send-buffer :wk "Send buffer")
@@ -797,7 +818,6 @@ DOCS are documentation strings to set."
  "m g" '(pipenv-graph :wk "Show graph")
  "m u" '(pipenv-update :wk "Update all libraries")
  "m U" '(pipenv-uninstall :wk "Uninstall packages")
- "m i" '(pipenv-install :wk "Install packages")
  "m a" '(pipenv-activate :wk "Activate venv")
  "m d" '(pipenv-deactivate :wk "Deactivate venv")
  )
@@ -1325,6 +1345,14 @@ DOCS are documentation strings to set."
 #+begin_src emacs-lisp
 (use-package jet)
 #+end_src
+**** Clj-Refactor
+:PROPERTIES:
+:CUSTOM_ID: clj-refactor
+:END:
+#+begin_src emacs-lisp
+(use-package clj-refactor
+  :hook ((clojure-ts-mode clojure-mode) clj-refactor-mode))
+#+end_src
 **** Раскладка
 :PROPERTIES:
 :CUSTOM_ID: раскладка-1
@@ -1486,6 +1514,8 @@ DOCS are documentation strings to set."
 #+begin_src emacs-lisp
 (use-package ansible
   :defer 5)
+(use-package ansible-vault
+  :defer 6)
 #+end_src
 
 ** Jenkins
