@@ -122,6 +122,8 @@
 ;; (electric-indent-mode -1)    ;; Turn off the weird indenting that Emacs does by default.
 (setq recentf-max-menu-items 100)
 (setq recentf-max-saved-items 150)
+(setq recentf-exclude '("/home/1TB/SD-Automatic1111/models/Lora/.*"
+                        "/home/1TB/Games/PyLoad/.*"))
 
 (electric-pair-mode -1)       ;; Turns on automatic parens pairing
 (global-auto-revert-mode t)  ;; Automatically show changes if the file has changed
@@ -292,6 +294,7 @@
     "f C" '((lambda () (interactive) (find-file "~/.emacs.d/")) :wk "Find files in config folder")
     "f c" '((lambda () (interactive) (find-file "~/.emacs.d/lisp/conf-files/")) :wk "Edit config file")
     "f r" '(consult-recent-file :wk "Find recent file")
+    "f t" '(trashed :wk "Trashed files")
     ;; "f f" '(consult-omni-fd :wk "Find file (consult)")
     )
 
@@ -970,6 +973,8 @@
 #+begin_src emacs-lisp
 (use-package dired
   :ensure nil
+  :custom
+  (dired-dwim-target t)
   :config
 
   (defun dired-spawn (&optional args)

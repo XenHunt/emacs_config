@@ -798,9 +798,10 @@ capture was not aborted."
 #+begin_src emacs-lisp
 (use-package org-download
   :defer 4
+  :custom
+  (org-download-image-dir "./.images")
   :config
   (add-hook 'dired-mode-hook 'org-download-enable)
-  (setq org-download-image-dir "./.images")
   )
 #+end_src
 

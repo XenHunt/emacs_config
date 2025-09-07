@@ -45,11 +45,14 @@
   (telega-symbol-heavy-checkmark "✔✔")
   (telega-chat-send-message-on-ret 'if-at-the-end)
   (telega-emoji-font-family  "Noto Color Emoji")
+  (telega-notifications-timeout nil)
   :config
   (let ((libs '(telega-dired-dwim telega-dashboard telega-mnz telega-transient)))
     (mapc (lambda (x) (require x)) libs))
   (telega-notifications-mode 1)
-  (global-telega-mnz-mode 1))
+  (global-telega-mnz-mode 1)
+  ;; (setq telega-notifications-timeout nil)
+  )
 #+end_src
 
 #+RESULTS:

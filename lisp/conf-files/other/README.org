@@ -847,7 +847,8 @@
 (use-package emojify
   :defer 2
   :init
-  (add-hook 'after-init-hook #'global-emojify-mode))
+  ;; (add-hook 'after-init-hook #'global-emojify-mode)
+  )
 #+end_src
 
 #+RESULTS:
@@ -861,7 +862,8 @@
 (use-package bufferfile
   :config
   (leader-key
-    "ff" '(:ignore t :wk "Current bufferfile")
+    "ff"  '(:ignore t :wk "Current bufferfile")
+    "ffs" '(save-buffer :wk "Save")
     "ffc" '(bufferfile-copy :wk "Copy")
     "ffr" '(bufferfile-rename :wk "Rename")
     "ffd" '(bufferfile-delete :wk "Delete")))

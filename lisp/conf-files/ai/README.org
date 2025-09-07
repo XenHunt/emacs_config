@@ -137,7 +137,40 @@ Guidelines:
 1. Receive a name and task description for a specific GPTel directive.
 2. Review and analyze the current prompt format.
 3. Refine the task by adding detailed instructions or clarifications.
-4. Make sure the refined prompt makes clear how to improve AI performance in executing its directive duties."))))
+4. Make sure the refined prompt makes clear how to improve AI performance in executing its directive duties.")
+                      (algorithmic-mathematician . "Provide a comprehensive, structured approach to solving a given problem by designing, analyzing, and optimizing multiple algorithms. Focus on clarity, efficiency, and adaptability while strictly adhering to pseudocode-only output.  
+
+---
+
+*Refined Instructions:*  
+1. *Problem Understanding:*  
+   - Clearly define the problem's input, output, and constraints.  
+   - Identify edge cases or special scenarios (e.g., empty input, large datasets, or specific data ranges).  
+
+2. *Algorithm Generation:*  
+   - Propose *at least three distinct algorithms* to solve the problem.  
+   - Ensure each algorithm differs in approach (e.g., brute force, greedy, dynamic programming, divide-and-conquer, etc.).  
+   - For each algorithm:  
+     - Write *high-level pseudocode* (avoid language-specific syntax).  
+     - Explain the *intuition* behind the approach.  
+     - Highlight *key steps* and *decision points*.  
+
+3. *Complexity Analysis:*  
+   - For each algorithm, analyze *time and space complexity* (e.g., O(n), O(n²), O(log n)).  
+   - Compare the algorithms' efficiency under different input sizes or constraints.  
+
+4. *Algorithm Evaluation:*  
+   - Discuss *trade-offs* between algorithms (e.g., speed vs. memory usage, simplicity vs. scalability).  
+   - Recommend scenarios where each algorithm is optimal (e.g., small input size, real-time processing, etc.).  
+
+5. *Optimization and Upgrades:*  
+   - Identify potential bottlenecks in each algorithm.  
+   - Suggest *upgrades* (e.g., memoization, pruning, heuristic adjustments) to improve performance.  
+   - Explain how the upgrade affects complexity or practicality.  
+
+6. *Final Recommendation:*  
+   - Summarize the most suitable algorithm(s) based on the problem's requirements.  
+   - Justify the choice with reasoning tied to the analysis."))))
     (mapc (lambda (x) (add-hook 'gptel-directives x)) directives))
   (leader-key
     "e g" '(:ignore t :wk "Gptel")
@@ -528,20 +561,20 @@ TAG should be a string key in each model's assoc list, and NAME is the value ass
   (aidermacs-auto-commits nil)
   ;; (aidermacs-args '("--model" "ollama_chat/deepseek-r1"))
   (aidermacs-default-model "ollama_chat/qwen2.5-coder:14b")
-  (aidermacs-use-architect-mode t)
-  (aidermacs-architect-model "ollama_chat/deepseek-r1")
+  ;; (aidermacs-use-architect-mode t)
+  (aidermacs-architect-model "ollama_chat/deepseek-r1:latest")
   (aidermacs-editor-model "ollama_chat/qwen2.5-coder:14b")
   :commands (aidermacs-transient-menu)
   :config
   (setenv "OLLAMA_API_BASE" "http://127.0.0.1:11434")
-  (let ((models '("ollama_chat/deepseek-r1"
+  (let ((models '("ollama_chat/deepseek-r1:latest"
                   "ollama_chat/llama3.1:8b"
-                  "ollama_chat/deepseek-coder-v2"
+                  "ollama_chat/deepseek-coder-v2:16b"
                   "ollama_chat/qwen2.5:3b"
                   "ollama_chat/qwen3:14b"
                   "ollama_chat/qwen3:30b-a3b"
                   "ollama_chat/qwen2.5-coder:14b")))
-    (mapc (lambda (x) (add-to-list 'aidermacs-popular-models x)) models)))
+    (mapc (lambda (x) (add-to-list 'aidermacs--cached-models x)) models)))
 #+end_src
 
 * Provide

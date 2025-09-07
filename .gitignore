@@ -64,3 +64,8 @@
 *.elc
 /lisp/conf-files/org/org-roam-menu.el
 /lisp/conf-files/base/.nrepl-port
+/emojis/
+/easysession/
+/multisession/
+*.org#
+/logs.txt

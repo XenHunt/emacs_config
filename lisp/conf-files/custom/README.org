@@ -12,6 +12,8 @@
 - [[#fast-loading][Fast-Loading]]
 - [[#graphical-beauty][Graphical Beauty]]
   - [[#doom-theme][Doom Theme]]
+  - [[#spacemacs-theme][Spacemacs Theme]]
+  - [[#catppucin][Catppucin]]
   - [[#themes][Themes]]
   - [[#doom-modeline][Doom Modeline]]
   - [[#fonts][Fonts]]
@@ -74,6 +76,28 @@
                     '(lsp-signature-postframe ((t (:inherit (lsp-ui-doc-background)))))
                     '(isearch-fail ((t (:foreground "white" :background "red"))))))
 #+end_src
+** Spacemacs Theme
+:PROPERTIES:
+:CUSTOM_ID: spacemacs-theme
+:END:
+#+begin_src emacs-lisp
+(use-package spacemacs-theme)
+#+end_src
+** Catppucin
+:PROPERTIES:
+:CUSTOM_ID: catppucin
+:END:
+#+begin_src emacs-lisp
+(use-package catppuccin-theme
+  :custom
+  (catppuccin-flavor 'mocha)
+  :config
+  (load-theme 'catppuccin t))
+#+end_src
+
+#+RESULTS:
+: [nil 26776 53255 492234 nil elpaca-process-queues nil nil 986000 nil]
+
 ** Themes
 :PROPERTIES:
 :CUSTOM_ID: themes
@@ -86,7 +110,8 @@
 ;;   :ensure (:type git :host github :repo "konrad1977/neofusion-emacs" :branch "main" :main "neofusion-theme.el"))
 (use-package exotica-theme
   :config
-  (load-theme 'exotica t))
+  ;; (load-theme 'exotica t)
+  )
 ;; (after! exotica-theme
 ;; (load-theme 'exotica t))
 ;; (use-package rose-pine-emacs

@@ -42,6 +42,7 @@
     - [[#pydocstring][PyDocString]]
     - [[#раскладка][Раскладка]]
   - [[#go][Go]]
+  - [[#csharp][CSharp]]
   - [[#jupyter][Jupyter]]
     - [[#code-cells][Code-Cells]]
   - [[#web][WEB]]
@@ -76,6 +77,7 @@
   - [[#nix-mode][Nix-Mode]]
   - [[#hyprlang-ts-mode][Hyprlang-ts-mode]]
   - [[#ansible][Ansible]]
+  - [[#kubel][Kubel]]
   - [[#jenkins][Jenkins]]
   - [[#nginx][Nginx]]
   - [[#cmake][Cmake]]
@@ -218,6 +220,19 @@
 #+begin_src emacs-lisp
 (elpaca-wait)
 (use-package magit
+  ;; :ensure ( :package "magit-section"
+  ;;   		;; Inherited from elpaca-order-functions.
+  ;;   		:depth treeless
+  ;;   		:inherit t
+  ;;   		:protocol https
+  ;;   		;; Inherited from elpaca-menu-item.
+  ;;   		:source "MELPA"
+  ;;   		:files ("lisp/magit-section.el"
+  ;;   				"docs/magit-section.texi"
+  ;;   				"magit-section-pkg.el")
+  ;;   		:repo "magit/magit"
+  ;;   		:fetcher github
+  ;;   		:tag "v4.3.7")
   :defer 4
   :config
   (general-define-key
@@ -238,6 +253,13 @@
   :config (magit-todos-mode 1))
 (use-package forge
   :defer 5
+  ;; :ensure ( :package "forge"
+  ;;           :fetcher github
+  ;;           :repo "magit/forge"
+  ;;           :files ("lisp/*.el" "docs/*.texi"
+  ;;                   ".dir-locals.el")
+  ;;           :source "MELPA"
+  ;;           :tag "v0.5.3")
   :after magit)
 #+end_src
 ** Git-Modes
@@ -454,9 +476,9 @@ DOCS are documentation strings to set."
    '("ngserver"
      "--stdio"
      "--tsProbeLocations"
-     "/home/berlizoves/.nvm/versions/node/v20.17.0/lib/node_modules/"
+     "/home/berlizoves/.nvm/versions/node/v22.14.0/lib/node_modules/"
      "--ngProbeLocations"
-     "/home/berlizoves/.nvm/versions/node/v20.17.0/lib/node_modules/@angular/language-server/node_modules/"
+     "/home/berlizoves/.nvm/versions/node/v22.14.0/lib/node_modules/"
      ))
   (lsp-log-io nil) ; ensure this is off when not debugging
   (lsp-completion-provider :none)
@@ -878,6 +900,19 @@ DOCS are documentation strings to set."
   )
 
 #+end_src
+** CSharp
+:PROPERTIES:
+:CUSTOM_ID: csharp
+:END:
+#+begin_src emacs-lisp
+(use-package sharper
+  :general
+  (:states 'normal "SPC c#"  'sharper-main-transient))
+#+end_src
+
+#+RESULTS:
+: [nil 26786 4999 666513 nil elpaca-process-queues nil nil 190000 nil]
+
 ** Jupyter 
 :PROPERTIES:
 :CUSTOM_ID: jupyter
@@ -1517,6 +1552,19 @@ DOCS are documentation strings to set."
 (use-package ansible-vault
   :defer 6)
 #+end_src
+
+** Kubel
+:PROPERTIES:
+:CUSTOM_ID: kubel
+:END:
+#+begin_src emacs-lisp
+(use-package kubel-evil
+  :after (vterm)
+  :config (kubel-vterm-setup))
+#+end_src
+
+#+RESULTS:
+: [nil 26739 60212 362802 nil elpaca-process-queues nil nil 425000 nil]
 
 ** Jenkins
 :PROPERTIES:
