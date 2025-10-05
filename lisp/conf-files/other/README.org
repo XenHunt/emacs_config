@@ -535,6 +535,7 @@
   (:states 'normal :keymaps 'ibuffer-mode-map "C-o" 'casual-ibuffer-tmenu)
   (:states 'normal :keymaps 'calc-mode-map "C-o" 'casual-calc-tmenu)
   (:states 'normal :keymaps 'dired-mode-map "C-o" 'casual-dired-tmenu)
+  (:states 'normal :keymaps 'dired-mode-map "s" 'casual-dired-sort-by-tmenu)
   (:states 'normal :keymaps 'image-mode-map "C-o" 'casual-image-tmenu)
   (:states 'normal :keymaps 'Info-mode-map "C-o" 'casual-info-tmenu)
   (:states 'normal :keymaps 'Man-mode-map "C-o" 'casual-man-tmenu)

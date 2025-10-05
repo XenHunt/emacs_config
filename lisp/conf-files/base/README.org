@@ -40,6 +40,8 @@
   - [[#evil-args][Evil-Args]]
   - [[#evil-org][Evil-Org]]
   - [[#evil-lion][Evil-Lion]]
+  - [[#evil-numbers][Evil-Numbers]]
+  - [[#evil-textobj-tree-sitter][Evil-Textobj-Tree-Sitter]]
   - [[#enhanced-evil-paredit][Enhanced-Evil-Paredit]]
 - [[#diminish][Diminish]]
 - [[#exec-path-from-shell][Exec-path-from-shell]]
@@ -833,6 +835,34 @@
 
 #+RESULTS:
 : [nil 26456 21103 27832 nil elpaca-process-queues nil nil 352000 nil]
+
+** Evil-Numbers
+:PROPERTIES:
+:CUSTOM_ID: evil-numbers
+:END:
+#+begin_src emacs-lisp
+(use-package evil-numbers
+  :after evil
+  :config
+  (evil-define-key '(normal visual) 'global (kbd "C-c +") 'evil-numbers/inc-at-pt)
+  (evil-define-key '(normal visual) 'global (kbd "C-c -") 'evil-numbers/dec-at-pt)
+  (evil-define-key '(normal visual) 'global (kbd "C-c C-+") 'evil-numbers/inc-at-pt-incremental)
+  (evil-define-key '(normal visual) 'global (kbd "C-c C--") 'evil-numbers/dec-at-pt-incremental-))
+#+end_src
+
+** Evil-Textobj-Tree-Sitter
+:PROPERTIES:
+:CUSTOM_ID: evil-textobj-tree-sitter
+:END:
+#+begin_src emacs-lisp
+(use-package evil-textobj-tree-sitter
+  :after evil
+  :config
+  ;; bind `function.outer`(entire function block) to `f` for use in things like `vaf`, `yaf`
+  (define-key evil-outer-text-objects-map "f" (evil-textobj-tree-sitter-get-textobj "function.outer"))
+  ;; bind `function.inner`(function block without name and args) to `f` for use in things like `vif`, `yif`
+  (define-key evil-inner-text-objects-map "f" (evil-textobj-tree-sitter-get-textobj "function.inner")))
+#+end_src
 
 ** TODO Enhanced-Evil-Paredit 
 :PROPERTIES:

@@ -243,6 +243,10 @@
    "]]" '(magit-next-line :wk "magit-next-line")
    "[[" '(magit-previous-line :wk "magit-previous-line")))
 #+end_src
+
+#+RESULTS:
+: [nil 26793 35446 726135 nil elpaca-process-queues nil nil 14000 nil]
+
 ** Magit-TODOS
 :PROPERTIES:
 :CUSTOM_ID: magit-todos

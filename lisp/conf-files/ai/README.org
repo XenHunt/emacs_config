@@ -10,6 +10,9 @@
 :CONTENTS:
 - [[#введение][Введение]]
 - [[#fast-loading][Fast-Loading]]
+- [[#extra-functions][Extra functions]]
+  - [[#functions][Functions]]
+  - [[#loading-extra-functions][Loading extra functions]]
 - [[#gptel][Gptel]]
   - [[#gptel-itself][Gptel Itself]]
   - [[#magit-gptcommit][Magit-GPTCommit]]
@@ -41,6 +44,55 @@
 ;; -*- lexical-binding: t;  no-byte-compile: t -*-
 #+end_src
 
+* Extra functions
+:PROPERTIES:
+:CUSTOM_ID: extra-functions
+:END:
+** Functions
+:PROPERTIES:
+:CUSTOM_ID: functions
+:END:
+#+begin_src emacs-lisp :tangle extra.el
+;; -*- lexical-binding: t;  no-byte-compile: t -*-
+(defun get-ollama-models ()
+  "Return list of available Ollama models."
+  (let* ((output (shell-command-to-string "ollama ls"))
+         (lines (split-string output "\n" t))
+         (models '()))
+    (dolist (line (cdr lines)) ; Skip header line
+      (let* ((fields (split-string line))
+             (name (car fields)))
+        (when name
+          (push name models))))
+    (nreverse models)))
+
+
+(defun get-ollama-chat-models ()
+  "Return list of Ollama model names with 'ollama_chat/' prefix."
+  (mapcar (lambda (model)
+            (format "ollama_chat/%s" model))
+          (get-ollama-models)))
+(defun get-ollama-symbol-models ()
+  "Return list of Ollama model symbols (without 'ollama_chat/' prefix)."
+  (mapcar (lambda (model)
+            (intern  model)) ; Remove "ollama_chat/" prefix
+          (get-ollama-models)))
+
+(provide 'extra)
+#+end_src
+
+#+RESULTS:
+: extra
+
+
+** Loading extra functions
+:PROPERTIES:
+:CUSTOM_ID: loading-extra-functions
+:END:
+#+begin_src emacs-lisp
+(require 'extra)
+#+end_src
+
 * Gptel
 :PROPERTIES:
 :CUSTOM_ID: gptel
@@ -63,7 +115,7 @@
    gptel-backend (gptel-make-ollama "Ollama"
                    :host "localhost:11434"
                    :stream t
-                   :models '(llama3.1:8b deepseek-coder-v2:16b qwen2.5:3b qwen2.5-coder:14b qwen2.5-coder:32b deepseek-r1 qwen3:14b qwen3:30b-a3b)))
+                   :models (get-ollama-symbol-models)))
   ;; (add-to-list 'gptel-directives '(clojure-teacher . "You are a professional programmer-teacher in Clojure. Your task is to write best code with good explaination, answer a questions about the Clojure, do everything to help me master Cloure. Respond concisely."))
   ;; (add-to-list 'gptel-directives '(org-helper . "You are a helper in writing declartive config for Emacs in Org files. Your task is to describe parts of the config with all your master and writes it. Respond concisely."))
   ;; (add-to-list 'gptel-di)
@@ -567,13 +619,7 @@ TAG should be a string key in each model's assoc list, and NAME is the value ass
   :commands (aidermacs-transient-menu)
   :config
   (setenv "OLLAMA_API_BASE" "http://127.0.0.1:11434")
-  (let ((models '("ollama_chat/deepseek-r1:latest"
-                  "ollama_chat/llama3.1:8b"
-                  "ollama_chat/deepseek-coder-v2:16b"
-                  "ollama_chat/qwen2.5:3b"
-                  "ollama_chat/qwen3:14b"
-                  "ollama_chat/qwen3:30b-a3b"
-                  "ollama_chat/qwen2.5-coder:14b")))
+  (let ((models (get-ollama-chat-models)))
     (mapc (lambda (x) (add-to-list 'aidermacs--cached-models x)) models)))
 #+end_src
 
