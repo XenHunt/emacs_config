@@ -31,6 +31,7 @@
   - [[#lsp-mode][LSP-Mode]]
     - [[#lsp-focus][Lsp-Focus]]
   - [[#dap-mode][DAP-Mode]]
+  - [[#mason][Mason]]
   - [[#formater][Formater]]
   - [[#python][Python]]
     - [[#blacken][Blacken]]
@@ -497,6 +498,7 @@ DOCS are documentation strings to set."
   (lsp-eldoc-enable-hover nil)
   ;; (lsp-signature-auto-activate nil)
   (lsp-signature-function #'lsp-signature-posframe)
+  (lsp-server-install-dir (concat (expand-file-name user-cache-dir) "lsp-mode"))
   :init
   ;; (evil-define-minor-mode-key 'normal lsp-mode (kbd "SPC c l") lsp-command-map)
   (defun lsp-booster--advice-json-parse (old-fn &rest args)
@@ -552,7 +554,7 @@ DOCS are documentation strings to set."
 	     ;; replace XXX-mode with concrete major-mode(e. g. python-mode)
 	     ;; (python-mode . lsp)
          ;;     (python-ts-mode . lsp)
-	     ((json-mode  yaml-mode javascript-mode js-ts-mode js-mode js-jsx-mode js2-jsx-mode typescript-mode typescript-ts-mode css-mode tsx-ts-mode  vue-mode js2-mode) . lsp-deferred)
+	     ((json-mode  yaml-mode javascript-mode js-ts-mode js-mode js-jsx-mode js2-jsx-mode typescript-mode typescript-ts-mode css-mode tsx-ts-mode  vue-mode js2-mode c-ts-mode bash-ts-mode cmake-ts-mode csharp-ts-mode) . lsp-deferred)
 	     (lsp-completion-mode . lsp-enable-which-key-integration)
 	     (lisp-interaction-mode . lsp)
 	     )
@@ -708,6 +710,30 @@ DOCS are documentation strings to set."
 ;;   :hook (dap-mode . dap-ui-mode)
 ;;   :hook (dap-ui-mode . dap-ui-controls-mode))
 #+end_src
+
+** Mason
+:PROPERTIES:
+:CUSTOM_ID: mason
+:END:
+#+begin_src emacs-lisp
+(use-package mason
+  :custom
+  (mason-dir (concat (expand-file-name user-cache-dir) "mason"))
+  :init
+  (defun my/mason-ensure ()
+    (remove-hook 'server-after-make-frame-hook 'my/mason-ensure)
+    (remove-hook 'after-make-frame-functions 'my/mason-ensure)
+    (mason-ensure))
+  :config
+  (if (daemonp)
+      (add-hook 'server-after-make-frame-hook 'my/mason-ensure)
+    (add-hook 'after-make-frame-functions 'my/mason-ensure))
+  (leader-key
+    "cm" '(:ignore t :wk "Mason")
+    "cmm" '(mason-manager :wk "Manage")
+    "cmr" '(mason-update-registry :wk "Upd registry")))
+#+end_src
+
 ** Formater 
 :PROPERTIES:
 :CUSTOM_ID: formater
@@ -1449,22 +1475,22 @@ DOCS are documentation strings to set."
 :CUSTOM_ID: janet
 :END:
 #+begin_src emacs-lisp
-(use-package janet-mode)
-(use-package parsec)
-(elpaca-wait)
-;; (use-package ijanet-mode
-;;   :after janet-mode parsec
-;;   :ensure ( ijanet-mode
-;;            :type git
-;;            :host github
-;;            :repo "SerialDev/ijanet-mode"
-;;            ;; :branch "master"
-;;            :main "ijanet.el"
+;; (use-package janet-mode)
+;; (use-package parsec)
+;; (elpaca-wait)
+;; ;; (use-package ijanet-mode
+;; ;;   :after janet-mode parsec
+;; ;;   :ensure ( ijanet-mode
+;; ;;            :type git
+;; ;;            :host github
+;; ;;            :repo "SerialDev/ijanet-mode"
+;; ;;            ;; :branch "master"
+;; ;;            :main "ijanet.el"
+;; ;;            :files ("*.el")))
+;; (use-package janet-ts-mode
+;;   :ensure (:host github
+;;            :repo "sogaiu/janet-ts-mode"
 ;;            :files ("*.el")))
-(use-package janet-ts-mode
-  :ensure (:host github
-           :repo "sogaiu/janet-ts-mode"
-           :files ("*.el")))
 #+end_src
 
 #+RESULTS:
@@ -1683,12 +1709,18 @@ DOCS are documentation strings to set."
       (hyprlang . ("https://github.com/tree-sitter-grammars/tree-sitter-hyprlang" "master"))
 	  (toml . ("https://github.com/tree-sitter/tree-sitter-toml"))
 	  (zig . ("https://github.com/GrayJack/tree-sitter-zig"))
+	  (regex . ("https://github.com/tree-sitter/tree-sitter-regex"))
+	  (markdown . ("https://github.com/tree-sitter-grammars/tree-sitter-markdown"))
+      (dockerfile . ("https://github.com/camdencheek/tree-sitter-dockerfile"))
+      (sql        . ("https://github.com/derekstride/tree-sitter-sql"))
+	  (clojure . ("https://github.com/sogaiu/tree-sitter-clojure/tree/unstable-20250526"))
+      (yaml       . ("https://github.com/tree-sitter-grammars/tree-sitter-yaml"))
       (janet-simple . ("https://github.com/sogaiu/tree-sitter-janet-simple"))))
   ;; (when (not (treesit-language-available-p 'janet-simple))
   ;;   (treesit-install-language-grammar 'janet-simple))
   ;; (when (not (treesit-language-available-p 'go))
   ;;   (treesit-install-language-grammar 'go))
-  (let ((tree-langs '(janet-simple python clojure typescript tsx make css html json vue bash hyprlang)))
+  (let ((tree-langs '(janet-simple python clojure typescript tsx make css html json vue bash hyprlang c cmake make)))
     (mapc (lambda (x) (unless (treesit-language-available-p x)
                              (treesit-install-language-grammar x)))
           tree-langs))
@@ -1705,7 +1737,10 @@ DOCS are documentation strings to set."
 #+begin_src emacs-lisp
 (use-package treesit-auto
   :defer 2
+  :custom
+  (treesit-auto-install 'prompt)
   :config
+  (treesit-auto-add-to-auto-mode-alist 'all)
   (global-treesit-auto-mode))
 #+end_src
 
