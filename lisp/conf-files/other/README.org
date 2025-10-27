@@ -300,6 +300,8 @@
         ("S-TAB" . corfu-previous)
         ([backtab] . corfu-previous)
         ("C-SPC" . corfu-insert-separator))
+  (:map corfu-mode-map
+        ("C-s-<tab>" . completion-at-point))
   :init
   (global-corfu-mode)
   (corfu-popupinfo-mode)

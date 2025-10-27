@@ -32,6 +32,7 @@
     - [[#lsp-focus][Lsp-Focus]]
   - [[#dap-mode][DAP-Mode]]
   - [[#mason][Mason]]
+  - [[#systemd-lsp][Systemd LSP]]
   - [[#formater][Formater]]
   - [[#python][Python]]
     - [[#blacken][Blacken]]
@@ -732,6 +733,20 @@ DOCS are documentation strings to set."
     "cm" '(:ignore t :wk "Mason")
     "cmm" '(mason-manager :wk "Manage")
     "cmr" '(mason-update-registry :wk "Upd registry")))
+#+end_src
+
+** Systemd LSP
+:PROPERTIES:
+:CUSTOM_ID: systemd-lsp
+:END:
+#+begin_src emacs-lisp
+(after! lsp
+  (add-to-list 'lsp-language-id-configuration '(systemd-mode . "systemd") nil)
+  (lsp-register-client (make-lsp-client
+                        :new-connection (lsp-stdio-connection "systemd-lsp")
+                        :activation-fn (lsp-activate-on "systemd")
+                        :server-id 'systemd))
+  (add-hook 'systemd-mode-hook #'lsp-deferred))
 #+end_src
 
 ** Formater 
@@ -1563,10 +1578,20 @@ DOCS are documentation strings to set."
 :END:
 #+begin_src emacs-lisp
 (use-package hyprlang-ts-mode
-  :hook
-  (hyprlang-ts-mode . prism-mode)
+  :ensure t
+  ;; :commands (hyprlang-ts-mode)
+  ;; :hook
+  ;; (hyprlang-ts-mode . lsp-deferred)
   :custom
-  (hyprlang-ts-mode-indent-offset 4))
+  (hyprlang-ts-mode-indent-offset 4)
+  :config
+  (after! lsp
+    (add-to-list 'lsp-language-id-configuration '(hyprlang-ts-mode . "hyprlang") nil)
+    (lsp-register-client (make-lsp-client
+                          :new-connection (lsp-stdio-connection "hyprls")
+                          :activation-fn (lsp-activate-on "hyprlang")
+                          :server-id 'hyprlang)))
+  (add-hook 'hyprlang-ts-mode-hook #'lsp-deferred))
 #+end_src
 
 #+RESULTS:
@@ -1714,13 +1739,14 @@ DOCS are documentation strings to set."
       (dockerfile . ("https://github.com/camdencheek/tree-sitter-dockerfile"))
       (sql        . ("https://github.com/derekstride/tree-sitter-sql"))
 	  (clojure . ("https://github.com/sogaiu/tree-sitter-clojure/tree/unstable-20250526"))
+      (hyprlang . ("https://github.com/tree-sitter-grammars/tree-sitter-hyprlang"))
       (yaml       . ("https://github.com/tree-sitter-grammars/tree-sitter-yaml"))
       (janet-simple . ("https://github.com/sogaiu/tree-sitter-janet-simple"))))
   ;; (when (not (treesit-language-available-p 'janet-simple))
   ;;   (treesit-install-language-grammar 'janet-simple))
   ;; (when (not (treesit-language-available-p 'go))
   ;;   (treesit-install-language-grammar 'go))
-  (let ((tree-langs '(janet-simple python clojure typescript tsx make css html json vue bash hyprlang c cmake make)))
+  (let ((tree-langs '(janet-simple python clojure typescript tsx make css html json vue bash hyprlang c cmake make hyprlang)))
     (mapc (lambda (x) (unless (treesit-language-available-p x)
                              (treesit-install-language-grammar x)))
           tree-langs))
