@@ -969,61 +969,170 @@ DOCS are documentation strings to set."
   ;;            jupyter-run-server-repl
   ;;            jupyter-server-list-kernels
   ;;            )
+  :custom
+  (jupyter-eval-use-overlays t)
   :init
   :config
-  (setq jupyter-eval-use-overlays t)
-  (defun display-ansi-colors ()
-    "Fixes kernel output in emacs-jupyter"
-    (ansi-color-apply-on-region (point-min) (point-max)))
-
-  (add-hook 'org-mode-hook
-            (lambda ()
-              (add-hook 'org-babel-after-execute-hook #'display-ansi-colors)))
-
-  (after! ob-jupyter
-    (org-babel-jupyter-aliases-from-kernelspecs))
-  (org-babel-jupyter-aliases-from-kernelspecs)
+  (after! org
+    (require 'ob-jupyter)
+    (after! org-src
+      (add-to-list 'org-src-lang-modes '("jupyter-python" . python-ts))
+      (add-to-list 'org-src-lang-modes '("jupyter-R" . R)))
+    
   (defun lc/org-load-jupyter ()
     (org-babel-do-load-languages 'org-babel-load-languages
                                  (append org-babel-load-languages
                                          '((jupyter . t)))))
-
-  (defun lc/load-ob-jupyter ()
-    ;; only try to load in org-mode
-    (when (derived-mode-p 'org-mode)
-      ;; skip if already loaded
-      (unless (member '(jupyter . t) org-babel-load-languages)
-        ;; only load if jupyter is available
-        (when (executable-find "jupyter")
-          (lc/org-load-jupyter)))))
-
-  (after! jupyter
     (unless (member '(jupyter . t) org-babel-load-languages)
       (when (executable-find "jupyter")
-        (lc/org-load-jupyter))))
-  (after! org-src
-    ;; (add-to-list 'org-src-lang-modes '("jupyter-python" . python-ts))
-    (add-to-list 'org-src-lang-modes '("jupyter-R" . R)))
-  (setq org-babel-default-header-args:jupyter-python '(
-                                                       (:display . "plain")
-                                                       (:results . "replace both")
-                                                       (:session . "jpy")
-                                                       (:async . "yes")
-                                                       (:pandoc . "t")
-                                                       (:exports . "both")
-                                                       (:cache . "no")
-                                                       (:noweb . "no")
-                                                       (:hlines . "no")
-                                                       (:tangle . "no")
-                                                       (:eval . "never-export")
-                                                       (:kernel . "python3")
-                                                       ))
-  (add-to-list 'org-babel-tangle-lang-exts '("ipython" . "py"))
-  (add-to-list 'org-babel-tangle-lang-exts '("jupyter-python" . "py"))
-  (add-hook 'jupyter-org-interaction-mode-hook (lambda ()  (corfu-mode)))
-  ;; (org-babel-jupyter-override-src-block "python")
-  ;; (org-babel-jupyter-override-src-block "R")
-  )
+        (lc/org-load-jupyter)))
+    
+    (add-hook 'org-mode-hook
+              (lambda ()
+                (add-hook 'org-babel-after-execute-hook #'display-ansi-colors)))
+    (add-hook 'org-babel-after-execute-hook
+              (lambda ()
+                (when (derived-mode-p 'org-mode)
+                  (org-display-inline-images))))
+    )
+  ;; (setq jupyter-eval-use-overlays t)
+  (defun display-ansi-colors ()
+    "Fixes kernel output in emacs-jupyter"
+    (ansi-color-apply-on-region (point-min) (point-max)))
+
+  ;; (add-hook 'org-mode-hook
+  ;;           (lambda ()
+  ;;             (add-hook 'org-babel-after-execute-hook #'display-ansi-colors)))
+
+  (after! ob-jupyter
+    (org-babel-jupyter-aliases-from-kernelspecs))
+  ;; (org-babel-jupyter-aliases-from-kernelspecs)
+
+  ;; (defun lc/load-ob-jupyter ()
+  ;;   ;; only try to load in org-mode
+  ;;   (when (derived-mode-p 'org-mode)
+  ;;     ;; skip if already loaded
+  ;;     (unless (member '(jupyter . t) org-babel-load-languages)
+  ;;       ;; only load if jupyter is available
+  ;;       (when (executable-find "jupyter")
+  ;;         (lc/org-load-jupyter)))))
+
+  ;; (after! jupyter
+  ;;   (unless (member '(jupyter . t) org-babel-load-languages)
+  ;;     (when (executable-find "jupyter")
+  ;;       (lc/org-load-jupyter))))
+  
+  
+  ;; (defun my/jupyter--safe-org-src-wrapper (orig-fn &rest args)
+  ;;   "Safely call ORIG-FN only if in an active Jupyter Org src block."
+  ;;   (when (and (derived-mode-p 'org-mode)
+  ;;              (org-before-first-heading-p) ; still too early
+  ;;              nil)
+  ;;     ;; Don't run if before first heading
+  ;;     (apply orig-fn args))
+  
+  ;;   ;; Only proceed if we're truly inside a valid Jupyter src block
+  ;;   (if (and (derived-mode-p 'org-mode)
+  ;;            (org-element-type (org-element-context)) ; valid parse tree
+  ;;            (let ((info (org-babel-get-src-block-info 'no-eval)))
+  ;;              (and info
+  ;;                   (string-prefix-p "jupyter-" (or (nth 0 info) "")))))
+  ;;       (apply orig-fn args)
+  ;;     ;; Otherwise, silently skip to avoid errors in Corfu, timers, etc.
+  ;;     nil))
+
+  ;;   (defun jupyter-org--set-src-block-cache ()
+  ;;     "Safely cache the current src block's marker and info.
+  ;; Avoids errors when not in a valid src block or marker is invalid."
+  ;;     (let ((info (org-babel-get-src-block-info 'no-eval)))
+  ;;       (if (and info
+  ;;                (string-prefix-p "jupyter-" (or (nth 0 info) "")))
+  ;;           (let ((begin (nth 3 info))  ; position of #+begin_src
+  ;;                 (end (nth 4 info)))   ; position of #+end_src
+  ;;             ;; Only set markers if positions are valid integers
+  ;;             (when (and (integerp begin) (integerp end) (> end begin))
+  ;;               (setq jupyter-org--src-block-marker
+  ;;                     (copy-marker begin))
+  ;;               (setq jupyter-org--src-block-end-marker
+  ;;                     (copy-marker end))
+  ;;               (setq jupyter-org--src-block-params
+  ;;                     (nth 2 info))  ; header args
+  ;;               t))
+  ;;         ;; Not in a Jupyter block: clear cache to avoid stale state
+  ;;         (setq jupyter-org--src-block-marker nil
+  ;;               jupyter-org--src-block-end-marker nil
+  ;;               jupyter-org--src-block-params nil)
+  ;;         nil)))
+  ;; (defun my/jupyter-org-completion-safe ()
+  ;;   "Safe Jupyter completion for Org src blocks."
+  ;;   (condition-case nil
+  ;;       (when (and (derived-mode-p 'org-mode)
+  ;;                  (let ((info (org-babel-get-src-block-info 'no-eval)))
+  ;;                    (and info (string-prefix-p "jupyter-" (nth 0 info)))))
+  ;;         ;; Force cache refresh (in case buffer changed)
+  ;;         (jupyter-org--set-src-block-cache)
+  ;;         (jupyter-org-completion-at-point))
+  ;;     (error nil))); silently fail on any error
+  ;; (with-eval-after-load 'jupyter
+  ;;   (advice-add 'jupyter-org--with-src-block-client
+  ;;               :around #'my/jupyter--safe-org-src-wrapper))
+  ;; (with-eval-after-load 'jupyter
+  ;;   ;; Remove any previous unsafe registration
+  ;;   (remove-hook 'completion-at-point-functions 'jupyter-org-completion-at-point t)
+  
+  ;;   (add-hook 'org-mode-hook
+  ;;             (lambda ()
+  ;;               (add-hook 'completion-at-point-functions
+  ;;                         #'my/jupyter-org-completion-safe nil t))))
+  (defun my/jupyter-org--set-src-block-cache ()
+    "Set the src-block cache.
+If set successfully or if `point' is already inside the cached
+source block, return non-nil. Otherwise, when `point' is not
+inside a Jupyter src-block, return nil."
+    (unless jupyter-org--src-block-cache
+      (setq jupyter-org--src-block-cache (list 'invalid nil nil)))
+    (if (org-in-src-block-p 'inside)
+        (or (jupyter-org--at-cached-src-block-p)
+            (when-let* ((ctx (org-element-context))
+                        (el (and (eq (org-element-type ctx) 'src-block) ctx))
+                        (info (and el
+                                   (org-babel-jupyter-language-p
+                                    (org-element-property :language el))
+                                   (org-babel-get-src-block-info t el)))
+                        (params (nth 2 info))
+                        (beg (org-element-property :begin el))
+                        (end (org-element-property :end el)))
+              (setq jupyter-org--src-block-cache
+                    (list params (copy-marker beg) (copy-marker end)))
+              t))
+      (pcase jupyter-org--src-block-cache
+        ((and `(,x . ,_) (guard (not (eq x 'invalid))))
+         (push 'invalid jupyter-org--src-block-cache)))
+      nil))
+
+  (advice-add 'jupyter-org--set-src-block-cache
+              :override #'my/jupyter-org--set-src-block-cache)
+  (with-eval-after-load 'jupyter
+    (setq org-babel-default-header-args:jupyter-python '(
+                                                         (:display . "plain")
+                                                         (:results . "replace both")
+                                                         (:session . "py")
+                                                         (:async . "yes")
+                                                         (:pandoc . "t")
+                                                         (:exports . "both")
+                                                         (:cache . "no")
+                                                         (:noweb . "no")
+                                                         (:hlines . "no")
+                                                         (:tangle . "no")
+                                                         (:eval . "never-export")
+                                                         (:kernel . "python3")
+                                                         ))
+    (add-to-list 'org-babel-tangle-lang-exts '("ipython" . "py"))
+    (add-to-list 'org-babel-tangle-lang-exts '("jupyter-python" . "py"))
+    ;; (add-hook 'jupyter-org-interaction-mode-hook (lambda ()  (corfu-mode)))
+    ;; (org-babel-jupyter-override-src-block "python")
+    ;; (org-babel-jupyter-override-src-block "R")
+    ))
 (use-package ein
   :mode "\\.ipynb\\'"
   :commands (ein:run)

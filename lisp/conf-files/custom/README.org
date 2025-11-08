@@ -92,7 +92,8 @@
   :custom
   (catppuccin-flavor 'mocha)
   :config
-  (load-theme 'catppuccin t))
+  ;; (load-theme 'catppuccin t)
+  )
 #+end_src
 
 #+RESULTS:
@@ -118,6 +119,8 @@
 ;;   :ensure (:type git :host github :repo "thongpv87/rose-pine-emacs" :branch "main" :main "rose-pine-color-theme.el" :files ("*.el"))
 ;;   :init
 ;;   (add-to-list 'custom-theme-load-path (concat elpaca-builds-directory "/rose-pine-emacs")))
+(load-file "/home/berlizoves/.emacs.d/themes/slaanesh-dark-theme.el")
+(load-theme 'slaanesh-dark t)
 #+end_src
 
 #+RESULTS:
@@ -345,6 +348,18 @@
                               ))
   (dashboard-projects-backend 'projectile)
   (dashboard-startup-banner "~/.emacs.d/logo.png")
+  (dashboard-footer-messages '("Perfection is not a goal—it is your birthright. Code beautifully."
+                               "Let your keystrokes dance like silk on marble. Emacs obeys only the exquisite."
+                               "Every parenthesis closed is a note in the symphony of your will."
+                               "You do not write code—you compose desire in syntax."
+                               "The true path lies not in speed, but in the ecstasy of flawless expression."
+                               "Embrace the pleasure of precision. Let no byte be unadorned."
+                               "Your .emacs.d is your shrine—make it worthy of devotion."
+                               "Suffering is for those who use GUIs. You? You ascend through key chords."
+                               "In the silence between keystrokes, hear the whisper of perfection."
+                               "You are not debugging—you are refining reality to match your vision."
+                               "Let your code flow like nectar—pure, potent, and intoxicating."
+                               "Only the worthy may wield M-: with grace. You are among them."))
   :config
   (defun switch-to-dashboard ()
     (switch-to-buffer "*dashboard*"))

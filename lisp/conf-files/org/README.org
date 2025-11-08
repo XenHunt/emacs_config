@@ -35,6 +35,7 @@
   - [[#org-fragtog][Org-Fragtog]]
   - [[#ob-async][OB-Async]]
   - [[#ob-mermaid][OB-Mermaid]]
+  - [[#chatu][Chatu]]
   - [[#org-babel-load-languages][ORG-Babel-Load-Languages]]
   - [[#org-download][Org-Download]]
   - [[#org-ref][Org-Ref]]
@@ -490,12 +491,13 @@ org файл, где находится tangled src blocks. К счастью, �
         org-roam-ui-update-on-save t
         org-roam-ui-open-on-start t))
 (use-package consult-org-roam
-  :ensure t
+  ;; :ensure t
   :after org-roam
   :init
   (require 'consult-org-roam)
   ;; Activate the minor mode
-  (consult-org-roam-mode 1)
+  (ignore-errors
+    (consult-org-roam-mode 1))
   :custom
   ;; Use `ripgrep' for searching with `consult-org-roam-search'
   (consult-org-roam-grep-func #'consult-ripgrep)
@@ -768,6 +770,38 @@ capture was not aborted."
 #+RESULTS:
 : [nil 26520 35704 297318 nil elpaca-process-queues nil nil 316000 nil]
 
+** Chatu
+:PROPERTIES:
+:CUSTOM_ID: chatu
+:END:
+#+begin_src emacs-lisp
+(use-package chatu
+  :ensure (chatu :host github :type git :repo "XenHunt/chatu" :branch "chatu-skip-lines-fix" 
+                 :files ("*.el" "*.el.in" "dir" "*.info"
+                         "*.texi" "*.texinfo" "doc/dir"
+                         "doc/*.info" "doc/*.texi"
+                         "doc/*.texinfo" "lisp/*.el" "docs/dir"
+                         "docs/*.info" "docs/*.texi"
+                         "docs/*.texinfo" (:exclude
+                                           ".dir-locals.el" "test.el" "tests.el"
+                                           "*-test.el" "*-tests.el" "LICENSE"
+                                           "README*" "*-pkg.el"))
+                 )
+  :hook ((org-mode markdown-mode) . chatu-mode)
+  (chatu-mode . (lambda ()
+                  (setq-local chatu-input-dir (get-cache-path "draws"))
+                  (setq-local chatu-output-dir (get-cache-path "images"))))
+  :commands (chatu-add
+             chatu-open))
+(use-package consult-chatu              ;
+  :ensure (consult-chatu :host github :type git :repo "XenHunt/consult-chatu" :branch "master" files ("*.el") :protocol ssh))
+
+(elpaca-wait)
+#+end_src
+
+#+RESULTS:
+: [nil 26891 26806 68629 nil elpaca-process-queues nil nil 883000 nil]
+
 ** ORG-Babel-Load-Languages 
 :PROPERTIES:
 :CUSTOM_ID: org-babel-load-languages
@@ -779,10 +813,12 @@ capture was not aborted."
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((emacs-lisp . t)
-   (python . t)
    (shell . t)
    (mermaid . t)
-   (clojure . t)))
+   (clojure . t)
+   (python . t)
+   ;; (jupyter . t)
+   ))
 
 #+end_src
 
@@ -798,8 +834,8 @@ capture was not aborted."
 #+begin_src emacs-lisp
 (use-package org-download
   :defer 4
-  :custom
-  (org-download-image-dir "./.images")
+  :hook ((org-mode dired-mode) . (lambda ()
+            (setq-local org-download-image-dir (get-cache-path "images"))))
   :config
   (add-hook 'dired-mode-hook 'org-download-enable)
   )
@@ -972,6 +1008,9 @@ capture was not aborted."
  "m b t o" '(org-table-toggle-coordinate-overlays :wk "org-table-toggle-coordinate-overlays")
  "m b c" '(:ignore :wk "Clock")
  "m b c c" '(org-clock-cancel :wk "org-clock-cancel")
+
+ ;; Chatu
+ "m c" '(consult-chatu-new :wk "consult-chatu-new")
  )
 
 (leader-key

@@ -654,11 +654,14 @@ TAG should be a string key in each model's assoc list, and NAME is the value ass
   (aidermacs-backend 'vterm)
   (aidermacs-auto-commits nil)
   ;; (aidermacs-args '("--model" "ollama_chat/deepseek-r1"))
-  (aidermacs-default-model "ollama_chat/qwen2.5-coder:14b")
+  (aidermacs-default-model "ollama_chat/qwen3-coder:30b")
   ;; (aidermacs-use-architect-mode t)
   (aidermacs-architect-model "ollama_chat/deepseek-r1:latest")
   (aidermacs-editor-model "ollama_chat/qwen2.5-coder:14b")
   :commands (aidermacs-transient-menu)
+  :init
+  (leader-key
+    "ea" '(aidermacs-transient-menu :wk "Aidermacs menu"))
   :config
   (setenv "OLLAMA_API_BASE" "http://127.0.0.1:11434")
   (let ((models (get-ollama-chat-models)))

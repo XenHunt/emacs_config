@@ -11,6 +11,7 @@
 - [[#введение][Введение]]
 - [[#fast-loading][Fast-Loading]]
 - [[#emacs][Emacs]]
+  - [[#cache-dir-function][Cache dir function]]
 - [[#по-умолчанию][По-умолчанию]]
 - [[#compile-angel][Compile-Angel]]
 - [[#elpaca-fixes][Elpaca Fixes]]
@@ -106,8 +107,34 @@
     (auth-source-pass-enable))
   (setq read-process-output-max (* 1024 1024 10)))
   (elpaca-wait)
-
 #+end_src
+
+** Cache dir function
+:PROPERTIES:
+:CUSTOM_ID: cache-dir-function
+:END:
+#+begin_src emacs-lisp
+(defun get-cache-path (&optional cache-dir-name)
+  "Return path to cache folder.
+If we are in a project, folder is in root of project.
+If not, it is in current directory.
+CACHE-DIR-NAME is optional cache folder name (defaults to \".cached\")."
+  (let ((cache-dir (or cache-dir-name ".cached"))
+        (project-root (projectile-project-root))
+        (current-file (buffer-file-name)))
+    (if (and project-root
+             (not (string-match-p (concat "^" (getenv "HOME") "/?$") project-root)))
+        (progn
+          (concat project-root cache-dir))
+      (progn
+        (if current-file
+            (concat (file-name-directory current-file) cache-dir)
+          (concat (getenv "HOME") "/" cache-dir ))) )))
+#+end_src
+
+#+RESULTS:
+: get-cache-path
+
 * По-умолчанию
 :PROPERTIES:
 :CUSTOM_ID: по-умолчанию
@@ -924,6 +951,17 @@
 (use-package vterm
   :custom
   (vterm-always-compile-module t)
+  :init
+  (general-define-key
+   ;; :definer 'minor-mode
+   :states 'normal
+   :keymaps '(vterm-mode-map vterm-copy-mode-map)
+   :prefix "SPC"
+   
+   "m" '(:ignore t :wk "VTerm commands")
+   "m n" '(vterm-toggle-show :wk "Create new term")
+   "m c" '(vterm-copy-mode :wk "Toggle copy mode")
+   )
   :config
   (defun vterm-spawn (&optional args)
     (let ((name (or args "")))
@@ -939,15 +977,6 @@
     "o t" '(vterm-other-window :wk "Opens Vterm in other window")
     "o T" '(vterm :wk "Open VTerm instead of this buffer")
     )
-  (general-define-key
-   ;; :definer 'minor-mode
-   :states 'normal
-   :keymaps 'vterm-mode-map
-   :prefix "SPC"
-   
-   "m" '(:ignore t :wk "VTerm commands")
-   "m n" '(vterm-toggle-show :wk "Create new term")
-   )
   )
 (use-package vterm-toggle
   :after vterm
@@ -1054,7 +1083,8 @@
                                 ("mp4" . "mpv")
                                 ("exe" . "portproton")
                                 ("torrent" . "ktorrent")
-                                ("AppImage" . "AppImageLauncher"))))
+                                ("AppImage" . "AppImageLauncher")
+                                ("drawio" . "drawio"))))
 #+end_src
 ** Peep-Dired 
 :PROPERTIES:
@@ -1140,9 +1170,8 @@
 #+begin_src emacs-lisp
 (use-package projectile
   :defer 2
-  :custom
-  (projectile-ignore-projects '("~/.emacs.d/" "~/.emacs.d/*" "~/"))
   :config
+  (setq projectile-ignored-projects '("~/.emacs.d/" "~/.emacs.d/*" "~/" "/home/berlizoves/"))
   (leader-key
     "p" '(:ignore t :wk "Project"))
   (add-to-list 'projectile-globally-ignored-directories "node_modules")
