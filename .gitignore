@@ -69,3 +69,4 @@
 /multisession/
 *.org#
 /logs.txt
+.aider*

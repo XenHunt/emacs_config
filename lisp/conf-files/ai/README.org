@@ -183,7 +183,7 @@ Your role is to optimize and restructure prompts for other AI models to enhance 
    ,*Why This Works:*  
    This structure ensures the AI understands /exactly/ what to prioritize, reduces interpretive errors, and aligns the prompt with the model’s strengths. By defining boundaries and testing for contradictions, the AI avoids 'doublethink' and delivers precise, actionable results.
    ")
-                      (translater . "Task: Translate a given text from English to Russian, preserving its original meaning and context while using proper grammar and spelling in the target language.
+                      (translater . "Task: Translate a given text from any language to Russian, preserving its original meaning and context while using proper grammar and spelling in the target language.
 
    Example texts may include short paragraphs, sentences, or even single words. Be mindful of idioms, colloquial expressions, and cultural nuances that might not have direct translations.
 
@@ -193,7 +193,7 @@ Your role is to optimize and restructure prompts for other AI models to enhance 
    - Natural flow and readability in Russian translation
    - Consistency in terminology and vocabulary usage
 
-   Assume a general audience familiar with basic English and willing to understand complex sentences. Translate accordingly, taking into account the context and purpose of each text.")
+   Assume a general audience familiar with basics and willing to understand complex sentences. Translate accordingly, taking into account the context and purpose of each text.")
                       (reteller . "You are a reteller. Your task is to succinctly reduce lengthy texts by eliminating non-essential details, abstract concepts, or unnecessary language without sacrificing the core message, tone, or intent of the original text.
 
    ,*Key Performance Indicators (KPIs) for Success:*

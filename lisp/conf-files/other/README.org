@@ -54,6 +54,8 @@
 - [[#systemd][Systemd]]
 - [[#emojify][Emojify]]
 - [[#bufferfile][Bufferfile]]
+- [[#string-inflection][String-Inflection]]
+- [[#use-proxy][Use-Proxy]]
 - [[#provide][Provide]]
 :END:
 * Введение
@@ -481,6 +483,7 @@
   :custom
   (xref-show-definitions-functions #'consult-xref)
   :config
+  (consult-preview-at-point-mode)
   (recentf-mode)
   )
 (elpaca-wait)
@@ -882,6 +885,21 @@
 
 #+RESULTS:
 : [nil 26739 43080 518873 nil elpaca-process-queues nil nil 643000 nil]
+
+* String-Inflection
+:PROPERTIES:
+:CUSTOM_ID: string-inflection
+:END:
+#+begin_src emacs-lisp
+(use-package string-inflection
+  :general
+  (:keymaps '(python-mode-map python-ts-mode-map)
+            :prefix "C-c"
+            "C-u" 'string-inflection-python-style-cycle))
+#+end_src
+
+#+RESULTS:
+: [nil 26904 10820 761773 nil elpaca-process-queues nil nil 168000 nil]
 
 * Provide
 :PROPERTIES:

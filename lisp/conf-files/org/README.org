@@ -33,6 +33,7 @@
       - [[#extra-functions][Extra functions]]
       - [[#само-меню][Само меню]]
   - [[#org-fragtog][Org-Fragtog]]
+  - [[#latex-export][LaTex Export]]
   - [[#ob-async][OB-Async]]
   - [[#ob-mermaid][OB-Mermaid]]
   - [[#chatu][Chatu]]
@@ -138,7 +139,12 @@
 :CUSTOM_ID: auto-fill-mode
 :END:
 #+begin_src emacs-lisp
-(add-hook 'org-mode-hook #'auto-fill-mode)
+(use-package visual-fill-column
+  :hooks
+  (org-mode visual-line)
+  :init
+  (add-hook 'visual-line-mode-hook #'visual-fill-column-for-vline))
+;; (add-hook 'org-mode-hook #'visual-line-mode)
 #+end_src
 ** Hover Links 
 :PROPERTIES:
@@ -471,6 +477,34 @@ org файл, где находится tangled src blocks. К счастью, �
            :if-new (file+head "%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
                               "#+title: ${title}\n#+category: ${title}\n#+date: %U\n#+filetags: :Data_Type:Programming:")
            :unnarrowed t)
+          ("c" "DH2 Char" plain
+           (file "~/.org/roam/templates/tabletop/DH2/char_sheet.org")
+           :if-new (file+head "%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
+                              "#+title: ${title}\n#+category: RPG, DH2, Character Sheet\n#+date: %U")
+           :unnarrowed t)
+          
+          ;; Tabletop Games
+          ("r" "Tabletop Games")
+          
+          ;; Pathfinder 1e
+          ("rp" "Pathfinder 1e")
+          
+          ;; Dark Heresy 2e
+          ("rd" "Dark Heresy 2e")
+          ("rdc" "Character Sheet" plain
+           (file "~/.org/roam/templates/tabletop/DH2/char_sheet.org")
+           :if-new (file+head "tabletop/DarkHeresy2e/%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
+                              "#+title: ${title}\n#+filetags: :Dark_Heresy2e:Character_Sheet:\n#+date: %U")
+
+           :unnarrowed t)
+
+          ;; Black Crusade
+          ("rb" "Black Crusade")
+          ("rbc" "Character Sheet" plain
+           (file "~/.org/roam/templates/tabletop/BlackCrusade/char_sheet.org")
+           :if-new (file+head "tabletop/BlackCrusade/%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
+                              "#+title: ${title}\n#+filetags: :Black_Crusade:Character_Sheet:\n#+date: %U")
+           :unnarrowed t)
           )         
         )
   
@@ -493,11 +527,11 @@ org файл, где находится tangled src blocks. К счастью, �
 (use-package consult-org-roam
   ;; :ensure t
   :after org-roam
-  :init
-  (require 'consult-org-roam)
+  ;; :init
+  ;; (require 'consult-org-roam)
   ;; Activate the minor mode
-  (ignore-errors
-    (consult-org-roam-mode 1))
+  ;; (ignore-errors
+  ;;   (consult-org-roam-mode 1))
   :custom
   ;; Use `ripgrep' for searching with `consult-org-roam-search'
   (consult-org-roam-grep-func #'consult-ripgrep)
@@ -508,6 +542,7 @@ org файл, где находится tangled src blocks. К счастью, �
   (consult-org-roam-buffer-after-buffers t)
   :config
   ;; Eventually suppress previewing for certain functions
+  (consult-org-roam-mode 1)
   (consult-customize
    consult-org-roam-forward-links
    :preview-key "M-.")
@@ -519,6 +554,20 @@ org файл, где находится tangled src blocks. К счастью, �
   ;; ("C-c n B" . consult-org-roam-backlinks-recursive)
   ;; ("C-c n l" . consult-org-roam-forward-links)
   ;; ("C-c n r" . consult-org-roam-search)
+  )
+(use-package consult-notes
+  :commands (consult-notes
+             consult-notes-search-in-all-notes
+             ;; if using org-roam 
+             consult-notes-org-roam-find-node
+             consult-notes-org-roam-find-node-relation)
+  :config
+  (consult-notes-org-roam-mode) 
+  (setq consult-notes-file-dir-sources '(("Roam"  ?o  "~/.org/roam/"))) ;; Set notes dir(s), see below
+  ;; ;; Set org-roam integration, denote integration, or org-heading integration e.g.:
+  ;; (setq consult-notes-org-headings-files '("~/path/to/file1.org"
+  ;;                                          "~/path/to/file2.org"))
+  ;; (consult-notes-org-headings-mode)
   )
 (elpaca-wait)
 #+end_src
@@ -742,6 +791,28 @@ capture was not aborted."
 ;; whatever you want
 )
 #+end_src
+
+** LaTex Export
+:PROPERTIES:
+:CUSTOM_ID: latex-export
+:END:
+#+begin_src emacs-lisp
+(add-to-list 'org-latex-packages-alist '("T2A" "fontenc" t))
+(add-to-list 'org-latex-packages-alist '("utf8" "inputenc" t))
+(add-to-list 'org-latex-packages-alist '("" "babel" t))
+(add-to-list 'org-latex-packages-alist '("" "fontspec" t))
+
+(add-to-list 'org-latex-default-packages-alist '("T2A" "fontenc" t))
+(add-to-list 'org-latex-default-packages-alist '("utf8" "inputenc" t))
+(add-to-list 'org-latex-default-packages-alist '("" "babel" t))
+(add-to-list 'org-latex-default-packages-alist '("" "fontspec" t))
+#+end_src
+
+#+RESULTS:
+|      | fontspec | t |
+|      | babel    | t |
+| utf8 | inputenc | t |
+| T2A  | fontenc  | t |
 
 ** OB-Async
 :PROPERTIES:

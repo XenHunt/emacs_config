@@ -43,6 +43,8 @@
   - [[#evil-lion][Evil-Lion]]
   - [[#evil-numbers][Evil-Numbers]]
   - [[#evil-textobj-tree-sitter][Evil-Textobj-Tree-Sitter]]
+  - [[#evil-anzu][Evil-Anzu]]
+  - [[#evil-better-visual-line][Evil-Better-Visual-Line]]
   - [[#enhanced-evil-paredit][Enhanced-Evil-Paredit]]
 - [[#diminish][Diminish]]
 - [[#exec-path-from-shell][Exec-path-from-shell]]
@@ -57,6 +59,7 @@
   - [[#image-dired][Image-Dired+]]
   - [[#dired-open-with][Dired-Open-With]]
   - [[#dired-du][Dired-DU]]
+  - [[#dirvish][Dirvish]]
 - [[#projectile][Projectile]]
 - [[#tramp][Tramp]]
   - [[#ssh-machine][SSH-Machine]]
@@ -92,21 +95,28 @@
   :custom
   (custom-file (concat user-emacs-directory "secrets.el"))
   (tab-width 4)
+  (large-file-warning-threshold (* 20 1024 1024))
   :config
+  ;; (setq-default package-archives
+  ;;               '(("melpa" . "https://www.mirrorservice.org/sites/melpa.org/packages/")
+  ;;                 ;;("melpa" . "https://melpa.org/packages/")
+  ;;                 ("gnu" . "https://elpa.gnu.org/packages/")
+  ;;                 ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
   (setq gc-cons-threshold (* 100 1024 1024))
   (setq ring-bel-functuin #'ignore)  
   (setq text-mode-ispell-word-completion nil)
   (setq tab-always-indent 'complete)
   (unless (or (file-exists-p (file-truename "~/.Trash/"))
-               (file-symlink-p (file-truename "~/.Trash/")))
+              (file-symlink-p (file-truename "~/.Trash/")))
     (make-symbolic-link (file-truename "~/.local/share/Trash/")
                         (file-truename "~/.Trash")))
 
   (setq backup-directory-alist '((".*" . "~/.Trash/files/")))
   (after! auth-source
-    (auth-source-pass-enable))
+    (auth-source-pass-enable)
+    (setq auth-source-debug t))
   (setq read-process-output-max (* 1024 1024 10)))
-  (elpaca-wait)
+(elpaca-wait)
 #+end_src
 
 ** Cache dir function
@@ -893,6 +903,30 @@ CACHE-DIR-NAME is optional cache folder name (defaults to \".cached\")."
   (define-key evil-inner-text-objects-map "f" (evil-textobj-tree-sitter-get-textobj "function.inner")))
 #+end_src
 
+** Evil-Anzu
+:PROPERTIES:
+:CUSTOM_ID: evil-anzu
+:END:
+#+begin_src emacs-lisp
+(use-package anzu
+  :config
+  (global-anzu-mode))
+(use-package evil-anzu)
+#+end_src
+
+#+RESULTS:
+: [nil 26896 32197 152189 nil elpaca-process-queues nil nil 537000 nil]
+
+** Evil-Better-Visual-Line
+:PROPERTIES:
+:CUSTOM_ID: evil-better-visual-line
+:END:
+#+begin_src emacs-lisp
+(use-package evil-better-visual-line
+  :ensure t
+  :config
+  (evil-better-visual-line-on))
+#+end_src
 ** TODO Enhanced-Evil-Paredit 
 :PROPERTIES:
 :CUSTOM_ID: enhanced-evil-paredit
@@ -1163,6 +1197,19 @@ CACHE-DIR-NAME is optional cache folder name (defaults to \".cached\")."
   :commands (dired-du-mode)
   :custom (dired-du-size-format t))
 #+end_src
+** Dirvish
+:PROPERTIES:
+:CUSTOM_ID: dirvish
+:END:
+#+begin_src emacs-lisp
+(use-package dirvish
+  :init
+  (dirvish-override-dired-mode))
+#+end_src
+
+#+RESULTS:
+: [nil 26913 20270 96909 nil elpaca-process-queues nil nil 101000 nil]
+
 * Projectile 
 :PROPERTIES:
 :CUSTOM_ID: projectile
