@@ -15,15 +15,14 @@
   - [[#loading-extra-functions][Loading extra functions]]
 - [[#gptel][Gptel]]
   - [[#gptel-itself][Gptel Itself]]
-  - [[#magit-gptcommit][Magit-GPTCommit]]
-  - [[#elysium][Elysium]]
+  - [[#gptel-commit][Gptel-Commit]]
   - [[#evedel][Evedel]]
-  - [[#corsair][Corsair]]
 - [[#codeium][Codeium]]
 - [[#consult-omni][Consult-Omni]]
 - [[#chatgpt-shell][Chatgpt-Shell]]
 - [[#ob-chatgpt-shell][Ob-Chatgpt-Shell]]
 - [[#aidermacs][Aidermacs]]
+- [[#context-navigator][Context-Navigator]]
 - [[#provide][Provide]]
 :END:
 * Введение
@@ -52,7 +51,7 @@
 :PROPERTIES:
 :CUSTOM_ID: functions
 :END:
-#+begin_src emacs-lisp :tangle extra.el
+#+begin_src emacs-lisp :tangle extra-ai.el
 ;; -*- lexical-binding: t;  no-byte-compile: t -*-
 (defun get-ollama-models ()
   "Return list of available Ollama models."
@@ -78,7 +77,7 @@
             (intern  model)) ; Remove "ollama_chat/" prefix
           (get-ollama-models)))
 
-(provide 'extra)
+(provide 'extra-ai)
 #+end_src
 
 #+RESULTS:
@@ -89,7 +88,7 @@
 :CUSTOM_ID: loading-extra-functions
 :END:
 #+begin_src emacs-lisp
-(require 'extra)
+(require 'extra-ai)
 #+end_src
 
 * Gptel
@@ -148,41 +147,42 @@ Use a neutral tone and avoid overly technical jargon. Ensure commentaries are se
 9. *Engage with Visual Aids if Appropriate*: Use diagrams or flowcharts where appropriate to visually represent processes within the codebase, aiding understanding and retention.
 10. *Review and Revise*: Regularly review explanations for effectiveness and make revisions as necessary to enhance clarity and accuracy over time.")
                       (org-helper . "You are a helper in writing declartive config for Emacs in Org files. Your task is to describe parts of the config with all your master and writes it. Respond concisely.")
-                      (prompt-engineer . "*Task:*  
+                      (prompt-engineer . "*Task:/  
 Your role is to optimize and restructure prompts for other AI models to enhance their clarity, precision, and effectiveness. The goal is to ensure the revised prompts eliminate ambiguity, avoid contradictions, and align with the target model’s capabilities.  
 
-,*Specific Instructions:*  
-1. *Analyze the Original Prompt:*  
+,*Specific Instructions:/  
+1. /Analyze the Original Prompt:/  
    - Identify vague phrases (e.g., 'as best as you can,' 'without doublethink').  
    - Detect assumptions or unspoken requirements (e.g., 'upgrade' without defining criteria).  
 
-2. *Define Clear Objectives:*  
+2. /Define Clear Objectives:/  
    - Specify the /goal/ of the prompt (e.g., 'Generate a step-by-step tutorial on Python loops').  
    - Clarify the /output format/ (e.g., bullet points, code blocks, numbered lists).  
    - Include /constraints/ (e.g., 'Avoid technical jargon for novice users').  
 
-3. *Structure for Maximum Impact:*  
+3. /Structure for Maximum Impact:/  
    - Use a hierarchical format: [Goal] → [Constraints] → [Example Output].  
    - Add explicit instructions for edge cases (e.g., 'If the user asks for a summary, limit it to 100 words').  
 
-4. *Test for 'Doublethink' (Contradictions):*  
+4. /Test for 'Doublethink' (Contradictions):/  
    - Ensure no conflicting requirements (e.g., 'Be concise' vs. 'Include every detail').  
    - Verify alignment between the prompt’s language and the model’s capabilities (e.g., avoid asking for real-time data if the model lacks internet access).  
 
-5. *Iterate for Perfection:*  
+5. /Iterate for Perfection:/  
    - Provide 2–3 versions of the refined prompt, highlighting trade-offs (e.g., 'Version 1: Focuses on speed; Version 2: Prioritizes accuracy').  
    - Include a checklist for validation: [Clarity] [Structure] [Feasibility] [Alignment with Model Capabilities].  
+6. /Ensure Exhaustive Detail:/  
+   - /Mandatory Depth:/ Require all sections (e.g., constraints, examples) to include /expanded explanations/, /step-by-step reasoning/, and /multiple illustrative examples/.  
+   - /Elaborate Edge Cases:/ Explicitly demand thorough analysis of outliers, ambiguities, and conflicting requirements (e.g., \"Detail how to resolve contradictions between 'concise' and 'comprehensive' demands\").  
+   - /Verbose Trade-Offs:/ For iterative versions, provide /detailed comparisons/ (e.g., 'Version 1: Faster but less precise; Version 2: Slower but covers 95% of edge cases').  
+   - /Unpack Assumptions:/ Clarify implicit biases or contextual dependencies (e.g., 'Assume no prior knowledge of [X] unless specified').  
 
-   ,*Example:*  
-   Original: 'Explain machine learning in simple terms.'
-   Refined:  
-   ,*Goal:* Simplify the concept of machine learning for a 10-year-old.  
-   ,*Constraints:* Use analogies (e.g., 'like a child learning to recognize animals'), avoid equations, and limit to 150 words.  
-   ,*Example Output:* 'Machine learning is like teaching a robot to identify cats. Every time you show it a cat picture, it learns new clues, until it can spot cats on its own!'  
-
-   ,*Why This Works:*  
-   This structure ensures the AI understands /exactly/ what to prioritize, reduces interpretive errors, and aligns the prompt with the model’s strengths. By defining boundaries and testing for contradictions, the AI avoids 'doublethink' and delivers precise, actionable results.
-   ")
+7. /No Examples, No Answers:/  
+   - The generated prompt must exclude all examples, direct answers, or solution-oriented content.  
+   - Focus solely on structuring the prompt to guide the target model effectively.  
+   - Ensure the revised prompt remains purely instructive, with no embedded content or outputs.  
+   - Validate that the final prompt adheres strictly to this constraint.  
+")
                       (translater . "Task: Translate a given text from any language to Russian, preserving its original meaning and context while using proper grammar and spelling in the target language.
 
    Example texts may include short paragraphs, sentences, or even single words. Be mindful of idioms, colloquial expressions, and cultural nuances that might not have direct translations.
@@ -301,6 +301,7 @@ Your role is to optimize and restructure prompts for other AI models to enhance 
    - Justify the choice with reasoning tied to the analysis."))))
     (mapc (lambda (x) (add-hook 'gptel-directives x)) directives))
   (leader-key
+    "e" '(:ignore t :wk "LLM")
     "e g" '(:ignore t :wk "Gptel")
     "e gg" '(gptel :wk "Start/Switch")
     "e gc" '(gptel-add :wk "Add/Remove regions of buffers from context")
@@ -313,70 +314,24 @@ Your role is to optimize and restructure prompts for other AI models to enhance 
 
 #+RESULTS:
 : [nil 26403 13421 488387 nil elpaca-process-queues nil nil 716000 nil]
-
-** Magit-GPTCommit
+** Gptel-Commit
 :PROPERTIES:
-:CUSTOM_ID: magit-gptcommit
+:CUSTOM_ID: gptel-commit
 :END:
 #+begin_src emacs-lisp
-(use-package magit-gptcommit
-  :ensure (magit-gptcommit
-           :type git
-           :host github
-           :branch "gptel"
-           :repo "douo/magit-gptcommit"
-           :files ("*.el" "*.el.in" "dir" "*.info"
-                   "*.texi" "*.texinfo" "doc/dir"
-                   "doc/*.info" "doc/*.texi"
-                   "doc/*.texinfo" "lisp/*.el" "docs/dir"
-                   "docs/*.info" "docs/*.texi"
-                   "docs/*.texinfo" (:exclude
-                                     ".dir-locals.el" "test.el" "tests.el"
-                                     "*-test.el" "*-tests.el" "LICENSE"
-                                     "README*" "*-pkg.el")))
-  :after gptel magit
-  :config
-
-  ;; Enable magit-gptcommit-mode to watch staged changes and generate commit message automatically in magit status buffer
-  ;; This mode is optional, you can also use `magit-gptcommit-generate' to generate commit message manually
-  ;; `magit-gptcommit-generate' should only execute on magit status buffer currently
-  ;; (magit-gptcommit-mode 1)
-
-  ;; Add gptcommit transient commands to `magit-commit'
-  ;; Eval (transient-remove-suffix 'magit-commit '(1 -1)) to remove gptcommit transient commands
-  (magit-gptcommit-status-buffer-setup)
-  :bind (:map git-commit-mode-map
-              ("C-c C-g" . magit-gptcommit-commit-accept))
-  )
-#+end_src
-** Elysium
-:PROPERTIES:
-:CUSTOM_ID: elysium
-:END:
-#+begin_src emacs-lisp
-(use-package elysium
-  :ensure (:host github :repo "lanceberge/elysium")
-  :after gptel
-  ;; :bind
+(use-package gptel-commit
+  :after (gptel magit)
   :custom
-  ;; Below are the default values
-  (elysium-window-size 0.33) ; The elysium buffer will be 1/3 your screen
-  (elysium-window-style 'vertical)
+  (gptel-commit-stream t)
   :config
-  (leader-key
-    "ee" '(:ignore t :wk "Elysium")
-    "e ee" '(elysium-query :wk "Query")
-    "e et" '(elysium-toggle-window :wk "Toggle window")))
-(use-package smerge-mode
-  :ensure nil
-  :hook
-  (prog-mode . smerge-mode)
-  :config
-  (leader-key
-    "e eu" '(smerge-keep-upper :wk "Kepp upper")
-    "e el" '(smerge-keep-lower :wk "Keep lower")
-    "e ec" '(smerge-keep-current :wk "Keep current")))
+  (after! magit
+    (define-key git-commit-mode-map (kbd "C-c g") #'gptel-commit)
+    (define-key git-commit-mode-map (kbd "C-c G") #'gptel-commit-rationale)))
 #+end_src
+
+#+RESULTS:
+: [nil 26932 23 410782 nil elpaca-process-queues nil nil 656000 nil]
+
 ** Evedel
 :PROPERTIES:
 :CUSTOM_ID: evedel
@@ -463,26 +418,6 @@ Your role is to optimize and restructure prompts for other AI models to enhance 
 
 #+RESULTS:
 : [nil 26444 9329 31631 nil elpaca-process-queues nil nil 868000 nil]
-
-** Corsair
-:PROPERTIES:
-:CUSTOM_ID: corsair
-:END:
-#+begin_src emacs-lisp
-(use-package corsair
-  :after gptel
-  :config
-  (leader-key
-    "e c" '(:ignore t :wk "Corsair")
-    "e cn" '(corsair-accumulate-file-name :wk "This file name")
-    "e cc" '(corsair-accumulate-file-path-and-contents :wk "Append file or folder")
-    "e cC" '(corsair-accumulate-selected-text :wk "Selected text")
-    "e cs" '(corsair-open-chat-buffer :wk "Switch/open to chat")
-    "e ci" '(corsair-insert-file-or-folder-contents :wk "Insert file or folder")))
-#+end_src
-
-#+RESULTS:
-: [nil 26403 11332 772728 nil elpaca-process-queues nil nil 982000 nil]
 
 * Codeium 
 :PROPERTIES:
@@ -701,6 +636,31 @@ TAG should be a string key in each model's assoc list, and NAME is the value ass
   ;; (let ((models (get-ollama-chat-models)))
   ;;   (mapc (lambda (x) (add-to-list 'aidermacs--cached-models x)) models))
   )
+#+end_src
+
+* Context-Navigator
+:PROPERTIES:
+:CUSTOM_ID: context-navigator
+:END:
+#+begin_src emacs-lisp
+(use-package context-navigator
+  :ensure (context-navigator
+           :type git
+           :host github
+           :repo "11111000000/context-navigator")
+  :commands (context-navigator-transient)
+  :custom
+  ;; (context-navigator-global-key "C-c n")
+  (context-navigator-autoload t)
+  (context-navigator-autosave t)
+  (context-navigator-view-width 36)
+  (context-navigator-view-controls-style 'icons)
+  (context-navigator-gptel-indicator-poll-interval 0)
+  :init
+  (leader-key
+    "ec" '(context-navigator-transient :wk "Context Navigator"))
+  :config
+  (context-navigator-mode 1))
 #+end_src
 
 * Provide

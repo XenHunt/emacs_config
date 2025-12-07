@@ -17,6 +17,7 @@
   - [[#other][Other]]
   - [[#org][Org]]
   - [[#programming][Programming]]
+  - [[#tex][Tex]]
   - [[#ai][AI]]
   - [[#usb][USB]]
   - [[#telega][Telega]]
@@ -113,6 +114,16 @@
 #+begin_src emacs-lisp
 (add-to-list 'load-path "~/.emacs.d/lisp/conf-files/programming/")
 (require 'programming)
+#+end_src
+** Tex
+:PROPERTIES:
+:CUSTOM_ID: tex
+:END:
+
+Эта часть подгружает настройки для работы с LaTex. Подробнее: [[./tex/README.org][README для tex]]
+#+begin_src emacs-lisp
+(add-to-list 'load-path "~/.emacs.d/lisp/conf-files/tex/")
+(require 'tex-config)
 #+end_src
 ** AI
 :PROPERTIES:

@@ -901,6 +901,20 @@
 #+RESULTS:
 : [nil 26904 10820 761773 nil elpaca-process-queues nil nil 168000 nil]
 
+* Use-Proxy
+:PROPERTIES:
+:CUSTOM_ID: use-proxy
+:END:
+#+begin_src emacs-lisp
+(use-package use-proxy
+  :custom
+  (use-proxy-http-proxy "localhost:2080")
+  (use-proxy-https-proxy "localhost:2080"))
+#+end_src
+
+#+RESULTS:
+: [nil 26913 62282 537977 nil elpaca-process-queues nil nil 44000 nil]
+
 * Provide
 :PROPERTIES:
 :CUSTOM_ID: provide

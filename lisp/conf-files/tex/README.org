@@ -1,0 +1,166 @@
+#+TITLE:XenHunt Config (org)
+#+AUTHOR: Evgeny Berlizov (XenHunt)
+#+DESCRIPTION: XenHunt's config of org
+#+STARTUP: content
+#+PROPERTY: header-args :tangle tex-config.el
+* Содержание
+:PROPERTIES:
+:TOC:      :include all :force (depth) :ignore (this) :local (depth)
+:CUSTOM_ID: содержание
+:END:
+:CONTENTS:
+- [[#fast-loading][Fast-Loading]]
+- [[#latex-export][LaTex Export]]
+  - [[#custom-class][Custom Class]]
+  - [[#defaults][Defaults]]
+- [[#auctex][AucTex]]
+- [[#lsp-latex][Lsp-LaTex]]
+- [[#preview][Preview]]
+- [[#evil-integration][Evil integration]]
+- [[#keybindings][Keybindings]]
+- [[#provide][Provide]]
+:END:
+
+* Fast-Loading
+:PROPERTIES:
+:CUSTOM_ID: fast-loading
+:END:
+
+Быстрая загрузка модуля.
+
+#+begin_src emacs-lisp
+;; -*- lexical-binding: t;  no-byte-compile: t -*-
+#+end_src
+
+* LaTex Export
+:PROPERTIES:
+:CUSTOM_ID: latex-export
+:END:
+#+begin_src emacs-lisp
+(add-to-list 'org-latex-packages-alist '("T1,T2A" "fontenc" t))
+(add-to-list 'org-latex-packages-alist '("utf8" "inputenc" t))
+(add-to-list 'org-latex-packages-alist '("russian,english" "babel" t))
+(add-to-list 'org-latex-packages-alist '("" "fontspec" t))
+
+;; (add-to-list 'org-latex-default-packages-alist '("T2A" "fontenc" t))
+;; (add-to-list 'org-latex-default-packages-alist '("utf8" "inputenc" t))
+;; (add-to-list 'org-latex-default-packages-alist '("" "babel" t))
+;; (add-to-list 'org-latex-default-packages-alist '("" "fontspec" t))
+#+end_src
+
+** Custom Class
+:PROPERTIES:
+:CUSTOM_ID: custom-class
+:END:
+#+begin_src emacs-lisp
+(with-eval-after-load 'ox-latex
+(add-to-list 'org-latex-classes
+             '("org-plain-latex"
+               "\\documentclass{article}
+           [NO-DEFAULT-PACKAGES]
+           [PACKAGES]
+           [EXTRA]"
+               ("\\section{%s}" . "\\section*{%s}")
+               ("\\subsection{%s}" . "\\subsection*{%s}")
+               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+               ("\\paragraph{%s}" . "\\paragraph*{%s}")
+               ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
+#+end_src
+
+** Defaults
+:PROPERTIES:
+:CUSTOM_ID: defaults
+:END:
+#+begin_src emacs-lisp
+;; (setq-default org-latex-default-table-environment "tabulararray")
+#+end_src
+* AucTex
+:PROPERTIES:
+:CUSTOM_ID: auctex
+:END:
+#+begin_src emacs-lisp
+(use-package auctex
+  :custom
+  (TeX-engine 'xetex)
+  (TeX-command-extra-options "-shell-escape")
+  (TeX-source-correlate-method 'synctex)
+  (TeX-source-correlate-mode)
+  (TeX-source-correlate-start-server t)
+  (LaTeX-math-menu-unicode t)
+
+  (TeX-auto-save t)
+  (TeX-parse-self t)
+  (TeX-master nil)
+  (font-latex-fontify-sectioning 1.3)
+
+  ;; Scale preview for my DPI
+  (preview-scale-function 1.4)
+  )
+#+end_src
+
+#+RESULTS:
+: [nil 26910 38204 265866 nil elpaca-process-queues nil nil 534000 nil]
+
+* Lsp-LaTex
+:PROPERTIES:
+:CUSTOM_ID: lsp-latex
+:END:
+#+begin_src emacs-lisp
+(use-package lsp-latex
+  :hook
+  ((LaTeX-mode tex-mode TeX-mode) . lsp-deferred))
+#+end_src
+
+#+RESULTS:
+: [nil 26916 41184 59615 nil elpaca-process-queues nil nil 425000 nil]
+
+* Preview
+:PROPERTIES:
+:CUSTOM_ID: preview
+:END:
+#+begin_src emacs-lisp
+(use-package preview-auto
+  :hook (LaTeX-mode . preview-auto-setup)
+  :custom
+  (preview-locating-previews-message nil)
+  (preview-protect-point t)
+  (preview-leave-open-previews-visible t))
+#+end_src
+
+* Evil integration
+:PROPERTIES:
+:CUSTOM_ID: evil-integration
+:END:
+#+begin_src emacs-lisp
+(use-package evil-tex
+  :after evil
+  :hook (LaTeX-mode . evil-tex-mode))
+#+end_src
+
+#+RESULTS:
+: [nil 26916 44767 700195 nil elpaca-process-queues nil nil 486000 nil]
+
+* Keybindings
+:PROPERTIES:
+:CUSTOM_ID: keybindings
+:END:
+#+begin_src emacs-lisp
+(general-def
+ :states 'normal
+ :keymaps 'LaTeX-mode-map
+ :prefix "SPC c"
+ "M" '(lambda() (interactive) (message "Hello")))
+#+end_src
+
+#+RESULTS:
+
+* Provide
+:PROPERTIES:
+:CUSTOM_ID: provide
+:END:
+#+begin_src emacs-lisp
+(provide 'tex-config)
+#+end_src
+
+#+RESULTS:
+: tex-config

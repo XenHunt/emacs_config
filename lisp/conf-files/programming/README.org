@@ -730,9 +730,9 @@ DOCS are documentation strings to set."
       (add-hook 'server-after-make-frame-hook 'my/mason-ensure)
     (add-hook 'after-make-frame-functions 'my/mason-ensure))
   (leader-key
-    "cm" '(:ignore t :wk "Mason")
-    "cmm" '(mason-manager :wk "Manage")
-    "cmr" '(mason-update-registry :wk "Upd registry")))
+    "cm" '("Mason" . nil)
+    "cmm" 'mason-manager
+    "cmr" 'mason-update-registry))
 #+end_src
 
 ** Systemd LSP

@@ -135,11 +135,11 @@ CACHE-DIR-NAME is optional cache folder name (defaults to \".cached\")."
     (if (and project-root
              (not (string-match-p (concat "^" (getenv "HOME") "/?$") project-root)))
         (progn
-          (concat project-root cache-dir))
+          (file-truename (concat project-root cache-dir)))
       (progn
         (if current-file
-            (concat (file-name-directory current-file) cache-dir)
-          (concat (getenv "HOME") "/" cache-dir ))) )))
+            (file-truename (concat (file-name-directory current-file) cache-dir))
+          (file-truename (concat (getenv "HOME") "/" cache-dir )))))))
 #+end_src
 
 #+RESULTS:
@@ -161,8 +161,6 @@ CACHE-DIR-NAME is optional cache folder name (defaults to \".cached\")."
 ;; (electric-indent-mode -1)    ;; Turn off the weird indenting that Emacs does by default.
 (setq recentf-max-menu-items 100)
 (setq recentf-max-saved-items 150)
-(setq recentf-exclude '("/home/1TB/SD-Automatic1111/models/Lora/.*"
-                        "/home/1TB/Games/PyLoad/.*"))
 
 (electric-pair-mode -1)       ;; Turns on automatic parens pairing
 (global-auto-revert-mode t)  ;; Automatically show changes if the file has changed
@@ -182,11 +180,22 @@ CACHE-DIR-NAME is optional cache folder name (defaults to \".cached\")."
 ;; (add-hook 'prog-mode-hook 'my-scroll-precision-mode)
 ;; (add-hook 'text-mode-hook 'my-scroll-precision-mode)
 (global-hl-line-mode 1)
+(setopt ;; show-trailing-whitespace t
+        calendar-week-start-day 1)
 (setq echo-keystrokes 0.01)
-(pixel-scroll-precision-mode -1)
 (setq user-cache-dir (concat user-emacs-directory ".local/cache/"))
 (setq delete-by-moving-to-trash 1)
 (setq backup-by-copying t)
+
+(defun init-text-scratch ()
+    "Change mode in scratch buffer into text-mode"
+  (remove-hook 'server-after-make-frame-hook 'init-text-scratch)
+  (remove-hook 'after-init-hook 'init-text-scratch)
+  (let ((original-buffer (current-buffer)))
+    (with-current-buffer (get-buffer "*scratch*")
+        (text-mode))))
+(add-hook 'server-after-make-frame-hook 'init-text-scratch)
+(add-hook 'after-init-hook 'init-text-scratch)
 #+end_src
 
 * Compile-Angel
@@ -242,6 +251,7 @@ CACHE-DIR-NAME is optional cache folder name (defaults to \".cached\")."
 #+begin_src emacs-lisp
 (ignore-errors
   (setq confirm-kill-emacs 'y-or-n-p)
+  (setopt use-short-answers t)
   (defalias 'yes-or-no-p 'y-or-n-p))
 #+end_src
 * General Keybindigs
@@ -256,6 +266,10 @@ CACHE-DIR-NAME is optional cache folder name (defaults to \".cached\")."
   (general-auto-unbind-keys)
   (general-evil-setup)
   (general-auto-unbind-keys)
+  (keymap-global-unset "M-,")     ;; Такие маркеры не нужны
+  (keymap-global-unset "C-z")     ;; Такой Ctrl+Z нам не нужен
+  (keymap-global-unset "C-x C-z") ;; `suspend-emacs' тоже не нужен
+  (keymap-global-unset "C-x C-p") ;; `mark-page' не нужна, часто конфликтует с Projectile
   ;; (general-define-key
   ;;  :keymaps '(normal insert visual emacs )
   ;;  :prefix "SPC"
@@ -388,10 +402,11 @@ CACHE-DIR-NAME is optional cache folder name (defaults to \".cached\")."
 
   (leader-key
     "t" '(:ignore t :wk "Toggle")
-    "t l" '(display-line-numbers-mode :wk "Toggle line numbers")
-    "t t" '(visual-line-mode :wk "Toggle truncated lines")
-    "t f" '(focus-mode :wk "Focus Mode")
-    "t T" '(indent-tabs-mode :wk "Tab Mode")
+    "t l" `(display-line-numbers-mode :wk "Line Numbers")
+    "t t" `(visual-line-mode :wk "Visual Line")
+    "t f" `(focus-mode :wk "Focus")
+    "t T" `(indent-tabs-mode :wk "Indent tabs")
+    "t c" `(colorful-mode :wk "Colorful")
     )
 
   ;; (leader-key
@@ -575,12 +590,9 @@ CACHE-DIR-NAME is optional cache folder name (defaults to \".cached\")."
 (use-package evil-collection :ensure t :demand t
   :after evil
   :config
-  (setq evil-collection-mode-list '((pdf pdf-view)
-                                    calendar
-				                    devdocs
-                                    diff-mode
+  (setq evil-collection-mode-list '(
+                                    devdocs
 				                    doc-view
-                                    ediff
 				                    elfeed
 				                    elisp-mode
 				                    elpaca
@@ -600,31 +612,34 @@ CACHE-DIR-NAME is optional cache folder name (defaults to \".cached\")."
 				                    which-key
 				                    xref
 				                    yaml-mode
- 				                    bookmark
- 				                    bufler
- 				                    compile
- 				                    consult
- 				                    corfu
- 				                    dashboard
- 				                    dired
- 				                    dired-sidebar
- 				                    forge
- 				                    git-timemachine
- 				                    ibuffer
- 				                    indent
- 				                    minibuffer
- 				                    sh-script
- 				                    vertico
- 				                    vterm
+ 				        bookmark
+ 				        bufler
+ 				        compile
+ 				        consult
+ 				        corfu
+ 				        dashboard
+ 				        dired
+ 				        dired-sidebar
+ 				        forge
+ 				        git-timemachine
+ 				        ibuffer
+ 				        indent
+ 				        minibuffer
+ 				        sh-script
+ 				        vertico
+ 				        vterm
                                     (custom cus-edit)
                                     (image image-mode)
                                     (magit magit-submodule)
                                     arc-mode
+                                    calendar
                                     cider
                                     cmake-mode
                                     daemons
+                                    diff-mode
                                     disk-usage
                                     docker
+                                    ediff
                                     evil-mc
                                     guix
                                     help
@@ -637,6 +652,7 @@ CACHE-DIR-NAME is optional cache folder name (defaults to \".cached\")."
                                     magit-todos
                                     man
                                     nov
+                                    reader
                                     scheme
                                     smerge-mode
                                     tar-mode
@@ -645,7 +661,8 @@ CACHE-DIR-NAME is optional cache folder name (defaults to \".cached\")."
                                     wdired
                                     wgrep
                                     woman
-                                    xwidget))
+                                    xwidget
+                                    (pdf pdf-view)))
   (evil-collection-init)
   )
 (elpaca-wait)

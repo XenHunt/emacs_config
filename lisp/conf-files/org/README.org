@@ -33,7 +33,6 @@
       - [[#extra-functions][Extra functions]]
       - [[#само-меню][Само меню]]
   - [[#org-fragtog][Org-Fragtog]]
-  - [[#latex-export][LaTex Export]]
   - [[#ob-async][OB-Async]]
   - [[#ob-mermaid][OB-Mermaid]]
   - [[#chatu][Chatu]]
@@ -46,6 +45,7 @@
   - [[#org-transclusion][Org-Transclusion]]
   - [[#org-tag-beautify][Org-Tag-Beautify]]
   - [[#раскладка][Раскладка]]
+    - [[#agenda][Agenda]]
 - [[#provide][Provide]]
 :END:
 
@@ -139,12 +139,12 @@
 :CUSTOM_ID: auto-fill-mode
 :END:
 #+begin_src emacs-lisp
-(use-package visual-fill-column
-  :hooks
-  (org-mode visual-line)
-  :init
-  (add-hook 'visual-line-mode-hook #'visual-fill-column-for-vline))
-;; (add-hook 'org-mode-hook #'visual-line-mode)
+;; (use-package visual-fill-column
+;;   ;; :hook
+;;   ;; (org-mode visual-line)
+;;   :init
+;;   (add-hook 'visual-line-mode-hook #'visual-fill-column-for-vline))
+(add-hook 'org-mode-hook #'visual-line-mode)
 #+end_src
 ** Hover Links 
 :PROPERTIES:
@@ -477,11 +477,6 @@ org файл, где находится tangled src blocks. К счастью, �
            :if-new (file+head "%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
                               "#+title: ${title}\n#+category: ${title}\n#+date: %U\n#+filetags: :Data_Type:Programming:")
            :unnarrowed t)
-          ("c" "DH2 Char" plain
-           (file "~/.org/roam/templates/tabletop/DH2/char_sheet.org")
-           :if-new (file+head "%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
-                              "#+title: ${title}\n#+category: RPG, DH2, Character Sheet\n#+date: %U")
-           :unnarrowed t)
           
           ;; Tabletop Games
           ("r" "Tabletop Games")
@@ -500,10 +495,95 @@ org файл, где находится tangled src blocks. К счастью, �
 
           ;; Black Crusade
           ("rb" "Black Crusade")
-          ("rbc" "Character Sheet" plain
+          ("rbb" "Character Sheet" plain
            (file "~/.org/roam/templates/tabletop/BlackCrusade/char_sheet.org")
            :if-new (file+head "tabletop/BlackCrusade/%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
-                              "#+title: ${title}\n#+filetags: :Black_Crusade:Character_Sheet:\n#+date: %U")
+                              "#+title: ${title}\n#+filetags: :Black_Crusade:Character:\n#+date: %U")
+           :unnarrowed t)
+          ("rba" "Armor" plain
+           (file "~/.org/roam/templates/tabletop/BlackCrusade/armor.org")
+           :if-new (file+head "tabletop/BlackCrusade/%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
+                              "#+title: ${title}\n#+filetags: :Black_Crusade:Armor:Equipment:\n#+date: %U")
+           :unnarrowed t)
+          ("rbA" "Armor Traits" plain
+           (file "~/.org/roam/templates/tabletop/BlackCrusade/armor_traits.org")
+           :if-new (file+head "tabletop/BlackCrusade/%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
+                              "#+title: ${title}\n#+filetags: :Black_Crusade:Armor:Traits:\n#+date: %U")
+           :unnarrowed t)
+          ("rbc" "Clothes" plain
+           (file "~/.org/roam/templates/tabletop/BlackCrusade/clothes.org")
+           :if-new (file+head "tabletop/BlackCrusade/%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
+                              "#+title: ${title}\n#+filetags: :Black_Crusade:Clothes:\n#+date: %U")
+           :unnarrowed t)
+          ("rbC" "Consumable" plain
+           (file "~/.org/roam/templates/tabletop/BlackCrusade/consumables.org")
+           :if-new (file+head "tabletop/BlackCrusade/%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
+                              "#+title: ${title}\n#+filetags: :Black_Crusade:Consumables:Equipment:\n#+date: %U")
+           :unnarrowed t)
+          ("rbg" "Gift of Gods" plain
+           (file "~/.org/roam/templates/tabletop/BlackCrusade/gift_of_gods.org")
+           :if-new (file+head "tabletop/BlackCrusade/%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
+                              "#+title: ${title}\n#+filetags: :Black_Crusade:Gifts:\n#+date: %U")
+           :unnarrowed t)
+          ("rbi" "Implant" plain
+           (file "~/.org/roam/templates/tabletop/BlackCrusade/implants.org")
+           :if-new (file+head "tabletop/BlackCrusade/%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
+                              "#+title: ${title}\n#+filetags: :Black_Crusade:Implant:Equipment:\n#+date: %U")
+           :unnarrowed t)
+          ("rbp" "Power_Field" plain
+           (file "~/.org/roam/templates/tabletop/BlackCrusade/power_field.org")
+           :if-new (file+head "tabletop/BlackCrusade/%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
+                              "#+title: ${title}\n#+filetags: :Black_Crusade:Armor:Power_Field:Equipment:\n#+date: %U")
+           :unnarrowed t)
+          ("rbP" "Psychic Power" plain
+           (file "~/.org/roam/templates/tabletop/BlackCrusade/psychic_powers.org")
+           :if-new (file+head "tabletop/BlackCrusade/%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
+                              "#+title: ${title}\n#+filetags: :Black_Crusade:Psychic_Powers:\n#+date: %U")
+           :unnarrowed t)
+          ("rbr" "Reward of Gods" plain
+           (file "~/.org/roam/templates/tabletop/BlackCrusade/rewards_of_gods.org")
+           :if-new (file+head "tabletop/BlackCrusade/%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
+                              "#+title: ${title}\n#+filetags: :Black_Crusade:Rewards:\n#+date: %U")
+           :unnarrowed t)
+          ("rbt" "Talent" plain
+           (file "~/.org/roam/templates/tabletop/BlackCrusade/talent.org")
+           :if-new (file+head "tabletop/BlackCrusade/%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
+                              "#+title: ${title}\n#+filetags: :Black_Crusade:Talent:\n#+date: %U")
+           :unnarrowed t)
+          ("rbT" "Trait" plain
+           (file "~/.org/roam/templates/tabletop/BlackCrusade/traits.org")
+           :if-new (file+head "tabletop/BlackCrusade/%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
+                              "#+title: ${title}\n#+filetags: :Black_Crusade:Traits:\n#+date: %U")
+           :unnarrowed t)
+          ("rbe" "Tool" plain
+           (file "~/.org/roam/templates/tabletop/BlackCrusade/tools.org")
+           :if-new (file+head "tabletop/BlackCrusade/%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
+                              "#+title: ${title}\n#+filetags: :Black_Crusade:Tools:Equipment:\n#+date: %U")
+           :unnarrowed t)
+          ("rbw" "Weapon" plain
+           (file "~/.org/roam/templates/tabletop/BlackCrusade/weapons.org")
+           :if-new (file+head "tabletop/BlackCrusade/%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
+                              "#+title: ${title}\n#+filetags: :Black_Crusade:Weapon:Equipment:\n#+date: %U")
+           :unnarrowed t)
+          ("rbW" "Weapon Trait" plain
+           (file "~/.org/roam/templates/tabletop/BlackCrusade/weapon_traits.org")
+           :if-new (file+head "tabletop/BlackCrusade/%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
+                              "#+title: ${title}\n#+filetags: :Black_Crusade:Weapon_Trait:\n#+date: %U")
+           :unnarrowed t)
+          ("rbE" "Wargear" plain
+           (file "~/.org/roam/templates/tabletop/BlackCrusade/wargear.org")
+           :if-new (file+head "tabletop/BlackCrusade/%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
+                              "#+title: ${title}\n#+filetags: :Black_Crusade:Wargear:Equipment:\n#+date: %U")
+           :unnarrowed t)
+          ("rbm" "Ammunition" plain
+           (file "~/.org/roam/templates/tabletop/BlackCrusade/ammunition.org")
+           :if-new (file+head "tabletop/BlackCrusade/%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
+                              "#+title: ${title}\n#+filetags: :Black_Crusade:Weapon:Ammunition:Equipment:\n#+date: %U")
+           :unnarrowed t)
+          ("rbs" "Special Abilities" plain
+           (file "~/.org/roam/templates/tabletop/BlackCrusade/special_abilities.org")
+           :if-new (file+head "tabletop/BlackCrusade/%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
+                              "#+title: ${title}\n#+filetags: :Black_Crusade:Special_Abilities:\n#+date: %U")
            :unnarrowed t)
           )         
         )
@@ -659,7 +739,7 @@ capture was not aborted."
    nil
    :templates
    '(("p" "project" plain "* Описание\n\n%^{Описание}\n\n* Tasks\n\n** TODO Add initial tasks %?"
-      :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+category: ${title}\n#+filetags: Project")
+      :if-new (file+head "%<%Y-%m-%d-%H:%M:%S>-${slug}.org" "#+title: ${title}\n#+category: ${title}\n#+filetags: Project")
       :unnarrowed t))))
 #+end_src
 
@@ -791,28 +871,6 @@ capture was not aborted."
 ;; whatever you want
 )
 #+end_src
-
-** LaTex Export
-:PROPERTIES:
-:CUSTOM_ID: latex-export
-:END:
-#+begin_src emacs-lisp
-(add-to-list 'org-latex-packages-alist '("T2A" "fontenc" t))
-(add-to-list 'org-latex-packages-alist '("utf8" "inputenc" t))
-(add-to-list 'org-latex-packages-alist '("" "babel" t))
-(add-to-list 'org-latex-packages-alist '("" "fontspec" t))
-
-(add-to-list 'org-latex-default-packages-alist '("T2A" "fontenc" t))
-(add-to-list 'org-latex-default-packages-alist '("utf8" "inputenc" t))
-(add-to-list 'org-latex-default-packages-alist '("" "babel" t))
-(add-to-list 'org-latex-default-packages-alist '("" "fontspec" t))
-#+end_src
-
-#+RESULTS:
-|      | fontspec | t |
-|      | babel    | t |
-| utf8 | inputenc | t |
-| T2A  | fontenc  | t |
 
 ** OB-Async
 :PROPERTIES:
@@ -993,104 +1051,205 @@ capture was not aborted."
 :CUSTOM_ID: раскладка
 :END:
 [[https://github.com/doomemacs/doomemacs/blob/master/modules/lang/org/config.el][Doom-Config Org-Mode]]
-Команда для быстрой вставки =:wk "<группа_1>"= - =%s/\("[^"]*"\) '(\([^):]*\))/\1 '(\2 :wk "\2")=
+
 #+begin_src emacs-lisp
 (general-define-key
  :states 'normal
  :keymaps 'org-mode-map
  :prefix "]"
- "h" '(org-next-visible-heading :wk "org-next-visible-heading")
+ "h" 'org-next-visible-heading
  )
 
 (general-define-key
  :states 'normal
  :keymaps 'org-mode-map
  :prefix "["
- "h" '(org-previous-visible-heading :wk "org-previous-visible-heading")
+ "h" 'org-previous-visible-heading
  )
 
 (general-define-key
- ;; :definer 'minor-mode
  :states 'normal
  :keymaps 'org-mode-map
  :prefix "SPC"
- "m" '(:ignore :wk "Mode Commands")
- "m #" '(org-update-statistics-cookies :wk "org-update-statistics-cookies")
- "m '" '(org-edit-special :wk "org-edit-special")
- "m *" '(org-ctrl-c-star :wk "org-ctrl-c-star")
- "m +" '(org-ctrl-c-minus :wk "org-ctrl-c-minus")
- "m ," '(org-switchb :wk "org-switchb")
- "m ." '(org-goto :wk "org-goto")
- "m @" '(org-cite-insert :wk "org-cite-insert")
- "m ." '(consult-org-heading :wk "consult-org-heading")
- "m /" '(consult-org-agenda :wk "consult-org-agenda")
- "m A" '(org-archive-subtree-default :wk "org-archive-subtree-default")
- "m e" '(org-export-dispatch :wk "org-export-dispatch")
- "m f" '(org-footnote-action :wk "org-footnote-action")
- "m h" '(org-toggle-heading :wk "org-toggle-heading")
- "m i" '(org-toggle-item :wk "org-toggle-item")
- "m I" '(org-id-get-create :wk "org-id-get-create")
- "m k" '(org-babel-remove-result :wk "org-babel-remove-result")
- "m n" '(org-store-link :wk "org-store-link")
- "m o" '(org-set-property :wk "org-set-property")
- "m q" '(org-set-tags-command :wk "org-set-tags-command")
- "m t" '(org-todo :wk "org-todo")
- "m T" '(org-todo-list :wk "org-todo-list")
- "m x" '(org-toggle-checkbox :wk "org-toggle-checkbox")
+
+ "m #" 'org-update-statistics-cookies
+ "m '" 'org-edit-special
+ "m *" 'org-ctrl-c-star
+ "m +" 'org-ctrl-c-minus
+ "m ," 'org-switchb
+ "m ." 'org-goto
+ "m @" 'org-cite-insert
+ "m ." 'consult-org-heading
+ "m /" 'consult-org-agenda
+ "m A" 'org-archive-subtree-default
+ "m e" 'org-export-dispatch
+ "m f" 'org-footnote-action
+ "m h" 'org-toggle-heading
+ "m i" 'org-toggle-item
+ "m I" 'org-id-get-create
+ "m k" 'org-babel-remove-result
+ "m n" 'org-store-link
+ "m o" 'org-set-property
+ "m q" 'org-set-tags-command
+ "m t" 'org-todo
+ "m T" 'org-todo-list
+ "m x" 'org-toggle-checkbox
  
  ;; Attachments
- "m a" '(:ignore :wk "Attachments")
- "m a a" '(org-attach :wk "org-attach")
- "m a d" '(org-attach-delete-one :wk "org-attach-delete-one")
- "m a D" '(org-attach-delete-all :wk "org-attach-delete-all")
- "m a n" '(org-attach-new :wk "org-attach-new")
- "m a o" '(org-attach-open :wk "org-attach-open")
- "m a O" '(org-attach-open-in-emacs :wk "org-attach-open-in-emacs")
- "m a r" '(org-attach-reveal :wk "org-attach-reveal")
- "m a R" '(org-attach-reveal-in-emacs :wk "org-attach-reveal-in-emacs")
- "m a u" '(org-attach-url :wk "org-attach-url")
- "m a s" '(org-attach-set-directory :wk "org-attach-set-directory")
- "m a S" '(org-attach-sync :wk "org-attach-sync")
- "m a c" '(org-download-screenshot :wk "org-download-screenshot")
- "m a p" '(org-download-clipboard :wk "org-download-clipboard")
- "m a P" '(org-download-yank :wk "org-download-yank")
+ "m a a" 'org-attach
+ "m a d" 'org-attach-delete-one
+ "m a D" 'org-attach-delete-all
+ "m a n" 'org-attach-new
+ "m a o" 'org-attach-open
+ "m a O" 'org-attach-open-in-emacs
+ "m a r" 'org-attach-reveal
+ "m a R" 'org-attach-reveal-in-emacs
+ "m a u" 'org-attach-url
+ "m a s" 'org-attach-set-directory
+ "m a S" 'org-attach-sync
+ "m a c" 'org-download-screenshot
+ "m a p" 'org-download-clipboard
+ "m a P" 'org-download-yank
 
- ;;Tables
- "m b" '(ignore :wk "Tables")
- "m b -" '(org-table-insert-hline :wk "org-table-insert-hline")
- "m b a" '(org-table-align :wk "org-table-align")
- "m b b" '(org-table-blank-field :wk "org-table-blank-field")
- "m b e" '(org-table-edit-field :wk "org-table-edit-field")
- "m b f" '(org-table-edit-formulas :wk "org-table-edit-formulas")
- "m b h" '(org-table-field-info :wk "org-table-field-info")
- "m b s" '(org-table-sort-lines :wk "org-table-sort-lines")
- "m b r" '(org-table-recalculate :wk "org-table-recalculate")
- "m b R" '(org-table-recalculate-buffer-tables :wk "org-table-recalculate-buffer-tables")
- "m b d" '(:ignore :wk "Delete")
- "m b d c" '(org-table-delete-column :wk "org-table-delete-column")
- "m b d r" '(org-table-kill-row :wk "org-table-kill-row")
- "m b i" '(:ignore :wk "Insert")
- "m b i c" '(org-table-insert-column :wk "org-table-insert-column")
- "m b i h" '(org-table-insert-hline :wk "org-table-insert-hline")
- "m b i r" '(org-table-insert-row :wk "org-table-insert-row")
- "m b i H" '(org-table-hline-and-move :wk "org-table-hline-and-move")
- "m b t" '(:ingore :wk "Table")
- "m b t f" '(org-table-toggle-formula-debugger :wk "org-table-toggle-formula-debugger")
- "m b t o" '(org-table-toggle-coordinate-overlays :wk "org-table-toggle-coordinate-overlays")
- "m b c" '(:ignore :wk "Clock")
- "m b c c" '(org-clock-cancel :wk "org-clock-cancel")
+ ;; Transclusion
+ "m a t t" 'org-transclusion-make-from-link
+ "m a t a" 'org-transclusion-add
+ "m a t A" 'org-transclusion-add-all
+ "m a t r" 'org-transclusion-remove
+ "m a t d" 'org-transclusion-detach
+ "m a t l" 'org-transclusion-make-live-sync-start
+ "m a t L" 'org-transclusion-make-live-sync-exit
+ "m a t o" 'org-transclusion-open-source
+ 
+ ;; Tables
+ "m b -" 'org-table-insert-hline
+ "m b a" 'org-table-align
+ "m b b" 'org-table-blank-field
+ "m b e" 'org-table-edit-field
+ "m b f" 'org-table-edit-formulas
+ "m b h" 'org-table-field-info
+ "m b s" 'org-table-sort-lines
+ "m b r" 'org-table-recalculate
+ "m b R" 'org-table-recalculate-buffer-tables
+ "m b d c" 'org-table-delete-column
+ "m b d r" 'org-table-kill-row
+ "m b i c" 'org-table-insert-column
+ "m b i h" 'org-table-insert-hline
+ "m b i r" 'org-table-insert-row
+ "m b i H" 'org-table-hline-and-move
+ "m b t f" 'org-table-toggle-formula-debugger
+ "m b t o" 'org-table-toggle-coordinate-overlays
 
+ ;; Clock
+ "m c c" 'org-clock-cancel
+ "m c d" 'org-clock-mark-default-task
+ "m c e" 'org-clock-modify-effort-estimate
+ "m c E" 'org-set-effort
+ "m c g" 'org-clock-goto
+ "m c i" 'org-clock-in
+ "m c I" 'org-clock-in-last
+ "m c o" 'org-clock-out
+ "m c r" 'org-clock-resolve-clocks
+ "m c R" 'org-clock-report
+ "m c t" 'org-evaluate-time-range
+ "m c =" 'org-clock-timestamps-up
+ "m c -" 'org-clock-timestamps-down
+
+ ;; Dates
+ "m d d" 'org-deadline
+ "m d s" 'org-schedule
+ "m d t" 'org-time-stamp
+ "m d T" 'org-time-stamp-inactive
+
+ ;; Goto
+ "m g g" 'consult-org-heading
+ "m g G" 'consult-org-agenda
+ "m g c" 'org-clock-goto
+ "m g i" 'org-id-goto
+ "m g r" 'org-refile-goto-last-stored
+ "m g x" 'org-capture-goto-last-stored
+
+ ;; Links
+ "m l i" 'org-id-store-link
+ "m l l" 'org-insert-link
+ "m l L" 'org-insert-all-links
+ "m l s" 'org-store-link
+ "m l S" 'org-insert-last-stored-link
+ "m l t" 'org-toggle-link-display
+
+ ;; Publish (Зачем это надо - непонятно)
+
+ "m P a" 'org-publish-all
+ "m P f" 'org-publish-current-file
+ "m P p" 'org-publish
+ "m P P" 'org-publish-current-project
+ "m P s" 'org-publish-sitemap
+
+ ;; Priority
+ "m p d" 'org-priority-down
+ "m p p" 'org-priority
+ "m p u" 'org-priority-up
+
+ ;; Tree/Subtree
+
+ "m s a" 'org-toggle-archive-tag
+ "m s b" 'org-tree-to-indirect-buffer
+ "m s c" 'org-clone-subtree-with-time-shift
+ "m s d" 'org-cut-subtree
+ "m s h" 'org-promote-subtree
+ "m s j" 'org-move-subtree-down
+ "m s k" 'org-move-subtree-up
+ "m s l" 'org-demote-subtree
+ "m s n" 'org-narrow-to-subtree
+ "m s r" 'org-refile
+ "m s s" 'org-sparse-tree
+ "m s A" 'org-archive-subtree-default
+ "m s N" 'widen
+ "m s S" 'org-sort
+ 
  ;; Chatu
- "m c" '(consult-chatu-new :wk "consult-chatu-new")
+ "m a c" 'consult-chatu-new
  )
 
 (leader-key
   "n" '(my/org-roam-tmenu :wk "Note menu"))
 
+
 ;; (general-def 'normal 'override "C-x C-x" """)
 #+end_src
+*** Agenda
+:PROPERTIES:
+:CUSTOM_ID: agenda
+:END:
+#+begin_src emacs-lisp
+(general-def
+ :states 'normal
+ :keymaps 'org-agenda-mode-map
+ :prefix "SPC m"
+ 
+ "q" 'org-agenda-set-tags
+ "r" 'org-agenda-refile
+ "t" 'org-agenda-todo
+ 
+ ;; Date
+ "d d" 'org-agenda-deadline
+ "d s" 'org-agenda-schedule
 
-#+RESULTS:
+ ;; Clock
+ "c c" 'org-agenda-clock-cancel
+ "c g" 'org-agenda-clock-goto
+ "c i" 'org-agenda-clock-in
+ "c o" 'org-agenda-clock-out
+ "c r" 'org-agenda-clockreport-mode
+ "c s" 'org-agenda-show-clocking-issues
+
+ ;;Priority
+ "p d" 'org-agenda-priority-down
+ "p p" 'org-agenda-priority
+ "p u" 'org-agenda-priority-up
+)
+#+end_src
+
 * Provide
 :PROPERTIES:
 :CUSTOM_ID: provide

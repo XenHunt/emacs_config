@@ -11,6 +11,8 @@
 - [[#введение][Введение]]
 - [[#fast-loading][Fast-Loading]]
 - [[#graphical-beauty][Graphical Beauty]]
+  - [[#pixel-scroll-precision-mode][Pixel-Scroll-Precision-Mode]]
+  - [[#ultra-scroll][Ultra-Scroll]]
   - [[#doom-theme][Doom Theme]]
   - [[#spacemacs-theme][Spacemacs Theme]]
   - [[#catppucin][Catppucin]]
@@ -30,7 +32,6 @@
   - [[#prismel][Prism.el]]
   - [[#ligatures][Ligatures]]
   - [[#highlight-indent][Highlight indent]]
-  - [[#ultra-scroll][Ultra-Scroll]]
 - [[#provide][Provide]]
 :END:
 * Введение
@@ -55,6 +56,46 @@
 :PROPERTIES:
 :CUSTOM_ID: graphical-beauty
 :END:
+** Pixel-Scroll-Precision-Mode
+:PROPERTIES:
+:CUSTOM_ID: pixel-scroll-precision-mode
+:END:
+#+begin_src emacs-lisp
+;; (when (package-installed-p 'pixel-scroll)
+;;   (use-package pixel-scroll
+;;     :ensure nil
+;;     :config
+;;     (pixel-scroll-mode t)
+;;     (setq pixel-scroll-precision-large-scroll-height 10.0) 
+;;     (setq mwheel-coalesce-scroll-events nil)
+;;     (pixel-scroll-precision-mode)))
+
+
+;; 📦 FRAME
+;; Управление фреймами.
+(use-package frame
+  :ensure nil
+  :custom
+  (frame-resize-pixelwise t "Размер фреймов считать по пикселям а не по символам"))
+#+end_src
+
+** Ultra-Scroll
+:PROPERTIES:
+:CUSTOM_ID: ultra-scroll
+:END:
+#+begin_src emacs-lisp
+(use-package ultra-scroll
+  :ensure (ultra-scroll :host github :repo "jdtsmith/ultra-scroll")
+  :init
+  (setq scroll-conservatively 3 ; important!
+        scroll-margin 0)
+  :config
+  (ultra-scroll-mode 1))
+#+end_src
+
+#+RESULTS:
+: [nil 26495 36291 189800 nil elpaca-process-queues nil nil 888000 nil]
+
 ** Doom Theme 
 :PROPERTIES:
 :CUSTOM_ID: doom-theme
@@ -483,23 +524,6 @@
   :hook (prog-mode . highlight-indent-guides-mode)
   )
 #+end_src
-
-** Ultra-Scroll
-:PROPERTIES:
-:CUSTOM_ID: ultra-scroll
-:END:
-#+begin_src emacs-lisp
-(use-package ultra-scroll
-  :ensure (ultra-scroll :host github :repo "jdtsmith/ultra-scroll")
-  :init
-  (setq scroll-conservatively 101 ; important!
-        scroll-margin 0)
-  :config
-  (ultra-scroll-mode 1))
-#+end_src
-
-#+RESULTS:
-: [nil 26495 36291 189800 nil elpaca-process-queues nil nil 888000 nil]
 
 * Provide
 :PROPERTIES:

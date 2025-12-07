@@ -46,6 +46,10 @@
   (telega-chat-send-message-on-ret 'if-at-the-end)
   (telega-emoji-font-family  "Noto Color Emoji")
   (telega-notifications-timeout nil)
+  :init
+  (leader-key
+    "a" '(:ignore t :wk "Apps")
+    "at" 'telega)
   :config
   (let ((libs '(telega-dired-dwim telega-dashboard telega-mnz telega-transient)))
     (mapc (lambda (x) (require x)) libs))

@@ -70,3 +70,8 @@
 *.org#
 /logs.txt
 .aider*
+/.local/
+/dirvish/
+/persist/
+/secrets.el
+*/*tex-config.el
