@@ -37,11 +37,11 @@
 :CUSTOM_ID: latex-export
 :END:
 #+begin_src emacs-lisp
-(add-to-list 'org-latex-packages-alist '("T1,T2A" "fontenc" t))
+;; (add-to-list 'org-latex-packages-alist '("T1,T2A" "fontenc" t))
 (add-to-list 'org-latex-packages-alist '("utf8" "inputenc" t))
 (add-to-list 'org-latex-packages-alist '("russian,english" "babel" t))
-(add-to-list 'org-latex-packages-alist '("" "fontspec" t))
 
+;; (setq org-latex-compiler "lualatex")
 ;; (add-to-list 'org-latex-default-packages-alist '("T2A" "fontenc" t))
 ;; (add-to-list 'org-latex-default-packages-alist '("utf8" "inputenc" t))
 ;; (add-to-list 'org-latex-default-packages-alist '("" "babel" t))
@@ -145,11 +145,11 @@
 :CUSTOM_ID: keybindings
 :END:
 #+begin_src emacs-lisp
-(general-def
- :states 'normal
- :keymaps 'LaTeX-mode-map
- :prefix "SPC c"
- "M" '(lambda() (interactive) (message "Hello")))
+;; (general-def
+;;  :states 'normal
+;;  :keymaps 'LaTeX-mode-map
+;;  :prefix "SPC c"
+;;  "M" '(lambda() (interactive) (message "Hello")))
 #+end_src
 
 #+RESULTS:

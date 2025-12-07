@@ -526,6 +526,14 @@
   :no-require t
   :after yasnippet
   :after consult)
+
+(use-package yasnippet-capf
+  :after cape
+  :init
+  (defun my/yasnippet-capf-h ()
+    (add-to-list 'completion-at-point-functions #'yasnippet-capf))
+  :hook
+  ((LaTeX-mode org-mode) . my/yasnippet-capf-h))
 #+end_src
 * Drag-stuff
 :PROPERTIES:
@@ -626,11 +634,24 @@
 :CUSTOM_ID: djvu
 :END:
 #+begin_src emacs-lisp
-(use-package djvu)
-(use-package djvu3
-  ;; :defer 2
-  :after djvu
-  :ensure (djvu3 :type git :host github :repo "dalanicolai/djvu3" :files ("djvu3.el")))
+;; (use-package djvu)
+;; (use-package djvu3
+;;   ;; :defer 2
+;;   :after djvu
+;;   :ensure (djvu3 :type git :host github :repo "dalanicolai/djvu3" :files ("djvu3.el"))
+;;   :init
+;;   (add-hook 'djvu-read-mode-hook (lambda () (setq imenu-create-index-function #'djvu-imenu-create-index)))
+;;   (add-hook 'djvu-read-mode-hook (lambda () (setq imenu-default-goto-function (lambda (title page) (djvu-goto-page page djvu-doc))))))
+(use-package doc-view
+  :ensure nil
+  :init
+  (setopt
+   doc-view-resolution 400)
+  (general-def
+    :keymaps 'doc-view-mode-map
+    :states 'normal
+    "k" 'doc-view-scroll-down-or-previous-page
+    "j" 'doc-view-scroll-up-or-next-page))
 #+end_src
 
 #+RESULTS:

@@ -21,6 +21,7 @@
 - [[#alias-for-yesno][Alias for yes/no]]
 - [[#general-keybindigs][General Keybindigs]]
   - [[#transient-window][Transient-Window]]
+  - [[#transient-toggle][Transient-Toggle]]
 - [[#wgrep][Wgrep]]
 - [[#smartparens][Smartparens]]
 - [[#helpful][Helpful]]
@@ -318,6 +319,7 @@ CACHE-DIR-NAME is optional cache folder name (defaults to \".cached\")."
     "i e" '(emoji-insert :wk "Insert")
     "i c" '(insert-char :wk "Character")
     "i t" '(table-insert :wk "Table")
+    "i k" '(consult-yank-from-kill-ring :wk "Kill ring")
     "i y" '(consult-yasnippet :wk "Snippet")
 
     )
@@ -345,7 +347,7 @@ CACHE-DIR-NAME is optional cache folder name (defaults to \".cached\")."
     "f" '(:ignore t :wk "Files")
     "." '(find-file :wk "Find File")
     "f C" '((lambda () (interactive) (find-file "~/.emacs.d/")) :wk "Find files in config folder")
-    "f c" '((lambda () (interactive) (find-file "~/.emacs.d/lisp/conf-files/")) :wk "Edit config file")
+    "f c" '((lambda () (interactive) (find-file "~/.emacs.d/lisp/conf-files/")) :wk "Edit config files")
     "f r" '(consult-recent-file :wk "Find recent file")
     "f t" '(trashed :wk "Trashed files")
     ;; "f f" '(consult-omni-fd :wk "Find file (consult)")
@@ -400,14 +402,14 @@ CACHE-DIR-NAME is optional cache folder name (defaults to \".cached\")."
     "h c" '(command-history :wk "History of commands")
     "h r r" '((lambda () (interactive) (load-file user-init-file)(ignore (elpaca-process-queues))) :wk "Reload emacs config"))
 
-  (leader-key
-    "t" '(:ignore t :wk "Toggle")
-    "t l" `(display-line-numbers-mode :wk "Line Numbers")
-    "t t" `(visual-line-mode :wk "Visual Line")
-    "t f" `(focus-mode :wk "Focus")
-    "t T" `(indent-tabs-mode :wk "Indent tabs")
-    "t c" `(colorful-mode :wk "Colorful")
-    )
+  ;; (leader-key
+  ;;   "t" '(:ignore t :wk "Toggle")
+  ;;   "t l" `(display-line-numbers-mode :wk "Line Numbers")
+  ;;   "t t" `(visual-line-mode :wk "Visual Line")
+  ;;   "t f" `(focus-mode :wk "Focus")
+  ;;   "t T" `(indent-tabs-mode :wk "Indent tabs")
+  ;;   "t c" `(colorful-mode :wk "Colorful")
+  ;;   )
 
   ;; (leader-key
   ;;   "w" '(:ignore t :wk "Windows")
@@ -436,6 +438,9 @@ CACHE-DIR-NAME is optional cache folder name (defaults to \".cached\")."
   (leader-key
     "w" '(my/window-tmenu :wk "Windows"))
 
+  (leader-key
+    "t" '(my/toggle-tmenu :wk "Toggle"))
+  
   (leader-key
     "C-c" '(:ignore t :wk "Codeium")
     "C-c t" '(my/toggle-codeium :wk "Toggle Codeium")
@@ -492,6 +497,53 @@ CACHE-DIR-NAME is optional cache folder name (defaults to \".cached\")."
   [:class transient-row
           (casual-lib-quit-one)])
 #+end_src
+** Transient-Toggle
+:PROPERTIES:
+:CUSTOM_ID: transient-toggle
+:END:
+#+begin_src emacs-lisp
+(defun my/toggle--yasnippet-capf ()
+  "Toggle yasnippet auto completion"
+  (interactive)
+  (if (memq 'yasnippet-capf completion-at-point-functions)
+      (setq completion-at-point-functions
+            (cl-remove 'yasnippet-capf completion-at-point-functions))
+    (push 'yasnippet-capf completion-at-point-functions)))
+
+(transient-define-prefix my/toggle-tmenu ()
+  "Transient menu for managing togglable options"
+  [["Toggle"
+    ("l" display-line-numbers-mode
+     :description (lambda ()
+                    (format "Line Numbers %s"
+                            (if display-line-numbers-mode "[x]" "[]"))))
+    ("t" "Visual Line" visual-line-mode
+     :description (lambda () (format "Visual Line %s"
+                                     (if visual-line-mode "[x]" "[]"))))
+    ("f" "Focus" focus-mode
+     :description (lambda () (format "Focus %s"
+                                     (if focus-mode "[x]" "[]"))))
+    ("T" "Indent Tabs" indent-tabs-mode
+     :description (lambda () (format "Indent Tabs %s"
+                                     (if indent-tabs-mode "[x]" "[]"))))
+    ("c" "Colorful" colorful-mode
+     :description (lambda () (format "Colorful %s"
+                                     (if colorful-mode "[x]" "[]"))))
+    ("p" "Proxy" use-proxy-toggle-all-proxies
+     :description (lambda ()
+                    (format "Proxy %s"
+                            (if (equal (use-proxy--proxy-states) "[]g")
+                                "[]" "[x]"))))]
+   ["Completion"
+    ("y" my/toggle--yasnippet-capf
+     :description (lambda () (format "Yasnippet CAPF %s" (if (memq 'yasnippet-capf
+                                                                   completion-at-point-functions)
+                                                             "[x]" "[]"))))]]
+  [:class transient-row
+          (casual-lib-quit-one)])
+
+#+end_src
+
 
 * Wgrep
 :PROPERTIES:

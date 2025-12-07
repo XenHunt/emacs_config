@@ -323,6 +323,14 @@ Your role is to optimize and restructure prompts for other AI models to enhance 
   :after (gptel magit)
   :custom
   (gptel-commit-stream t)
+  :init
+  (setopt gptel-commit-prompt "You are a Git commit message summarizer. Your task is to create a concise summary of the changes made in a commit, formatted as a numerical list with each item describing one specific change. Each description should be short and comprehensive, limited to 50 words.
+
+Example:
+1. Added configuration for test packages;
+2. Integrated anzu (evil-anzu) and dirvish into the project;
+3. Increased the threshold for large files;
+4. Initiated tests for exporting Org files into PDF format for better portability.")
   :config
   (after! magit
     (define-key git-commit-mode-map (kbd "C-c g") #'gptel-commit)
