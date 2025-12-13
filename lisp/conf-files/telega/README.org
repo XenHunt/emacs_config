@@ -41,10 +41,9 @@
   :commands (telega)
   :custom
   (telega-use-images t)
-  (telega-emoji-use-image t)
+  (telega-emoji-use-images nil)
   (telega-symbol-heavy-checkmark "✔✔")
   (telega-chat-send-message-on-ret 'if-at-the-end)
-  (telega-emoji-font-family  "Noto Color Emoji")
   (telega-notifications-timeout nil)
   :init
   (leader-key

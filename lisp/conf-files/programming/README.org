@@ -1552,26 +1552,26 @@ inside a Jupyter src-block, return nil."
  :keymaps '(clojure-mode-map clojure-ts-mode-map)
  :prefix "SPC"
  "m" '(:ignore t :wk "Mode commands")
- "m i" '(:ignore t :wk "Imports")
- "m i i" '(lsp-clojure-add-import-to-namespace :wk "Add import")
- "m i f" '(clojure-insert-ns-form :wk "Insert ns form")
- "m i F" '(clojure-insert-ns-form-at-point :wk "Insert ns form at point")
- "m i r" '(clojure-rename-ns-alias :wk "Rename ns alias")
- "m i c" '(lsp-clojure-clean-ns :wk "Clean ns form")
- "m i s" '(clojure-sort-ns :wk "Sort namespaces")
+ ;; "m i" '(:ignore t :wk "Imports")
+ "m i i" 'lsp-clojure-add-import-to-namespace
+ "m i f" 'clojure-insert-ns-form
+ "m i F" 'clojure-insert-ns-form-at-point
+ "m i r" 'clojure-rename-ns-alias
+ "m i c" 'lsp-clojure-clean-ns
+ "m i s" 'clojure-sort-ns
 
- "m c" '(:ignore t :wk "Cider")
- "m c c" '(cider :wk "Start cider")
- "m c r" '(cider-run :wk "Run -main")
- "m c j" '(cider-connect-clj :wk "Cider connect")
- "m c q" '(cider-quit :wk "Cider quit")
- "m d" '(cider-clojuredocs :wk "Clojure Doc")
- "m e" '(:ignore t :wk "Evaluate")
- "m e r" '(cider-eval-region :wk "Region")
- "m e e" '(cider-eval-sexp-at-point :wk "Sexp at point")
- "m e l" '(cider-eval-list-at-point :wk "List")
- "m e f" '(cider-eval-file :wk "File")
- "m e b" '(cider-eval-buffer :wk "Buffer"))
+ ;; "m c" '(:ignore t :wk "Cider")
+ "m c c" 'cider
+ "m c r" 'cider-run
+ "m c j" 'cider-connect-clj
+ "m c q" 'cider-quit
+ "m d" 'cider-clojuredocs
+ ;; "m e" '(:ignore t :wk "Evaluate")
+ "m e r" 'cider-eval-region
+ "m e e" 'cider-eval-sexp-at-point
+ "m e l" 'cider-eval-list-at-point
+ "m e f" 'cider-eval-file
+ "m e b" 'cider-eval-buffer)
 #+end_src
 *** Guile
 :PROPERTIES:
@@ -1657,8 +1657,8 @@ inside a Jupyter src-block, return nil."
  :states 'normal
  :keymaps '(janet-mode-map janet-ts-mode-map)
  :prefix "SPC"
- "m" '(:ignore t :wk "Janet commands")
- "m a" '(ajrepl :wk "Start ajrepl")
+ ;; "m" '(:ignore t :wk "Janet commands")
+ "m a" 'ajrepl
  )
 #+end_src
 *** Yuck

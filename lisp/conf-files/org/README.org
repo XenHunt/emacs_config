@@ -79,6 +79,11 @@
   ;; (require 'org-crypt)
 ;;   (org-crypt-use-before-save-magic)
 ;;   (setq org-tags-exclude-from-inheritance '("crypt")))
+(use-package org
+  :ensure nil
+  :hook
+  (org-mode . (lambda ()
+                (setq-local org-preview-latex-image-directory (get-cache-path "images/" t)))))
 #+end_src
 
 #+RESULTS:
@@ -380,7 +385,7 @@ org файл, где находится tangled src blocks. К счастью, �
    :keymaps 'org-noter-doc-mode-map
    :prefix "SPC"
    "m" '(:ignore t :wk "Mode keybindigs")
-   "mn" '(:ignore t :wk "Org-Noter")
+   ;; "mn" '(:ignore t :wk "Org-Noter")
    "mn i" '(org-noter-insert-note :wk "Insert note")
    "mn q" '(org-noter-kill-session :wk "Kill session")
    "mn p" '(org-noter-insert-precise-note :wk "Insert precise note")
@@ -553,12 +558,12 @@ org файл, где находится tangled src blocks. К счастью, �
           ("rbT" "Trait" plain
            (file "~/.org/roam/templates/tabletop/BlackCrusade/traits.org")
            :if-new (file+head "tabletop/BlackCrusade/%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
-                              "#+title: ${title}\n#+filetags: :Black_Crusade:Traits:\n#+date: %U")
+                              "#+title: ${title}\n#+filetags: :Black_Crusade:Trait:\n#+date: %U")
            :unnarrowed t)
           ("rbe" "Tool" plain
            (file "~/.org/roam/templates/tabletop/BlackCrusade/tools.org")
            :if-new (file+head "tabletop/BlackCrusade/%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
-                              "#+title: ${title}\n#+filetags: :Black_Crusade:Tools:Equipment:\n#+date: %U")
+                              "#+title: ${title}\n#+filetags: :Black_Crusade:Tool:Equipment:\n#+date: %U")
            :unnarrowed t)
           ("rbw" "Weapon" plain
            (file "~/.org/roam/templates/tabletop/BlackCrusade/weapons.org")
@@ -817,7 +822,7 @@ capture was not aborted."
     ("d" "Dailies>" my/org-roam-dailies-tmenu :if (lambda () (require 'org-roam-dailies nil 'no-error)))]
    ["Projects"
     ("C" "Capture" my/org-roam-capture-task :transient nil)
-    ("p" "Find" my/org-roam-find-project :transient t)]]
+    ("p" "Find" my/org-roam-find-project :transient nil)]]
   [["Tag"
     ("t" "Add" org-roam-tag-add :transient t)
     ("T" "Remove" org-roam-tag-remove :transient t)]
@@ -918,8 +923,8 @@ capture was not aborted."
                  )
   :hook ((org-mode markdown-mode) . chatu-mode)
   (chatu-mode . (lambda ()
-                  (setq-local chatu-input-dir (get-cache-path "draws"))
-                  (setq-local chatu-output-dir (get-cache-path "images"))))
+                  (setq-local chatu-input-dir (get-cache-path "draws" t))
+                  (setq-local chatu-output-dir (get-cache-path "images" t))))
   :commands (chatu-add
              chatu-open))
 (use-package consult-chatu              ;
@@ -964,7 +969,7 @@ capture was not aborted."
 (use-package org-download
   :defer 4
   :hook ((org-mode dired-mode) . (lambda ()
-            (setq-local org-download-image-dir (get-cache-path "images"))))
+            (setq-local org-download-image-dir (get-cache-path "images" t))))
   :config
   (add-hook 'dired-mode-hook 'org-download-enable)
   )
@@ -1046,7 +1051,7 @@ capture was not aborted."
   :custom (org-tag-beautify-data-dir "~/.emacs.d/.cache/org-tag-beautify/data/")
   :init (org-tag-beautify-mode 1))
 #+end_src
-** TODO Раскладка
+** Раскладка
 :PROPERTIES:
 :CUSTOM_ID: раскладка
 :END:
@@ -1117,8 +1122,8 @@ capture was not aborted."
  "m a t A" 'org-transclusion-add-all
  "m a t r" 'org-transclusion-remove
  "m a t d" 'org-transclusion-detach
- "m a t l" 'org-transclusion-make-live-sync-start
- "m a t L" 'org-transclusion-make-live-sync-exit
+ "m a t l" 'org-transclusion-live-sync-start
+ "m a t L" 'org-transclusion-live-sync-exit
  "m a t o" 'org-transclusion-open-source
  
  ;; Tables
@@ -1149,7 +1154,7 @@ capture was not aborted."
  "m c i" 'org-clock-in
  "m c I" 'org-clock-in-last
  "m c o" 'org-clock-out
- "m c r" 'org-clock-resolve-clocks
+ "m c r" 'org-clock-resolve-clock
  "m c R" 'org-clock-report
  "m c t" 'org-evaluate-time-range
  "m c =" 'org-clock-timestamps-up

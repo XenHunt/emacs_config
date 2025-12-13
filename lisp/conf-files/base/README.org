@@ -12,6 +12,7 @@
 - [[#fast-loading][Fast-Loading]]
 - [[#emacs][Emacs]]
   - [[#cache-dir-function][Cache dir function]]
+  - [[#emojis][Emojis]]
 - [[#по-умолчанию][По-умолчанию]]
 - [[#compile-angel][Compile-Angel]]
 - [[#elpaca-fixes][Elpaca Fixes]]
@@ -125,26 +126,39 @@
 :CUSTOM_ID: cache-dir-function
 :END:
 #+begin_src emacs-lisp
-(defun get-cache-path (&optional cache-dir-name)
+(defun get-cache-path (cache-dir-name full-path)
   "Return path to cache folder.
-If we are in a project, folder is in root of project.
-If not, it is in current directory.
-CACHE-DIR-NAME is optional cache folder name (defaults to \".cached\")."
-  (let ((cache-dir (or cache-dir-name ".cached"))
-        (project-root (projectile-project-root))
+CACHE-DIR-NAME is the name of the cache folder (required).
+If FULL-PATH is non-nil (default), return the full path (using file-truename).
+Otherwise, return the path as is."
+  (let ((project-root (projectile-project-root))
         (current-file (buffer-file-name)))
-    (if (and project-root
-             (not (string-match-p (concat "^" (getenv "HOME") "/?$") project-root)))
-        (progn
-          (file-truename (concat project-root cache-dir)))
-      (progn
-        (if current-file
-            (file-truename (concat (file-name-directory current-file) cache-dir))
-          (file-truename (concat (getenv "HOME") "/" cache-dir )))))))
+    (if full-path
+        (if (and project-root
+                 (not (string-match-p (concat "^" (getenv "HOME") "/?$") project-root)))
+            (file-truename (concat project-root cache-dir-name))
+          (if current-file
+              (file-truename (concat (file-name-directory current-file) cache-dir-name))
+            (file-truename (concat (getenv "HOME") "/" cache-dir-name))
+            ))
+      cache-dir-name)))
 #+end_src
 
 #+RESULTS:
 : get-cache-path
+
+** Emojis
+:PROPERTIES:
+:CUSTOM_ID: emojis
+:END:
+#+begin_src emacs-lisp
+(defun my/set-emoji-font ()
+    (set-fontset-font t 'emoji "Noto Color Emoji"))
+
+(if (daemonp)
+      (add-hook 'server-after-make-frame-hook #'my/set-emoji-font)
+    (my/set-emoji-font))
+#+end_src
 
 * По-умолчанию
 :PROPERTIES:
