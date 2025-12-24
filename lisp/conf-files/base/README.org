@@ -2,7 +2,7 @@
 #+AUTHOR: Evgeny Berlizov (XenHunt)
 #+DESCRIPTION: XenHunt's config of basic features
 #+STARTUP: content
-#+PROPERTY: header-args :tangle base.el
+#+PROPERTY: header-args :tangle base.el :results nil
 * Содержание
 :PROPERTIES:
 :TOC:      :include all :depth 100 :force (nothing) :ignore (this) :local (nothing)
@@ -558,7 +558,6 @@ Otherwise, return the path as is."
 
 #+end_src
 
-
 * Wgrep
 :PROPERTIES:
 :CUSTOM_ID: wgrep
@@ -659,6 +658,7 @@ Otherwise, return the path as is."
   (setq evil-collection-mode-list '(
                                     devdocs
 				                    doc-view
+                                    ebib
 				                    elfeed
 				                    elisp-mode
 				                    elpaca

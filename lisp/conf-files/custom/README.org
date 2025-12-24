@@ -187,15 +187,15 @@
   "Ставим стандартные фонты"
   (set-face-attribute 'default nil
 		      :font "JetBrainsMono Nerd Font"
-		      :height 110
+		      :height 150
 		      :weight 'medium)
   (set-face-attribute 'variable-pitch nil
 		      :font "Ubuntu Nerd Font"
-		      :height 120
+		      :height 180
 		      :weight 'medium)
   (set-face-attribute 'fixed-pitch nil
 		      :font "JetBrainsMono Nerd Font"
-		      :height 110
+		      :height 180
 		      :weight 'medium)
 
   ;; Делаем так, чтобы особые символы были italic

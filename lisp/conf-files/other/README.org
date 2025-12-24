@@ -56,6 +56,7 @@
 - [[#bufferfile][Bufferfile]]
 - [[#string-inflection][String-Inflection]]
 - [[#use-proxy][Use-Proxy]]
+- [[#wc][WC]]
 - [[#provide][Provide]]
 :END:
 * Введение
@@ -533,7 +534,7 @@
   (defun my/yasnippet-capf-h ()
     (add-to-list 'completion-at-point-functions #'yasnippet-capf))
   :hook
-  ((LaTeX-mode org-mode) . my/yasnippet-capf-h))
+  ((LaTeX-mode org-mode bibtex-mode) . my/yasnippet-capf-h))
 #+end_src
 * Drag-stuff
 :PROPERTIES:
@@ -935,6 +936,18 @@
 
 #+RESULTS:
 : [nil 26913 62282 537977 nil elpaca-process-queues nil nil 44000 nil]
+
+* WC
+:PROPERTIES:
+:CUSTOM_ID: wc
+:END:
+#+begin_src emacs-lisp
+(use-package wc-mode
+  :hook
+  ((org-mode) . wc-mode)
+  :init
+   (add-to-list 'global-mode-string '("" wc-buffer-stats)))
+#+end_src
 
 * Provide
 :PROPERTIES:

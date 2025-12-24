@@ -18,6 +18,7 @@
   - [[#org][Org]]
   - [[#programming][Programming]]
   - [[#tex][Tex]]
+  - [[#note-taking][Note-Taking]]
   - [[#ai][AI]]
   - [[#usb][USB]]
   - [[#telega][Telega]]
@@ -124,6 +125,15 @@
 #+begin_src emacs-lisp
 (add-to-list 'load-path "~/.emacs.d/lisp/conf-files/tex/")
 (require 'tex-config)
+#+end_src
+** Note-Taking
+:PROPERTIES:
+:CUSTOM_ID: note-taking
+:END:
+Тут будет подключаться модуль для создания заметок (данная проблема настолько разрослась, что потребовался отдельный модуль).
+#+begin_src emacs-lisp
+(add-to-list 'load-path "~/.emacs.d/lisp/conf-files/note-taking/")
+(require 'note-taking)
 #+end_src
 ** AI
 :PROPERTIES:

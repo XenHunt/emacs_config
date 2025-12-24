@@ -10,13 +10,16 @@
 :END:
 :CONTENTS:
 - [[#fast-loading][Fast-Loading]]
+- [[#defaults][Defaults]]
 - [[#latex-export][LaTex Export]]
   - [[#custom-class][Custom Class]]
-  - [[#defaults][Defaults]]
+  - [[#defaults-0][Defaults]]
 - [[#auctex][AucTex]]
 - [[#lsp-latex][Lsp-LaTex]]
 - [[#preview][Preview]]
 - [[#evil-integration][Evil integration]]
+- [[#bibtex-capf][BibTex Capf]]
+- [[#ebib][Ebib]]
 - [[#keybindings][Keybindings]]
 - [[#provide][Provide]]
 :END:
@@ -31,6 +34,18 @@
 #+begin_src emacs-lisp
 ;; -*- lexical-binding: t;  no-byte-compile: t -*-
 #+end_src
+
+* Defaults
+:PROPERTIES:
+:CUSTOM_ID: defaults
+:END:
+#+begin_src emacs-lisp
+(require 'bibtex)
+(setq-default bibtex-dialect 'biblatex)
+#+end_src
+
+#+RESULTS:
+: biblatex
 
 * LaTex Export
 :PROPERTIES:
@@ -139,6 +154,35 @@
 
 #+RESULTS:
 : [nil 26916 44767 700195 nil elpaca-process-queues nil nil 486000 nil]
+
+* BibTex Capf
+:PROPERTIES:
+:CUSTOM_ID: bibtex-capf
+:END:
+#+begin_src emacs-lisp
+;; (use-package)
+#+end_src
+
+* Ebib
+:PROPERTIES:
+:CUSTOM_ID: ebib
+:END:
+#+begin_src emacs-lisp
+(use-package ebib
+  ;; :hook
+  ;; (ebib-index-mode . (lambda () (evil-insert-state +1)))
+  :custom
+  (ebib-default-directory "~/Документы/Библиотека/")
+  (ebib-preload-bib-files '("~/.bib/test.bib"))
+  (ebib-import-source-directory "~/Загрузки/")
+  (ebib-import-target-directory "~/Документы/Библиотека/")
+  (ebib-bib-search-dirs "~/.bib")
+  (ebib-bibtex-dialect 'biblatex)
+  (ebib-truncate-file-names nil))
+#+end_src
+
+#+RESULTS:
+: [nil 26953 27944 616377 nil elpaca-process-queues nil nil 839000 nil]
 
 * Keybindings
 :PROPERTIES:
