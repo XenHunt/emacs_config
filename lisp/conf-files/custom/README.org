@@ -32,6 +32,7 @@
   - [[#prismel][Prism.el]]
   - [[#ligatures][Ligatures]]
   - [[#highlight-indent][Highlight indent]]
+  - [[#color-identifiers-mode][Color-Identifiers-Mode]]
 - [[#provide][Provide]]
 :END:
 * Введение
@@ -113,6 +114,7 @@
                     '(doom-modeline-evil-insert-state ((t (:foreground "firebrick4"))))
                     '(doom-modeline-evil-visual-state ((t (:inherit doom-modeline-warning :foreground "purple2"))))
                     '(org-verbatim ((t (:foreground "green1"))))
+                    ;; '(whitespace-tab)
                     '(lsp-signature-posframe ((t (:inherit lsp-ui-doc-background))))
                     '(lsp-signature-postframe ((t (:inherit (lsp-ui-doc-background)))))
                     '(isearch-fail ((t (:foreground "white" :background "red"))))))
@@ -462,7 +464,7 @@
   ;; :elpaca (prism :fetcher github :repo "alphapapa/prism.el")
   :hook (
 	 ((python-mode python-ts-mode html-mode vue-html-mode) . prism-whitespace-mode)
-	 ((javascript-mode js-ts-mode js-mode js2-mode css-mode typescript-mode typescript-ts-mode tsx-ts-mode json-mode yaml-mode html-mode markdown-mode  latex-mode bash-mode scheme-mode janet-mode janet-ts-mode go-mode go-ts-mode lisp-mode sh-mode bash-ts-mode) . prism-mode)
+	 ((javascript-mode js-ts-mode js-mode js2-mode css-mode typescript-mode typescript-ts-mode tsx-ts-mode json-mode yaml-mode html-mode markdown-mode  latex-mode bash-mode scheme-mode janet-mode janet-ts-mode go-mode go-ts-mode lisp-mode sh-mode bash-ts-mode qml-ts-mode) . prism-mode)
 	 )
   :mode
   (("\\.html\\'" . (lambda () (prism-whitespace-mode) (setq-local prism-whitespace-indent-offset 2))))
@@ -524,6 +526,19 @@
   :hook (prog-mode . highlight-indent-guides-mode)
   )
 #+end_src
+
+** Color-Identifiers-Mode
+:PROPERTIES:
+:CUSTOM_ID: color-identifiers-mode
+:END:
+#+begin_src emacs-lisp
+(use-package color-identifiers-mode
+  :hook
+  ((python-ts-mode c-ts-mode bash-ts-mode) . color-identifiers-mode))
+#+end_src
+
+#+RESULTS:
+: [nil 26962 21569 489051 nil elpaca-process-queues nil nil 754000 nil]
 
 * Provide
 :PROPERTIES:

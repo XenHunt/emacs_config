@@ -55,6 +55,7 @@
     - [[#web-mode][WEB-Mode]]
     - [[#js-pkg-mode][JS-PKG-Mode]]
     - [[#prettier-js][Prettier-JS]]
+    - [[#com-css-sort][Com-CSS-Sort]]
     - [[#js2-mode][JS2-Mode]]
     - [[#typescript][Typescript]]
       - [[#раскладка-0][Раскладка]]
@@ -94,6 +95,7 @@
   - [[#treesitter][Treesitter]]
     - [[#treesitter-auto][Treesitter-auto]]
     - [[#treesitter-0][Treesitter]]
+    - [[#mode-alist][Mode-Alist]]
 - [[#codemetrics][Codemetrics]]
 - [[#provide][Provide]]
 :END:
@@ -1325,6 +1327,23 @@ inside a Jupyter src-block, return nil."
 ;; 			       ))
 ;;   )
 #+end_src
+
+*** Com-CSS-Sort
+:PROPERTIES:
+:CUSTOM_ID: com-css-sort
+:END:
+#+begin_src emacs-lisp
+(use-package com-css-sort
+  :custom
+  (com-css-sort-sort-type 'type-sort)
+  ;; :init
+  ;; (add-hook 'before-save-hook (lambda () (if (or css-mode css-ts-mode) (com-css-sort-attributes-document))))
+  )
+#+end_src
+
+#+RESULTS:
+: [nil 26990 29287 682795 nil elpaca-process-queues nil nil 123000 nil]
+
 *** JS2-Mode 
 :PROPERTIES:
 :CUSTOM_ID: js2-mode
@@ -1770,8 +1789,15 @@ inside a Jupyter src-block, return nil."
 :CUSTOM_ID: cmake
 :END:
 #+begin_src emacs-lisp
-(use-package cmake-mode)
-(elpaca-wait)
+(use-package cmake-mode
+  :init
+  (after! lsp
+    (lsp-register-client (make-lsp-client
+                          :new-connection (lsp-stdio-connection "neocmake --stdio")
+                          :activation-fn (lsp-activate-on "cmake")
+                          :server-id 'neocmake))))
+  
+  (elpaca-wait)
 #+end_src
 ** Docker
 :PROPERTIES:
@@ -1916,6 +1942,27 @@ inside a Jupyter src-block, return nil."
   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
   )
 (use-package tree-sitter-langs)
+#+end_src
+
+**** Mode-Alist
+:PROPERTIES:
+:CUSTOM_ID: mode-alist
+:END:
+#+begin_src emacs-lisp
+(setq major-mode-remap-alist '((yaml-mode . yaml-ts-mode)
+                               (python-mode . python-ts-mode)
+                               (clojure-mode . clojure-ts-mode)
+                               (cmake-mode . cmake-ts-mode)
+                               (go-mode . go-ts-mode)
+                               (csharp-mode . csharp-ts-mode)
+                               (js2-mode . js-ts-mode)
+                               (js-mode . js-ts-mode)
+                               (json-mode . json-ts-mode)
+                               (typescript-mode . typescript-ts-mode)
+                               (c++-mode . c++-ts-mode)
+                               (c-mode . c-ts-mode)
+                               (css-mode . css-ts-mode)
+                               (html-mode . html-ts-mode)))
 #+end_src
 
 * Codemetrics

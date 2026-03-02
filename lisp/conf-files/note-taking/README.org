@@ -20,7 +20,6 @@
   - [[#org-citar][Org-Citar]]
     - [[#embark][Embark]]
     - [[#roam-integrations][Roam Integrations]]
-    - [[#org-noter-integration][Org-Noter Integration]]
 - [[#provide][Provide]]
 :END:
 
@@ -551,8 +550,8 @@ capture was not aborted."
 #+begin_src emacs-lisp
 (use-package citar
   :custom
-  (citar-bibliography '("~/.bib/test.bib") "List of bibliography files")
-  (citar-library-paths '("~/Документы/Библиотека") "List of libraries direcotories (where pdf will be stored)")
+  (citar-bibliography my/bib-files-alist "List of bibliography files")
+  (citar-library-paths my/bib-library-paths-alist "List of libraries direcotories (where pdf will be stored)")
   (org-cite-insert-processor 'citar)
   (org-cite-follow-processor 'citar)
   (org-cite-activate-processor 'citar)
@@ -642,7 +641,7 @@ capture was not aborted."
                                        
                                        :if-new (file+head+olp
                                                 "citar-notes/${citar-citekey}.org"
-                                                "#+title: ${citar-citekey} (${citar-date}).\n#+filetags: Book_Note\n#+created: %U\n#+last_modified: %U\n\n* ${note-title}\n:PROPERTIES:\n:NOTER_DOCUMENT: %(my/citar-get-file \"${citar-citekey}\")\n:END:\n\n** Описание книги\n\n%^{Кратко опиши про что книга}\n\n** Заметки\n"
+                                                "#+title: ${citar-citekey} (${citar-date}).\n#+filetags: Book_Note\n#+created: %U\n#+last_modified: %U\n\n* ${note-title}\n:PROPERTIES:\n:NOTER_DOCUMENT: %(my/citar-get-file \"${citar-citekey}\")\n:ROAM_REFS: @${citar-citekey}\n:END:\n\n** Описание книги\n\n%^{Кратко опиши про что книга}\n\n** Заметки\n"
                                                 ("${note-title}" "Заметки"))
                                        :hook org-id-get-create)))
         (citar-org-roam-capture-template-key "l"))
@@ -655,46 +654,19 @@ capture was not aborted."
     ("c" "Capture" my/citar-org-roam-add-entry :transient nil)
     ("f" "Find" citar-open-note :transient nil)]
    ["Ebib"
-    ("s" "Start" ebib :if (lambda () (= 0 (length ebib--buffer-alist))) :transient nil)
-    ("S" "Stop" ebib-quit :if (lambda () (< 0 (length ebib--buffer-alist))) :transient nil)
-    ]]
+    :if (lambda () (= 0 (length ebib--buffer-alist)))
+    ("s" "Start" ebib :transient nil)
+    ;; ("S" "Stop" ebib-quit :if (lambda () (< 0 (length ebib--buffer-alist))) :transient nil)
+    ;; ("i" "Import literature" ebib-import-file :if (lambda () (< 0 (length ebib--buffer-alist))) :transient nil)
+   ]
+   ["Ebib"
+    :if (lambda () (< 0 (length ebib--buffer-alist)))
+    ("S" "Stop" ebib-quit :transient nil)
+    ("i" "Import literature" ebib-import-file :transient nil)]]
 [:class transient-row
         (casual-lib-quit-one)])
 
 #+end_src
-
-
-*** Org-Noter Integration
-:PROPERTIES:
-:CUSTOM_ID: org-noter-integration
-:END:
-#+begin_src emacs-lisp
-;; (setq citar-org-roam-template-fields
-;;         '((:citar-citekey "key")
-;;           (:citar-title "title")
-;;           (:citar-author "author" "editor")
-;;           (:citar-date "date" "year" "issued")
-;;           (:citar-pages "pages")
-;;           (:citar-type "=type="))) 
-
-(defun citar-add-org-noter-document-property(key &optional entry)
-  "Set various properties PROPERTIES drawer when new Citar note is created."
-  (interactive)
-  (let* ((file-list-temp (list (citar--select-resource key :files t)))
-	 (file-path-temp (alist-get 'file file-list-temp)) 
-	 (cite-author (cdr (citar-get-field-with-value'(author) key)))
-	 (cite-url (cdr (citar-get-field-with-value '(url) key))) )
-    (org-set-property "NOTER_DOCUMENT" file-path-temp)
-    (org-set-property "Custom_ID" key)
-    (org-set-property "AUTHOR" cite-author)
-    (org-set-property "URL"    cite-url)
-    (org-roam-ref-add (concat "@" key))
-    (org-id-get-create) ))
-
-;; (advice-add 'citar-create-note :after #'citar-add-org-noter-document-property)
-#+end_src
-
-#+RESULTS:
 
 * Provide
 :PROPERTIES:

@@ -15,6 +15,7 @@
   - [[#ret---open-link-or-exec-src-block][RET - open link or exec src block]]
   - [[#auto-fill-mode][Auto-Fill-Mode]]
   - [[#hover-links][Hover Links]]
+  - [[#org-custom-todos][Org Custom TODOS]]
   - [[#org-inline-images][Org Inline Images]]
   - [[#org-appear][Org-Appear]]
   - [[#toc][Toc]]
@@ -76,6 +77,8 @@
 ;;   (setq org-tags-exclude-from-inheritance '("crypt")))
 (use-package org
   :ensure nil
+  :custom
+  (org-capture-bookmark nil "Отключаем закладку в org-capture")
   :hook
   (org-mode . (lambda ()
                 (setq-local org-preview-latex-image-directory (get-cache-path "images/" t)))))
@@ -155,8 +158,14 @@
 (setq org-descriptive-links t)
 #+end_src
 
-#+RESULTS:
-: t
+** Org Custom TODOS
+:PROPERTIES:
+:CUSTOM_ID: org-custom-todos
+:END:
+#+begin_src emacs-lisp
+(setq-default org-todo-keywords '((sequence "TODO" "DONE")
+                                  (sequence "TODO-READING" "READING" "|" "FINISHED-READING")))
+#+end_src
 
 ** Org Inline Images
 :PROPERTIES:
@@ -232,10 +241,14 @@
   (setq hl-todo-highlight-punctuation ":"
         hl-todo-keyword-faces
         `(("TODO"       warning bold)
+          ("TODO-READING" warning bold)
+          ("READING" font-lock-keyword-face bold)
           ("FIXME"      error bold)
           ("HACK"       font-lock-constant-face bold)
           ("REVIEW"     font-lock-keyword-face bold)
           ("NOTE"       success bold)
+          ("FINISHED-READING" success bold)
+          ("DONE" success bold)
           ("DEPRECATED" font-lock-doc-face bold))))
 
 (use-package consult-todo
@@ -560,10 +573,10 @@ org файл, где находится tangled src blocks. К счастью, �
 :CUSTOM_ID: org-tag-beautify
 :END:
 #+begin_src emacs-lisp
-(use-package org-tag-beautify
-  :ensure t
-  :custom (org-tag-beautify-data-dir "~/.emacs.d/.cache/org-tag-beautify/data/")
-  :init (org-tag-beautify-mode 1))
+;; (use-package org-tag-beautify
+;;   :ensure t
+;;   :custom (org-tag-beautify-data-dir "~/.emacs.d/.cache/org-tag-beautify/data/")
+;;   :init (org-tag-beautify-mode 1))
 #+end_src
 ** Раскладка
 :PROPERTIES:
@@ -602,6 +615,7 @@ org файл, где находится tangled src blocks. К счастью, �
  "m /" 'consult-org-agenda
  "m A" 'org-archive-subtree-default
  "m e" 'org-export-dispatch
+ "m E" 'org-emphasize
  "m f" 'org-footnote-action
  "m h" 'org-toggle-heading
  "m i" 'org-toggle-item

@@ -57,6 +57,7 @@
 - [[#string-inflection][String-Inflection]]
 - [[#use-proxy][Use-Proxy]]
 - [[#wc][WC]]
+- [[#awesome][Awesome]]
 - [[#provide][Provide]]
 :END:
 * Введение
@@ -561,6 +562,10 @@
   (:states 'normal :keymaps 'image-mode-map "C-o" 'casual-image-tmenu)
   (:states 'normal :keymaps 'Info-mode-map "C-o" 'casual-info-tmenu)
   (:states 'normal :keymaps 'Man-mode-map "C-o" 'casual-man-tmenu)
+  (:states 'normal :keymaps 'bibtex-mode-map "C-o" 'casual-bibtex-tmenu)
+  (:states 'normal :keymaps 'cmake-mode-map "C-o" 'casual-make-tmenu)
+  (:states 'normal :keymaps 'css-mode-map "C-o" 'casual-css-tmenu)
+  (:states 'normal :keymaps 'html-mode-map "C-o" 'casual-html-tmenu)
   (:states 'normal :keymaps 'help-mode-map "C-o" 'casual-help-tmenu)
   :init
   (require 'casual-image)
@@ -947,6 +952,23 @@
   ((org-mode) . wc-mode)
   :init
    (add-to-list 'global-mode-string '("" wc-buffer-stats)))
+#+end_src
+
+* Awesome
+:PROPERTIES:
+:CUSTOM_ID: awesome
+:END:
+#+begin_src emacs-lisp
+(use-package fontawesome
+  :config
+  (defun vertico-fontawesome ()
+  (interactive)
+  (require 'vertico)
+  (insert
+   (cdr
+    (assoc
+     (completing-read "Font awesome: " (fontawesome--construct-candidates))
+     (fontawesome--construct-candidates))))))
 #+end_src
 
 * Provide

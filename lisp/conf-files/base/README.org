@@ -20,6 +20,7 @@
 - [[#benchmark-init][Benchmark-Init]]
 - [[#startup-time-boost][Startup time boost]]
 - [[#alias-for-yesno][Alias for yes/no]]
+- [[#transient-postframe][Transient-Postframe]]
 - [[#general-keybindigs][General Keybindigs]]
   - [[#transient-window][Transient-Window]]
   - [[#transient-toggle][Transient-Toggle]]
@@ -174,6 +175,7 @@ Otherwise, return the path as is."
 (setq native-comp-async-report-warnings-errors nil)
 (delete-selection-mode 1)    ;; You can select text and delete it by typing.
 ;; (electric-indent-mode -1)    ;; Turn off the weird indenting that Emacs does by default.
+
 (setq recentf-max-menu-items 100)
 (setq recentf-max-saved-items 150)
 
@@ -196,19 +198,19 @@ Otherwise, return the path as is."
 ;; (add-hook 'text-mode-hook 'my-scroll-precision-mode)
 (global-hl-line-mode 1)
 (setopt ;; show-trailing-whitespace t
-        calendar-week-start-day 1)
+ calendar-week-start-day 1)
 (setq echo-keystrokes 0.01)
 (setq user-cache-dir (concat user-emacs-directory ".local/cache/"))
 (setq delete-by-moving-to-trash 1)
 (setq backup-by-copying t)
 
 (defun init-text-scratch ()
-    "Change mode in scratch buffer into text-mode"
+  "Change mode in scratch buffer into text-mode"
   (remove-hook 'server-after-make-frame-hook 'init-text-scratch)
   (remove-hook 'after-init-hook 'init-text-scratch)
   (let ((original-buffer (current-buffer)))
     (with-current-buffer (get-buffer "*scratch*")
-        (text-mode))))
+      (text-mode))))
 (add-hook 'server-after-make-frame-hook 'init-text-scratch)
 (add-hook 'after-init-hook 'init-text-scratch)
 #+end_src
@@ -268,6 +270,15 @@ Otherwise, return the path as is."
   (setq confirm-kill-emacs 'y-or-n-p)
   (setopt use-short-answers t)
   (defalias 'yes-or-no-p 'y-or-n-p))
+#+end_src
+* Transient-Postframe
+:PROPERTIES:
+:CUSTOM_ID: transient-postframe
+:END:
+#+begin_src emacs-lisp
+(use-package transient-posframe
+  :config
+  (transient-posframe-mode))
 #+end_src
 * General Keybindigs
 :PROPERTIES:
@@ -530,29 +541,36 @@ Otherwise, return the path as is."
     ("l" display-line-numbers-mode
      :description (lambda ()
                     (format "Line Numbers %s"
-                            (if display-line-numbers-mode "[x]" "[]"))))
+                            (if display-line-numbers-mode "[x]" "[]")))
+     :transient t)
     ("t" "Visual Line" visual-line-mode
      :description (lambda () (format "Visual Line %s"
-                                     (if visual-line-mode "[x]" "[]"))))
+                                     (if visual-line-mode "[x]" "[]")))
+     :transient t)
     ("f" "Focus" focus-mode
      :description (lambda () (format "Focus %s"
-                                     (if focus-mode "[x]" "[]"))))
+                                     (if focus-mode "[x]" "[]")))
+     :transient t)
     ("T" "Indent Tabs" indent-tabs-mode
      :description (lambda () (format "Indent Tabs %s"
-                                     (if indent-tabs-mode "[x]" "[]"))))
+                                     (if indent-tabs-mode "[x]" "[]")))
+     :transient t)
     ("c" "Colorful" colorful-mode
      :description (lambda () (format "Colorful %s"
-                                     (if colorful-mode "[x]" "[]"))))
+                                     (if colorful-mode "[x]" "[]")))
+     :transient t)
     ("p" "Proxy" use-proxy-toggle-all-proxies
      :description (lambda ()
                     (format "Proxy %s"
                             (if (equal (use-proxy--proxy-states) "[]g")
-                                "[]" "[x]"))))]
+                                "[]" "[x]")))
+     :transient t)]
    ["Completion"
     ("y" my/toggle--yasnippet-capf
      :description (lambda () (format "Yasnippet CAPF %s" (if (memq 'yasnippet-capf
                                                                    completion-at-point-functions)
-                                                             "[x]" "[]"))))]]
+                                                             "[x]" "[]")))
+     :transient t)]]
   [:class transient-row
           (casual-lib-quit-one)])
 
@@ -1279,6 +1297,8 @@ Otherwise, return the path as is."
 (use-package dired-du
   :commands (dired-du-mode)
   :custom (dired-du-size-format t))
+(use-package dired-du-duc
+  :commands (dired-du-duc-mode))
 #+end_src
 ** Dirvish
 :PROPERTIES:
@@ -1286,6 +1306,8 @@ Otherwise, return the path as is."
 :END:
 #+begin_src emacs-lisp
 (use-package dirvish
+  :custom
+  (dirvish-hide-details nil)
   :init
   (dirvish-override-dired-mode))
 #+end_src

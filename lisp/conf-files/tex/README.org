@@ -12,8 +12,6 @@
 - [[#fast-loading][Fast-Loading]]
 - [[#defaults][Defaults]]
 - [[#latex-export][LaTex Export]]
-  - [[#custom-class][Custom Class]]
-  - [[#defaults-0][Defaults]]
 - [[#auctex][AucTex]]
 - [[#lsp-latex][Lsp-LaTex]]
 - [[#preview][Preview]]
@@ -42,10 +40,16 @@
 #+begin_src emacs-lisp
 (require 'bibtex)
 (setq-default bibtex-dialect 'biblatex)
+(defvar my/bib-files-alist
+  (list "~/.bib/base.bib" "~/.bib/hud_lit.bib")
+  "Mine list of bibfiles")
+(defvar my/bib-library-paths-alist
+  (list "~/Документы/Библиотека/")
+  "Mine list of libraries, where all books must be stored")
 #+end_src
 
 #+RESULTS:
-: biblatex
+: my/bib-library-paths-alist
 
 * LaTex Export
 :PROPERTIES:
@@ -63,32 +67,6 @@
 ;; (add-to-list 'org-latex-default-packages-alist '("" "fontspec" t))
 #+end_src
 
-** Custom Class
-:PROPERTIES:
-:CUSTOM_ID: custom-class
-:END:
-#+begin_src emacs-lisp
-(with-eval-after-load 'ox-latex
-(add-to-list 'org-latex-classes
-             '("org-plain-latex"
-               "\\documentclass{article}
-           [NO-DEFAULT-PACKAGES]
-           [PACKAGES]
-           [EXTRA]"
-               ("\\section{%s}" . "\\section*{%s}")
-               ("\\subsection{%s}" . "\\subsection*{%s}")
-               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-               ("\\paragraph{%s}" . "\\paragraph*{%s}")
-               ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
-#+end_src
-
-** Defaults
-:PROPERTIES:
-:CUSTOM_ID: defaults
-:END:
-#+begin_src emacs-lisp
-;; (setq-default org-latex-default-table-environment "tabulararray")
-#+end_src
 * AucTex
 :PROPERTIES:
 :CUSTOM_ID: auctex
@@ -172,12 +150,13 @@
   ;; :hook
   ;; (ebib-index-mode . (lambda () (evil-insert-state +1)))
   :custom
-  (ebib-default-directory "~/Документы/Библиотека/")
-  (ebib-preload-bib-files '("~/.bib/test.bib"))
+  ;; (ebib-default-directory "~/Документы/Библиотека/")
+  (ebib-preload-bib-files my/bib-files-alist)
   (ebib-import-source-directory "~/Загрузки/")
-  (ebib-import-target-directory "~/Документы/Библиотека/")
+  (ebib-file-search-dirs my/bib-library-paths-alist)
   (ebib-bib-search-dirs "~/.bib")
-  (ebib-bibtex-dialect 'biblatex)
+  (ebib-bibtex-dialect bibtex-dialect)
+  (ebib-default-entry-type "Book")
   (ebib-truncate-file-names nil))
 #+end_src
 

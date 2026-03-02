@@ -23,6 +23,7 @@
 - [[#ob-chatgpt-shell][Ob-Chatgpt-Shell]]
 - [[#aidermacs][Aidermacs]]
 - [[#context-navigator][Context-Navigator]]
+- [[#cariage][Cariage]]
 - [[#provide][Provide]]
 :END:
 * Введение
@@ -110,6 +111,10 @@
   (setq
    ;; gptel-model 'deepseek-coder-v2:16b
    ;; gptel-default-mode #'org-mode
+   gptel-response-prefix-alist
+   '((markdown-mode . "[Response] ")
+     (org-mode . "*** Response: ")
+     (text-mode . "[Response]"))
    gptel-backend (gptel-make-ollama "Ollama"
                    :host "localhost:11434"
                    :stream t
@@ -670,6 +675,26 @@ TAG should be a string key in each model's assoc list, and NAME is the value ass
   :config
   (context-navigator-mode 1))
 #+end_src
+
+* Cariage
+:PROPERTIES:
+:CUSTOM_ID: cariage
+:END:
+#+begin_src emacs-lisp
+(use-package carriage
+  :ensure (carriage
+           :type git
+           :host github
+           :repo "gnu-emacs-ru/carriage")
+  ;; :load-path "~/.emacs.d/elpaca/repos/carriage/lisp"
+  :commands (carriage-mode carriage-global-mode)
+  :init
+  (carriage-global-mode 1)  ;; опционально: глобальный префикс/меню под C-c e
+  )
+#+end_src
+
+#+RESULTS:
+: [nil 27010 17134 913354 nil elpaca-process-queues nil nil 411000 nil]
 
 * Provide
 :PROPERTIES:
