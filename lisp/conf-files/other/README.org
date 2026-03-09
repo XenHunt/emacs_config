@@ -23,8 +23,8 @@
   - [[#cape][Cape]]
   - [[#orderless][Orderless]]
   - [[#marginalia][Marginalia]]
-  - [[#embark][Embark]]
   - [[#consult][Consult]]
+  - [[#embark][Embark]]
   - [[#yasnippet][Yasnippet]]
 - [[#drag-stuff][Drag-stuff]]
 - [[#casual][Casual]]
@@ -443,6 +443,38 @@
 #+RESULTS:
 : [nil 26333 27716 331036 nil elpaca-process-queues nil nil 713000 nil]
 
+** Consult 
+:PROPERTIES:
+:CUSTOM_ID: consult
+:END:
+#+begin_src emacs-lisp
+(use-package consult
+  :custom
+  (xref-show-definitions-functions #'consult-xref)
+  :config
+  ;; (consult-preview-at-point-mode)
+  (recentf-mode)
+  )
+(elpaca-wait)
+
+(use-package consult-dir
+  :after consult
+  :bind
+  (:map vertico-map
+        ("C-x C-d" . consult-dir)
+        ("C-x C-j" . consult-dir-jump-file)))
+
+(use-package consult-flycheck
+  :after (consult flycheck))
+
+
+(use-package consult-projectile)
+(use-package consult-recoll
+  :config
+  (leader-key
+    "sr" '(consult-recoll :wk "Documents")))
+#+end_src
+
 ** Embark
 :PROPERTIES:
 :CUSTOM_ID: embark
@@ -469,44 +501,13 @@
 
 (use-package embark-consult
   ;; :after '(em
-  :hook
-  (embark-collect-mode . consult-preview-at-point-mode)
+  :after (consult embark)
+  ;; :hook
+  ;; (embark-collect-mode . consult-preview-at-point-mode)
   )
 #+end_src
 
 #+RESULTS:
-
-** Consult 
-:PROPERTIES:
-:CUSTOM_ID: consult
-:END:
-#+begin_src emacs-lisp
-(use-package consult
-  :custom
-  (xref-show-definitions-functions #'consult-xref)
-  :config
-  (consult-preview-at-point-mode)
-  (recentf-mode)
-  )
-(elpaca-wait)
-
-(use-package consult-dir
-  :after consult
-  :bind
-  (:map vertico-map
-        ("C-x C-d" . consult-dir)
-        ("C-x C-j" . consult-dir-jump-file)))
-
-(use-package consult-flycheck
-  :after (consult flycheck))
-
-
-(use-package consult-projectile)
-(use-package consult-recoll
-  :config
-  (leader-key
-    "sr" '(consult-recoll :wk "Documents")))
-#+end_src
 
 ** Yasnippet 
 :PROPERTIES:

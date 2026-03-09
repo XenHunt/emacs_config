@@ -115,6 +115,7 @@
                         (file-truename "~/.Trash")))
 
   (setq backup-directory-alist '((".*" . "~/.Trash/files/")))
+  (load custom-file)
   (after! auth-source
     (auth-source-pass-enable)
     (setq auth-source-debug t))
