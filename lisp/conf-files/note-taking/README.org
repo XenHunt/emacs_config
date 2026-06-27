@@ -20,6 +20,7 @@
   - [[#org-citar][Org-Citar]]
     - [[#embark][Embark]]
     - [[#roam-integrations][Roam Integrations]]
+  - [[#ltex-plus][Ltex-Plus]]
 - [[#provide][Provide]]
 :END:
 
@@ -94,32 +95,17 @@
   (setq org-roam-directory (file-truename "~/.org/roam"))
   (setq org-roam-node-display-template "${title:*} ${tags:45}")
   (org-roam-db-autosync-enable)
-  ;; (map! :leader
-  ;;       (:prefix ("n r" . "org-roam")
-  ;;                :desc "Completion at point"      "c" #'completion-at-point
-  ;;                :desc "Find node"                "f" #'org-roam-node-find
-  ;;                :desc "Show graph"               "g" #'org-roam-graph
-  ;;                :desc "Insert node"              "i" #'org-roam-node-insert
-  ;;                :desc "Create id for header"     "I" #'org-id-get-create
-  ;;                :desc "Capture to node"          "n" #'org-roam-capture
-  ;;                :desc "Toggle roam buffer"       "r" #'org-roam-buffer-toggle
-  ;;                :desc "Start org-roam-ui in web" "u" #'org-roam-ui-mode
-  ;;                :desc "Reload org-roam db"       "d" #'org-roam-db-sync
-  ;;                :desc "Insert tag"               "t" #'org-roam-tag-add
-  ;;                :desc "Remove tag"               "T" #'org-roam-tag-remove
-  ;;                :desc "Add alias"                "a" #'org-roam-alias-add
-  ;;                :desc "Remove alias"             "A" #'org-roam-alias-remove)
-  ;;       (:prefix ("n j" . "org-roam-daily")
-  ;;                :desc "Add today note entry"   "a" #'org-roam-dailies-capture-today
-  ;;                :desc "Go to today note"       "A" #'org-roam-dailies-goto-today
-  ;;                :desc "Add note entry by date" "d" #'org-roam-dailies-capture-date
-  ;;                :desc "Go to note by date"     "D" #'org-roam-dailies-goto-date
-  ;;                :desc "Find note in directory" "f" #'org-roam-dailies-find-directory
-  ;;                ))
-
+  
+  (defun my/make-rpg-template (key desc template-file tags)
+    "Вспомогательная функция для генерации шаблонов RPG заметок."
+    (list key desc 'plain
+          `(file ,(concat "~/.org/roam/templates/tabletop/BlackCrusade/" template-file))
+          :if-new `(file+head 
+                    ,(concat "tabletop/BlackCrusade/%<%Y-%m-%d-%H:%M:%S>-${slug}.org")
+                    ,(concat "#+title: ${title}\n#+category: ${title}\n#+date: %U\n#+filetags: " tags))))
   
   (setq org-roam-capture-templates
-        '(
+        `(
           ("d" "default" plain
            "%?"
            :if-new (file+head "%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
@@ -182,98 +168,27 @@
 
           ;; Black Crusade
           ("rb" "Black Crusade")
-          ("rbb" "Character Sheet" plain
-           (file "~/.org/roam/templates/tabletop/BlackCrusade/char_sheet.org")
-           :if-new (file+head "tabletop/BlackCrusade/%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
-                              "#+title: ${title}\n#+filetags: :Black_Crusade:Character:\n#+date: %U")
-           :unnarrowed t)
-          ("rba" "Armor" plain
-           (file "~/.org/roam/templates/tabletop/BlackCrusade/armor.org")
-           :if-new (file+head "tabletop/BlackCrusade/%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
-                              "#+title: ${title}\n#+filetags: :Black_Crusade:Armor:Equipment:\n#+date: %U")
-           :unnarrowed t)
-          ("rbA" "Armor Traits" plain
-           (file "~/.org/roam/templates/tabletop/BlackCrusade/armor_traits.org")
-           :if-new (file+head "tabletop/BlackCrusade/%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
-                              "#+title: ${title}\n#+filetags: :Black_Crusade:Armor:Traits:\n#+date: %U")
-           :unnarrowed t)
-          ("rbc" "Clothes" plain
-           (file "~/.org/roam/templates/tabletop/BlackCrusade/clothes.org")
-           :if-new (file+head "tabletop/BlackCrusade/%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
-                              "#+title: ${title}\n#+filetags: :Black_Crusade:Clothes:\n#+date: %U")
-           :unnarrowed t)
-          ("rbC" "Consumable" plain
-           (file "~/.org/roam/templates/tabletop/BlackCrusade/consumables.org")
-           :if-new (file+head "tabletop/BlackCrusade/%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
-                              "#+title: ${title}\n#+filetags: :Black_Crusade:Consumables:Equipment:\n#+date: %U")
-           :unnarrowed t)
-          ("rbg" "Gift of Gods" plain
-           (file "~/.org/roam/templates/tabletop/BlackCrusade/gift_of_gods.org")
-           :if-new (file+head "tabletop/BlackCrusade/%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
-                              "#+title: ${title}\n#+filetags: :Black_Crusade:Gifts:\n#+date: %U")
-           :unnarrowed t)
-          ("rbi" "Implant" plain
-           (file "~/.org/roam/templates/tabletop/BlackCrusade/implants.org")
-           :if-new (file+head "tabletop/BlackCrusade/%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
-                              "#+title: ${title}\n#+filetags: :Black_Crusade:Implant:Equipment:\n#+date: %U")
-           :unnarrowed t)
-          ("rbp" "Power_Field" plain
-           (file "~/.org/roam/templates/tabletop/BlackCrusade/power_field.org")
-           :if-new (file+head "tabletop/BlackCrusade/%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
-                              "#+title: ${title}\n#+filetags: :Black_Crusade:Armor:Power_Field:Equipment:\n#+date: %U")
-           :unnarrowed t)
-          ("rbP" "Psychic Power" plain
-           (file "~/.org/roam/templates/tabletop/BlackCrusade/psychic_powers.org")
-           :if-new (file+head "tabletop/BlackCrusade/%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
-                              "#+title: ${title}\n#+filetags: :Black_Crusade:Psychic_Powers:\n#+date: %U")
-           :unnarrowed t)
-          ("rbr" "Reward of Gods" plain
-           (file "~/.org/roam/templates/tabletop/BlackCrusade/rewards_of_gods.org")
-           :if-new (file+head "tabletop/BlackCrusade/%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
-                              "#+title: ${title}\n#+filetags: :Black_Crusade:Rewards:\n#+date: %U")
-           :unnarrowed t)
-          ("rbt" "Talent" plain
-           (file "~/.org/roam/templates/tabletop/BlackCrusade/talent.org")
-           :if-new (file+head "tabletop/BlackCrusade/%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
-                              "#+title: ${title}\n#+filetags: :Black_Crusade:Talent:\n#+date: %U")
-           :unnarrowed t)
-          ("rbT" "Trait" plain
-           (file "~/.org/roam/templates/tabletop/BlackCrusade/traits.org")
-           :if-new (file+head "tabletop/BlackCrusade/%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
-                              "#+title: ${title}\n#+filetags: :Black_Crusade:Trait:\n#+date: %U")
-           :unnarrowed t)
-          ("rbe" "Tool" plain
-           (file "~/.org/roam/templates/tabletop/BlackCrusade/tools.org")
-           :if-new (file+head "tabletop/BlackCrusade/%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
-                              "#+title: ${title}\n#+filetags: :Black_Crusade:Tool:Equipment:\n#+date: %U")
-           :unnarrowed t)
-          ("rbw" "Weapon" plain
-           (file "~/.org/roam/templates/tabletop/BlackCrusade/weapons.org")
-           :if-new (file+head "tabletop/BlackCrusade/%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
-                              "#+title: ${title}\n#+filetags: :Black_Crusade:Weapon:Equipment:\n#+date: %U")
-           :unnarrowed t)
-          ("rbW" "Weapon Trait" plain
-           (file "~/.org/roam/templates/tabletop/BlackCrusade/weapon_traits.org")
-           :if-new (file+head "tabletop/BlackCrusade/%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
-                              "#+title: ${title}\n#+filetags: :Black_Crusade:Weapon_Trait:\n#+date: %U")
-           :unnarrowed t)
-          ("rbE" "Wargear" plain
-           (file "~/.org/roam/templates/tabletop/BlackCrusade/wargear.org")
-           :if-new (file+head "tabletop/BlackCrusade/%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
-                              "#+title: ${title}\n#+filetags: :Black_Crusade:Wargear:Equipment:\n#+date: %U")
-           :unnarrowed t)
-          ("rbm" "Ammunition" plain
-           (file "~/.org/roam/templates/tabletop/BlackCrusade/ammunition.org")
-           :if-new (file+head "tabletop/BlackCrusade/%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
-                              "#+title: ${title}\n#+filetags: :Black_Crusade:Weapon:Ammunition:Equipment:\n#+date: %U")
-           :unnarrowed t)
-          ("rbs" "Special Abilities" plain
-           (file "~/.org/roam/templates/tabletop/BlackCrusade/special_abilities.org")
-           :if-new (file+head "tabletop/BlackCrusade/%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
-                              "#+title: ${title}\n#+filetags: :Black_Crusade:Special_Abilities:\n#+date: %U")
-           :unnarrowed t)
-          )         
-        )
+          ,@(mapcar (lambda (tpl) (apply #'my/make-rpg-template tpl))
+                    '(("rbb" "Character Sheet" "char_sheet.org" ":Black_Crusade:Character:")
+                      ("rba" "Armor" "armor.org" ":Black_Crusade:Armor:Equipment:")
+                      ("rbA" "Armor Traits" "armor_traits.org" ":Black_Crusade:Armor:Traits:")
+                      ("rbc" "Clothes" "clothes.org" ":Black_Crusade:Clothes:")
+                      ("rbC" "Consumable" "consumables.org" ":Black_Crusade:Consumables:Equipment:")
+                      ("rbg" "Gift of Gods" "gift_of_gods.org" ":Black_Crusade:Gifts:")
+                      ("rbi" "Implant" "implants.org" ":Black_Crusade:Implant:Equipment:")
+                      ("rbp" "Power_Field" "power_field.org" ":Black_Crusade:Armor:Power_Field:Equipment:")
+                      ("rbP" "Psychic Power" "psychic_powers.org" ":Black_Crusade:Psychic_Powers:")
+                      ("rbr" "Reward of Gods" "rewards_of_gods.org" ":Black_Crusade:Rewards:")
+                      ("rbt" "Talent" "talent.org" ":Black_Crusade:Talent:")
+                      ("rbT" "Trait" "traits.org" ":Black_Crusade:Trait:")
+                      ("rbe" "Tool" "tools.org" ":Black_Crusade:Tool:Equipment:")
+                      ("rbw" "Weapon" "weapons.org" ":Black_Crusade:Weapon:Equipment:")
+                      ("rbW" "Weapon Trait" "weapon_traits.org" ":Black_Crusade:Weapon_Trait:")
+                      ("rbE" "Wargear" "wargear.org" ":Black_Crusade:Wargear:Equipment:")
+                      ("rbm" "Ammunition" "ammunition.org" ":Black_Crusade:Weapon:Ammunition:Equipment:")
+                      ("rbs" "Special Abilities" "special_abilities.org" ":Black_Crusade:Special_Abilities:")))
+          )
+        )         
   
   (setq org-roam-dailies-capture-templates
         '(("d" "default" entry "* %<%I:%M %p>\n%?"
@@ -339,8 +254,6 @@
 (elpaca-wait)
 #+end_src
 
-#+RESULTS:
-| d | default | entry | * %<%I:%M %p> |
 
 *** Org-QL-Roam
 :PROPERTIES:
@@ -667,6 +580,21 @@ capture was not aborted."
         (casual-lib-quit-one)])
 
 #+end_src
+
+** Ltex-Plus
+:PROPERTIES:
+:CUSTOM_ID: ltex-plus
+:END:
+#+begin_src emacs-lisp
+(use-package lsp-ltex-plus
+  :init
+  (lsp-ltex-plus-enable-for-modes
+    :restrict-to '(org-mode markdown-mode latex-mode LaTeX-mode))
+  )
+#+end_src
+
+#+RESULTS:
+: [nil 27198 41165 486059 nil elpaca-process-queues nil nil 353000 nil]
 
 * Provide
 :PROPERTIES:

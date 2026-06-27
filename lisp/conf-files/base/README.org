@@ -15,6 +15,8 @@
   - [[#emojis][Emojis]]
 - [[#по-умолчанию][По-умолчанию]]
 - [[#compile-angel][Compile-Angel]]
+- [[#no-littering][No-Littering]]
+- [[#buffer-terminator][Buffer-Terminator]]
 - [[#elpaca-fixes][Elpaca Fixes]]
   - [[#closql][Closql]]
 - [[#benchmark-init][Benchmark-Init]]
@@ -54,6 +56,7 @@
 - [[#editorconfig][Editorconfig]]
 - [[#shell][Shell]]
   - [[#vterm][VTerm]]
+  - [[#ghostel][Ghostel]]
 - [[#which-key][Which-key]]
 - [[#dired][Dired]]
   - [[#base][Base]]
@@ -63,6 +66,7 @@
   - [[#dired-open-with][Dired-Open-With]]
   - [[#dired-du][Dired-DU]]
   - [[#dirvish][Dirvish]]
+  - [[#dired-clipboard][Dired-Clipboard]]
 - [[#projectile][Projectile]]
 - [[#tramp][Tramp]]
   - [[#ssh-machine][SSH-Machine]]
@@ -227,6 +231,35 @@ Otherwise, return the path as is."
   (push "/usr/share/emacs/.+" compile-angel-excluded-files-regexps)
   (compile-angel-on-load-mode)
   (add-hook 'emacs-lisp-mode-hook #'compile-angel-on-save-local-mode))
+#+end_src
+
+* No-Littering
+:PROPERTIES:
+:CUSTOM_ID: no-littering
+:END:
+#+begin_src emacs-lisp
+(use-package no-littering)
+#+end_src
+
+* Buffer-Terminator
+:PROPERTIES:
+:CUSTOM_ID: buffer-terminator
+:END:
+#+begin_src emacs-lisp
+(use-package buffer-terminator
+  :custom
+  (buffer-terminator-verbose nil)
+
+  ;; Set the inactivity timeout (in seconds) after which buffers are considered
+  ;; inactive (default is 30 minutes):
+  (buffer-terminator-inactivity-timeout (* 30 60)) ; 30 minutes
+
+  ;; Define how frequently the cleanup process should run (default is every 10
+  ;; minutes):
+  (buffer-terminator-interval (* 10 60)) ; 10 minutes
+
+  :config
+  (buffer-terminator-mode 1))
 #+end_src
 * Elpaca Fixes
 :PROPERTIES:
@@ -675,6 +708,7 @@ Otherwise, return the path as is."
   :after evil
   :config
   (setq evil-collection-mode-list '(
+                                    calc
                                     devdocs
 				                    doc-view
                                     ebib
@@ -726,6 +760,7 @@ Otherwise, return the path as is."
                                     docker
                                     ediff
                                     evil-mc
+                                    org-agenda
                                     guix
                                     help
                                     helpful
@@ -1133,6 +1168,52 @@ Otherwise, return the path as is."
                  (reusable-frames . visible)
                  (window-height . 0.3))))
   #+end_src
+** Ghostel
+:PROPERTIES:
+:CUSTOM_ID: ghostel
+:END:
+#+begin_src emacs-lisp
+(use-package ghostel
+  :bind (("C-x m" . ghostel)
+         :map ghostel-semi-char-mode-map
+         ("C-s"  . consult-line)
+         ("C-k"  . my/ghostel-send-C-k-and-kill)
+         ;; ;; I'm used to go up/down the shell history with M-n/p from eshell
+         ;; ;; Simulate this behavior in ghostel by sending C-p and C-n
+         ("M-p" . (lambda () (interactive) (ghostel-send-key "p" "ctrl")))
+         ("M-n" . (lambda () (interactive) (ghostel-send-key "n" "ctrl")))
+         :map project-prefix-map
+         ("m" . ghostel-project)
+         ("M" . ghostel-project-list-buffers))
+  :init
+  (defun ghostel-spawn (&optional args)
+    (let ((name (or args ""))
+          ;; (ghostel-exit-functions '(kill-buffer-and-window))
+          )
+      ;; (message name)
+      (if (not (string-empty-p name))
+          (ghostel name)
+        (ghostel "Ghostel"))))
+  
+  :config
+  (defun my/ghostel-send-C-k-and-kill ()
+    "Send `C-k' to ghostel.
+Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
+    (interactive)
+    (kill-ring-save (point) (line-end-position))
+    (ghostel-send-key "k" "ctrl"))
+
+  (add-to-list 'project-switch-commands '(ghostel-project "Ghostel") t)
+  (add-to-list 'project-switch-commands '(ghostel-project-list-buffers "Ghostel buffers") t)
+  (add-to-list 'ghostel-eval-cmds '("magit-status-setup-buffer" magit-status-setup-buffer)))
+
+(use-package evil-ghostel
+  :after (ghostel evil)
+  :hook (ghostel-mode . evil-ghostel-mode))
+#+end_src
+
+#+RESULTS:
+: [nil 27197 26275 880964 nil elpaca-process-queues nil nil 927000 nil]
 * Which-key
 :PROPERTIES:
 :CUSTOM_ID: which-key
@@ -1315,6 +1396,17 @@ Otherwise, return the path as is."
 
 #+RESULTS:
 : [nil 26913 20270 96909 nil elpaca-process-queues nil nil 101000 nil]
+** Dired-Clipboard
+:PROPERTIES:
+:CUSTOM_ID: dired-clipboard
+:END:
+#+begin_src emacs-lisp
+(use-package dired-clipboard
+  :ensure (dired-clipboard :type git :host github :repo "kn66/dired-clipboard.el" :branch "main"))
+#+end_src
+
+#+RESULTS:
+: [nil 27198 41758 295587 nil elpaca-process-queues nil nil 965000 nil]
 
 * Projectile 
 :PROPERTIES:
@@ -1324,7 +1416,6 @@ Otherwise, return the path as is."
 (use-package projectile
   :defer 2
   :config
-  (setq projectile-ignored-projects '("~/.emacs.d/" "~/.emacs.d/*" "~/" "/home/berlizoves/"))
   (leader-key
     "p" '(:ignore t :wk "Project"))
   (add-to-list 'projectile-globally-ignored-directories "node_modules")
@@ -1381,8 +1472,13 @@ Otherwise, return the path as is."
   :custom
   (password-store-password-length 45))
 (use-package pass)
-;; (use-package password-store-menu
-;;   :config (password-store-menu-enable))
+(use-package password-store-menu
+  ;; :custom
+  ;; (password-store-menu-key  "SPC sP" "Menu Key for password-store")
+  ;; :config (password-store-menu-enable)
+  :general
+  (:states 'normal "SPC s P" 'password-store-menu)
+  )
 ;; (general-auto-unbind-keys)
 #+end_src
 

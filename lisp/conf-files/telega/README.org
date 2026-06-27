@@ -49,6 +49,9 @@
   (leader-key
     "a" '(:ignore t :wk "Apps")
     "at" 'telega)
+  (add-hook 'telega-before-auth-hook
+            (lambda ()
+              (telega--addProxy '(:server "127.0.0.1" :port 2080 :type (:@type "proxyTypeSocks5")) 'enable)))
   :config
   (let ((libs '(telega-dired-dwim telega-dashboard telega-mnz telega-transient)))
     (mapc (lambda (x) (require x)) libs))

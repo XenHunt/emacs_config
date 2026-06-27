@@ -280,13 +280,18 @@
 (use-package org-modern
   :hook (org-mode . org-modern-mode)
   :custom
-  (org-modern-hide-stars nil)		; adds extra indentation
+  ;; (org-modern-hide-stars " ")		; adds extra indentation
   ;; (org-modern-table nil)
   (org-modern-list 
    '(;; (?- . "-")
      (?* . "•")
      (?+ . "‣")))
   (org-modern-block-name '("" . "")) ; or other chars; so top bracket is drawn promptly
+  ;; (org-modern-fold-stars
+  ;;  '(("◉" . "◯")
+  ;;    ("│" . "└")
+  ;;    (" │" . " └")
+  ;;    (" │" . " └")))
   )
 #+end_src
 

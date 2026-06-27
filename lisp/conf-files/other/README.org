@@ -198,7 +198,7 @@
   :config
   (setq-default flycheck-disabled-checkers
 		        (append flycheck-disabled-checkers
-			            '(javascript-jshint json-jsonlist)))
+			            '(javascript-jshint json-jsonlist org-lint emacs-lisp-checkdoc)))
   (flycheck-add-mode 'javascript-eslint 'web-mode)
 
   (add-hook 'after-init-hook #'global-flycheck-mode))
@@ -720,6 +720,7 @@
 :END:
 #+begin_src emacs-lisp
 (use-package jinx
+  ;; :ensure (jinx :tag "2.7")
   :custom
   (jinx-languages "ru_RU en_US")
   (global-jinx-modes '(text-mode))

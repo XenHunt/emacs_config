@@ -18,6 +18,7 @@
   - [[#git-time-machine][Git-Time Machine]]
   - [[#magit][Magit]]
   - [[#magit-todos][Magit-TODOS]]
+  - [[#magit-difftstatic][Magit-Difftstatic]]
   - [[#git-modes][Git-Modes]]
   - [[#git-gutter][Git-Gutter]]
   - [[#abridged-diff][Abridged-Diff]]
@@ -271,6 +272,19 @@
   ;;           :tag "v0.5.3")
   :after magit)
 #+end_src
+
+** Magit-Difftstatic
+:PROPERTIES:
+:CUSTOM_ID: magit-difftstatic
+:END:
+#+begin_src emacs-lisp
+(use-package magit-difftastic
+  :ensure (:host github :repo "rschmukler/magit-difftastic")
+  :after magit
+  :config
+  (magit-difftastic-mode +1))
+#+end_src
+
 ** Git-Modes
 :PROPERTIES:
 :CUSTOM_ID: git-modes
@@ -468,6 +482,11 @@ DOCS are documentation strings to set."
 (add-to-list 'load-path (expand-file-name "lib/lsp-mode" user-emacs-directory))
 (add-to-list 'load-path (expand-file-name "lib/lsp-mode/clients" user-emacs-directory))
 (setq lsp-pyright-multi-root nil)
+
+(use-package sideline-lsp
+  :init
+  (setq sideline-backends-right '(sideline-lsp)))
+
 (use-package lsp-mode
   :commands (lsp lsp-deferred)
   :custom
@@ -558,6 +577,7 @@ DOCS are documentation strings to set."
 	     ;; replace XXX-mode with concrete major-mode(e. g. python-mode)
 	     ;; (python-mode . lsp)
          ;;     (python-ts-mode . lsp)
+         (lsp-mode . sideline-mode)
 	     ((json-mode  yaml-mode javascript-mode js-ts-mode js-mode js-jsx-mode js2-jsx-mode typescript-mode typescript-ts-mode css-mode tsx-ts-mode  vue-mode js2-mode c-ts-mode bash-ts-mode cmake-ts-mode csharp-ts-mode) . lsp-deferred)
 	     (lsp-completion-mode . lsp-enable-which-key-integration)
 	     (lisp-interaction-mode . lsp)
@@ -599,12 +619,14 @@ DOCS are documentation strings to set."
    "c x d" '(consult-lsp-diagnostics :wk "Diagnostics"))
   ;; (setq lsp-enabled-clients '(ts-ls pyright angular-ls vue-semantic-server json-ls html-ls eslint css-ls bash-ls))
   )
+
 (elpaca-wait)
 (use-package lsp-ui 
   :custom
   (lsp-ui-doc-use-childframe t)
   (lsp-ui-sideline-show-diagnostics t)
   (lsp-ui-sideline-show-hover t)
+  (lsp-ui-sideline-enable nil)
   (lsp-ui-doc-enable t)
   (lsp-ui-doc-position 'at-point)
   (lsp-ui-doc-show-with-cursor t )
@@ -1816,8 +1838,15 @@ inside a Jupyter src-block, return nil."
 :END:
 #+begin_src emacs-lisp
 (use-package dockerfile-mode
-  :defer 5)
+  :hook
+  ((dockerfile-mode dockerfile-ts-mode) . lsp-deferred)
+  :defer 5
+  )
 #+end_src
+
+#+RESULTS:
+: [nil 27102 10056 593138 nil elpaca-process-queues nil nil 847000 nil]
+
 *** Docker
 :PROPERTIES:
 :CUSTOM_ID: docker-0
@@ -1861,11 +1890,11 @@ inside a Jupyter src-block, return nil."
 (use-package treesit
   :ensure nil
   :if (featurep 'treesit)
-  :config
-  (setq treesit-language-source-alist
+  :init
+  (setopt treesit-language-source-alist
 	'((bash . ("https://github.com/tree-sitter/tree-sitter-bash"))
-	  (c . ("https://github.com/tree-sitter/tree-sitter-c"))
-	  (cpp . ("https://github.com/tree-sitter/tree-sitter-cpp"))
+	  (c . ("https://github.com/tree-sitter/tree-sitter-c" "v0.20.8" ))
+	  (cpp . ("https://github.com/tree-sitter/tree-sitter-cpp" "v0.20.5"))
 	  (css . ("https://github.com/tree-sitter/tree-sitter-css"))
 	  (cmake . ("https://github.com/uyha/tree-sitter-cmake"))
 	  (go . ("https://github.com/tree-sitter/tree-sitter-go"))
@@ -1894,7 +1923,7 @@ inside a Jupyter src-block, return nil."
 	  (markdown . ("https://github.com/tree-sitter-grammars/tree-sitter-markdown"))
       (dockerfile . ("https://github.com/camdencheek/tree-sitter-dockerfile"))
       (sql        . ("https://github.com/derekstride/tree-sitter-sql"))
-	  (clojure . ("https://github.com/sogaiu/tree-sitter-clojure/tree/unstable-20250526"))
+	  (clojure . ("https://github.com/sogaiu/tree-sitter-clojure" "unstable-20250526"))
       (hyprlang . ("https://github.com/tree-sitter-grammars/tree-sitter-hyprlang"))
       (yaml       . ("https://github.com/tree-sitter-grammars/tree-sitter-yaml"))
       (janet-simple . ("https://github.com/sogaiu/tree-sitter-janet-simple"))))
@@ -1902,7 +1931,8 @@ inside a Jupyter src-block, return nil."
   ;;   (treesit-install-language-grammar 'janet-simple))
   ;; (when (not (treesit-language-available-p 'go))
   ;;   (treesit-install-language-grammar 'go))
-  (let ((tree-langs '(janet-simple python clojure typescript tsx make css html json vue bash hyprlang c cmake make hyprlang qmljs)))
+  :config
+  (let ((tree-langs '(janet-simple python clojure typescript tsx make css html json vue bash hyprlang  cmake make  qmljs)))
     (mapc (lambda (x) (unless (treesit-language-available-p x)
                              (treesit-install-language-grammar x)))
           tree-langs))
@@ -1959,8 +1989,8 @@ inside a Jupyter src-block, return nil."
                                (js-mode . js-ts-mode)
                                (json-mode . json-ts-mode)
                                (typescript-mode . typescript-ts-mode)
-                               (c++-mode . c++-ts-mode)
-                               (c-mode . c-ts-mode)
+                               ;; (c++-mode . c++-ts-mode)
+                               ;; (c-mode . c-ts-mode)
                                (css-mode . css-ts-mode)
                                (html-mode . html-ts-mode)))
 #+end_src

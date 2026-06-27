@@ -25,6 +25,7 @@
   - [[#all-the-icons][ALL-THE-ICONS]]
   - [[#outline-indent][Outline-Indent]]
   - [[#spacious-padding][Spacious-padding]]
+  - [[#page-break-lines][Page-Break-Lines]]
   - [[#dashboard][Dashboard]]
   - [[#rainbow-mode][Rainbow-mode]]
   - [[#rainbow-delimiters][Rainbow Delimiters]]
@@ -321,12 +322,27 @@
 #+RESULTS:
 : [nil 26445 48695 884954 nil elpaca-process-queues nil nil 293000 nil]
 
+** Page-Break-Lines
+:PROPERTIES:
+:CUSTOM_ID: page-break-lines
+:END:
+#+begin_src emacs-lisp
+(use-package page-break-lines)
+#+end_src
 ** Dashboard 
 :PROPERTIES:
 :CUSTOM_ID: dashboard
 :END:
 #+begin_src emacs-lisp
 (use-package dashboard
+  :ensure 
+( :package "dashboard"
+  :fetcher github
+  :repo "emacs-dashboard/dashboard"
+  :files (:defaults "banners")
+  :pin t
+  :ref "9cfcb08c5623816d8f9a68a76c54845bc4bf46df"
+  :source "MELPA")
   :init
   (setq dashboard-set-file-icons t)
   (setq dashboard-set-heading-icons t)
