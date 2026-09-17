@@ -14,6 +14,7 @@
   - [[#загрузка-скриптов][Загрузка скриптов]]
   - [[#base][Base]]
   - [[#custom][Custom]]
+  - [[#fold][Fold]]
   - [[#other][Other]]
   - [[#org][Org]]
   - [[#programming][Programming]]
@@ -24,6 +25,7 @@
   - [[#telega][Telega]]
   - [[#irc][IRC]]
   - [[#elfeed][Elfeed]]
+  - [[#db][DB]]
 - [[#provide][Provide]]
 :END:
 
@@ -49,7 +51,6 @@
 :PROPERTIES:
 :CUSTOM_ID: загрузка-конфига
 :END:
-
 Загрузка всего конфига.
 
 ** Загрузка скриптов
@@ -83,6 +84,16 @@
 (add-to-list 'load-path "~/.emacs.d/lisp/conf-files/custom/")
 (require 'beauty)
 #+end_src
+** Fold
+:PROPERTIES:
+:CUSTOM_ID: fold
+:END:
+
+Эта часть конфига посвященая настройки folding'а, свертки блоков кода или текста. Подробнее: [[./fold/README.org][README folding'а]]
+#+begin_src emacs-lisp
+(add-to-list 'load-path "~/.emacs.d/lisp/conf-files/fold/")
+(require 'fold-config)
+#+end_src
 ** Other
 :PROPERTIES:
 :CUSTOM_ID: other
@@ -115,6 +126,7 @@
 #+begin_src emacs-lisp
 (add-to-list 'load-path "~/.emacs.d/lisp/conf-files/programming/")
 (require 'programming)
+(require 'eglot-configuration)
 #+end_src
 ** Tex
 :PROPERTIES:
@@ -197,7 +209,16 @@
 
 #+RESULTS:
 : elfeed-package
+** DB
+:PROPERTIES:
+:CUSTOM_ID: db
+:END:
 
+Это часть подключает экспериментальную часть для работы с базами данных. Подробнее: [[./db/README.org][README для db]].
+#+begin_src emacs-lisp
+(add-to-list 'load-path "~/.emacs.d/lisp/conf-files/db/")
+(require 'db-config)
+#+end_src
 * Provide
 :PROPERTIES:
 :CUSTOM_ID: provide

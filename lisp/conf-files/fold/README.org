@@ -1,0 +1,86 @@
+#+TITLE:XenHunt Config (fold)
+#+AUTHOR: Evgeny Berlizov (XenHunt)
+#+DESCRIPTION: XenHunt's config of folding
+#+STARTUP: content
+#+PROPERTY: header-args :tangle fold-config.el
+* Содержание
+:PROPERTIES:
+:TOC:      :include all :depth 100 :force (nothing) :ignore (this) :local (nothing)
+:END:
+:CONTENTS:
+- [[#введение][Введение]]
+- [[#fast-loading][Fast-Loading]]
+- [[#outline-indent][Outline-Indent]]
+- [[#kirigami][Kirigami]]
+- [[#provide][Provide]]
+* Введение
+:PROPERTIES:
+:CUSTOM_ID: введение
+:END:
+
+Эта часть конфига посвящена настройки fold (свертки блоков) =Emacs=. 
+
+* Fast-Loading
+:PROPERTIES:
+:CUSTOM_ID: fast-loading
+:END:
+
+Быстрая загрузка модуля.
+
+#+begin_src emacs-lisp
+;; -*- lexical-binding: t;  no-byte-compile: t -*-
+#+end_src
+
+* Outline-Indent
+:PROPERTIES:
+:CUSTOM_ID: outline-indent
+:END:
+#+begin_src emacs-lisp
+(use-package outline-indent
+  :commands (outline-indent-minor-mode
+             outline-indent-backward-same-level
+             outline-indent-forward-same-level)
+  :hook (((yaml-mode conf-toml-mode json-mode conf-unix-mode) . outline-indent-minor-mode))
+  :custom
+  (outline-indent-ellipsis " ▼"))
+#+end_src
+
+#+RESULTS:
+: [nil 26436 37702 488240 nil elpaca-process-queues nil nil 855000 nil]
+* Kirigami
+:PROPERTIES:
+:CUSTOM_ID: kirigami
+:END:
+#+begin_src emacs-lisp
+(use-package kirigami
+  :custom
+  ;; Add Kirigami to the menu bar and context menu (`context-menu-mode').
+  (kirigami-show-menu-bar t)
+  (kirigami-show-context-menu t)
+  :init
+  (kirigami-global-mode 1)
+  (after! evil
+    (define-key evil-normal-state-map "zo" 'kirigami-open-fold)
+    (define-key evil-normal-state-map "zO" 'kirigami-open-fold-rec)
+    (define-key evil-normal-state-map "zc" 'kirigami-close-fold)
+    (define-key evil-normal-state-map "za" 'kirigami-toggle-fold)
+    (define-key evil-normal-state-map "zr" 'kirigami-open-folds)
+    (define-key evil-normal-state-map "zm" 'kirigami-close-folds)))
+#+end_src
+* Treesit-fold
+:PROPERTIES:
+:CUSTOM_ID: treesit-fold
+:END:
+#+begin_src emacs-lisp
+(use-package treesit-fold
+  :after treesit
+  :config
+  (global-treesit-fold-mode))
+#+end_src
+* Provide
+:PROPERTIES:
+:CUSTOM_ID: provide
+:END:
+#+begin_src emacs-lisp
+(provide 'fold-config)
+#+end_src

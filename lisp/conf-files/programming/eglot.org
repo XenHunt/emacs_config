@@ -1,0 +1,363 @@
+#+STARTUP: content
+#+PROPERTY: header-args :tangle eglot-configuration.el
+* Fast-Loading
+:PROPERTIES:
+:CUSTOM_ID: fast-loading
+:END:
+
+Быстрая загрузка модуля.
+
+#+begin_src emacs-lisp
+;; -*- lexical-binding: t;  no-byte-compile: t -*-
+#+end_src
+* Debug-Mode
+#+begin_src emacs-lisp
+(defun start-debug ()
+  (interactive )
+  (setq-local debug-on-error t)
+  (setq-local debug-on-signal t))
+
+#+end_src
+* Sideline
+#+begin_src emacs-lisp
+(use-package sideline-eglot
+  :init
+  (setq sideline-backends-right '(sideline-eglot)))
+#+end_src
+* Eglot
+#+begin_src emacs-lisp
+(use-package eglot
+  :ensure nil
+  :hook
+  (eglot-mode . sideline-mode)
+  ((python-mode python-ts-mode) . eglot-ensure)
+  ;; JavaScript/TypeScript/Vue
+  ((javascript-mode js-ts-mode js-mode js-jsx-mode js2-jsx-mode 
+                    typescript-mode typescript-ts-mode typescriptreact-mode
+                    tsx-ts-mode vue-mode js2-mode) . eglot-ensure)
+  
+  ;; Web
+  ((json-mode json-ts-mode css-mode css-ts-mode html-mode html-ts-mode) . eglot-ensure)
+  
+  ;; YAML
+  ((yaml-mode yaml-ts-mode) . eglot-ensure)
+  
+  ;; Go
+  ((go-mode go-ts-mode) . eglot-ensure)
+  
+  ;; Clojure
+  ((clojure-mode clojure-ts-mode clojurescript-mode) . eglot-ensure)
+  
+  ;; Docker
+  ((dockerfile-mode dockerfile-ts-mode) . eglot-ensure)
+  
+  ;; QML
+  (qml-ts-mode . eglot-ensure)
+  
+  ;; Systemd
+  (systemd-mode . eglot-ensure)
+  
+  ;; Hyprland
+  (hyprlang-ts-mode . eglot-ensure)
+  
+  ;; CMake
+  ((cmake-mode cmake-ts-mode) . eglot-ensure)
+  
+  ;; C#
+  (csharp-ts-mode . eglot-ensure)
+
+  ;; Lua
+  ((lua-mode lua-ts-mode) . eglot-ensure)
+  
+  ;; Nix 
+  ((nix-ts-mode) . eglot-ensure)
+  :custom
+  (eglot-autoshutdown t)
+  (eglot-events-buffer-config '(:size 0 :format short))
+  (eglot-sync-connect nil)
+  :config
+  (add-to-list 'eglot-server-programs
+               '(qml-ts-mode . ("qmlls" "-E")))
+  (add-to-list 'eglot-server-programs
+               '(nix-ts-mode . ("nil")))
+  (add-to-list 'eglot-server-programs
+               '(systemd-mode . ("systemd-lsp")))
+  (add-to-list 'eglot-server-programs
+               '(hyprlang-ts-mode . ("hyprls")))
+  (add-to-list 'eglot-server-programs
+               '(vue-mode . ("rass" "vuetail")))
+  (add-to-list 'eglot-server-programs
+               '(janet-ts-mode . ("janet-lsp")))
+  (add-to-list 'eglot-server-programs
+               '(yuck-mode . ("yuck-language-server")))
+  (add-to-list 'eglot-server-programs
+               '(nginx-mode . ("nginx-language-server")))
+  (add-to-list 'eglot-server-programs
+               '(jenkinsfile-mode . ("jenkinsfile-lsp")))
+  
+  (add-to-list 'eglot-server-programs
+               '((python-mode python-ts-mode) . ("rass" "python")))
+
+  (after! flycheck
+    (global-flycheck-eglot-mode))
+  
+  (general-define-key
+   :states 'normal
+   ;; :keymaps 'eglot-mode-map
+   :prefix "SPC"
+   
+   "c" '(:ignore t :wk "Code")
+   "c d" '((lambda () (interactive) (message "eglot current server: %s" (process-command (jsonrpc--process (eglot-current-server))))) :wk "Describe Session")
+   "c s" '(consult-eglot-symbols :wk "Search symbol")
+   "c a" '(eglot-code-actions :wk "Code Actions")
+   "c r" '(eglot-rename :wk "Rename")
+   "c h" '(eglot-help-at-point :wk "Help")
+   "c f" '(:ignore t :wk "Find")
+   "c f i" '(eglot-find-implementation :wk "Implementation")
+   "c f d" '(eglot-find-declaration :wk "Declaration")
+   "c f t" '(eglot-find-typeDefinition :wk "Type Definition")
+   "c =" '(eglot-format-buffer :wk "Format")
+   "c M" '(:ignore t :wk "Maintenance")
+   "c M S" '(eglot-shutdown-all :wk "Shutdown ALL")
+   "c M s" '(eglot-shutdown :wk "Shutdown")
+   "c M e" '(eglot-stderr-buffer :wk "Show stderr buffer")
+   "c M E" '(eglot-events-buffer :wk "Show events buffer")
+   "c M r" '(eglot-reconnect :wk "Reconnect")
+   "c x" '(:ignore t :wk "Consult")
+   "c x x" '(consult-flycheck :wk "Flycheck")
+   "c x s" '(consult-eglot-symbols :wk "Symbols")))
+#+end_src
+
+* Eglot-Signature-Eldoc-Talkative
+#+begin_src emacs-lisp
+(use-package eglot-signature-eldoc-talkative
+  :after eglot eldoc
+  :config
+  (advice-add #'eglot-signature-eldoc-function
+              :override #'eglot-signature-eldoc-talkative))
+#+end_src
+
+* Consult-Eglot
+#+begin_src emacs-lisp
+(use-package consult-eglot
+  :after consult eglot)
+
+(use-package consult-eglot-embark
+  :after consult-eglot)
+#+end_src
+
+* Eldoc-Box
+#+begin_src emacs-lisp
+(use-package eldoc-box
+  :after eglot
+  :hook (eglot-managed-mode . eldoc-box-hover-at-point-mode)
+  :custom
+  (eldoc-box-max-pixel-width 700)
+  (eldoc-box-max-pixel-height 600)
+  ;; (eldoc-box-only-multi-line t)  ;; Однострочные не показываются в childframe вообще
+  :config
+  ;; Удаляем стандартный вывод в echo area при активации eldoc-box
+  ;; В Emacs 29+ есть eldoc-display-functions
+  (when (boundp 'eldoc-display-functions)
+    (add-hook 'eldoc-box-hover-at-point-mode-hook
+              (lambda ()
+                (setq-local eldoc-display-functions
+                            (remq 'eldoc-display-in-echo-area
+                                  eldoc-display-functions))
+                ;; Также убираем отдельный *eldoc* буфер, если не нужен
+                (setq-local eldoc-display-functions
+                            (remq 'eldoc-display-in-buffer
+                                  eldoc-display-functions)))))
+  ;; Добавляем advice для evil-mode
+  (defun my/eldoc-box-add-evil-unfocus (&rest r)
+    (evil-define-key '(normal visual emacs insert motion) 'local "q" 'eldoc-box-unfocus-frame)
+    (evil-define-key nil 'local (kbd "C-c f") 'eldoc-box-unfocus-frame)
+    (read-only-mode +1)
+    )
+  (advice-add #'eldoc-box-focus-frame :after #'my/eldoc-box-add-evil-unfocus)
+  :bind
+  (:map eldoc-mode
+        ("C-c f" . eldoc-box-focus-frame)
+        ;; ("C-c F" . eldoc-box-unfocus-frame)
+        )
+  )
+#+end_src
+* Dape
+#+begin_src emacs-lisp
+(use-package dape
+  :ensure t
+  :defer t
+  :preface
+  ;; By default dape shares the same keybinding prefix as `gud'
+  ;; If you do not want to use any prefix, set it to nil.
+  (setq dape-key-prefix nil)
+  :hook
+  ;; Save breakpoints on quit
+  (kill-emacs . dape-breakpoint-save)
+  ;; Load breakpoints on startup
+  (after-init . dape-breakpoint-load)
+
+  :custom
+  ;; Turn on global bindings for setting breakpoints with mouse
+  (dape-breakpoint-global-mode +1)
+
+  ;; Info buffers to the right
+  (dape-buffer-window-arrangement 'right)
+  ;; Info buffers like gud (gdb-mi)
+  ;; (dape-buffer-window-arrangement 'gud)
+  (dape-info-hide-mode-line nil)
+
+  ;; Projectile users
+  (dape-cwd-function #'projectile-project-root)
+
+  :config
+
+  ;; Pulse source line (performance hit)
+  (add-hook 'dape-display-source-hook #'pulse-momentary-highlight-one-line)
+
+  ;; Save buffers on startup, useful for interpreted languages
+  (add-hook 'dape-start-hook (lambda () (save-some-buffers t t)))
+
+  ;; Kill compile buffer on build success
+  (add-hook 'dape-compile-hook #'kill-buffer)
+  :general
+  ;; ─── Глобальные лидер-биндинги (SPC d ...) ───
+  (:states '(normal visual) :prefix "SPC"
+           "d"   '(:ignore t :wk "Debug")
+
+           ;; Управление сессией
+           "d d" '(dape :wk "Start / Resume session")
+           "d k" '(dape-kill :wk "Kill session")
+           "d q" '(dape-quit :wk "Quit (kill all)")
+           "d r" '(dape-restart :wk "Restart session")
+           "d s" '(dape-select-session :wk "Select session")
+           "d D" '(dape-disconnect-quit :wk "Disconnect (keep debuggee)")
+
+           ;; Выполнение
+           "d c" '(dape-continue :wk "Continue")
+           "d p" '(dape-pause :wk "Pause")
+           "d u" '(dape-until :wk "Run until point")
+
+           ;; Шаги
+           "d n" '(dape-next :wk "Next (step over)")
+           "d i" '(dape-step-in :wk "Step in")
+           "d o" '(dape-step-out :wk "Step out")
+
+           ;; Брейкпоинты
+           "d b"   '(:ignore t :wk "Breakpoints")
+           "d b b" '(dape-breakpoint-toggle :wk "Toggle at line")
+           "d b l" '(dape-breakpoint-log :wk "Log breakpoint")
+           "d b h" '(dape-breakpoint-hits :wk "Hits breakpoint")
+           "d b e" '(dape-breakpoint-expression :wk "Expression breakpoint")
+           "d b f" '(dape-breakpoint-function :wk "Function breakpoint")
+           "d b d" '(dape-breakpoint-remove-at-point :wk "Delete at point")
+           "d b D" '(dape-breakpoint-remove-all :wk "Delete all")
+           "d b s" '(dape-breakpoint-save :wk "Save breakpoints")
+           "d b L" '(dape-breakpoint-load :wk "Load breakpoints")
+
+           ;; Инспекция
+           "d v"   '(:ignore t :wk "Inspect")
+           "d v e" '(dape-evaluate-expression :wk "Evaluate expression")
+           "d v w" '(dape-watch-dwim :wk "Watch expression")
+           "d v r" '(dape-repl :wk "REPL")
+           "d v m" '(dape-memory :wk "Memory view")
+           "d v a" '(dape-disassemble :wk "Disassemble")
+
+           ;; Стек / Потоки
+           "d t"   '(:ignore t :wk "Stack / Thread")
+           "d t s" '(dape-select-stack :wk "Select stack")
+           "d t t" '(dape-select-thread :wk "Select thread")
+           "d t u" '(dape-stack-select-up :wk "Stack up")
+           "d t d" '(dape-stack-select-down :wk "Stack down")
+           "d t f" '(dape-restart-frame :wk "Restart frame")
+
+           ;; Окна
+           "d w"   '(:ignore t :wk "Windows")
+           "d w i" '(dape-info :wk "Info buffers")
+           "d w m" '(dape-many-windows :wk "Toggle many-windows"))
+
+  ;; ─── Запасные клавиши в prog-mode (C-c d ...) ───
+  (:keymaps 'prog-mode-map :states 'normal :prefix "C-c d"
+            "d" #'dape
+            "k" #'dape-kill
+            "c" #'dape-continue
+            "p" #'dape-pause
+            "n" #'dape-next
+            "s" #'dape-step-in
+            "o" #'dape-step-out
+            "b" #'dape-breakpoint-toggle
+            "q" #'dape-quit)
+  ;; :bind
+  ;; (:map prog-mode-map
+  ;;       ("C-c d d" . dape)
+  ;;       ("C-c d k" . dape-kill)
+  ;;       ("C-c d c" . dape-continue)
+  ;;       ("C-c d p" . dape-pause)
+  ;;       ("C-c d n" . dape-next)
+  ;;       ("C-c d s" . dape-step-in)
+  ;;       ("C-c d o" . dape-step-out)
+  ;;       ("C-c d b" . dape-breakpoint-toggle)
+  ;;       ("C-c d q" . dape-quit))
+  )
+#+end_src
+* Dape-Repeat
+#+begin_src emacs-lisp
+(when (fboundp 'repeat-mode)
+  ;; Включаем repeat-mode глобально
+  (repeat-mode +1)
+
+  ;; Карта повторения для отладочных команд
+  (defvar dape-repeat-map
+    (let ((map (make-sparse-keymap)))
+      ;; Шаги и выполнение
+      (define-key map "n" #'dape-next)
+      (define-key map "i" #'dape-step-in)
+      (define-key map "o" #'dape-step-out)
+      (define-key map "c" #'dape-continue)
+      (define-key map "p" #'dape-pause)
+      (define-key map "u" #'dape-until)
+
+      ;; Брейкпоинты
+      (define-key map "b" #'dape-breakpoint-toggle)
+
+      ;; Сессия
+      (define-key map "r" #'dape-restart)
+      (define-key map "k" #'dape-kill)
+      (define-key map "q" #'dape-quit)
+      (define-key map "D" #'dape-disconnect-quit)
+      (define-key map "s" #'dape-select-session)
+
+      ;; Стек / потоки
+      (define-key map "t" #'dape-select-thread)
+      (define-key map "S" #'dape-select-stack)
+
+      ;; Инспекция
+      (define-key map "e" #'dape-evaluate-expression)
+      (define-key map "w" #'dape-watch-dwim)
+      (define-key map "m" #'dape-memory)
+      (define-key map "d" #'dape-disassemble)
+      map)
+    "Repeat map for `dape' debugging commands.")
+
+  ;; Привязываем свойство repeat-map к командам.
+  ;; Именно это заставляет repeat-mode активировать карту
+  ;; после выполнения любой из этих команд.
+  (dolist (cmd '(dape-next dape-step-in dape-step-out dape-continue
+                 dape-pause dape-until dape-breakpoint-toggle
+                 dape-restart dape-kill dape-quit dape-disconnect-quit
+                 dape-select-session dape-select-thread dape-select-stack
+                 dape-evaluate-expression dape-watch-dwim
+                 dape-memory dape-disassemble))
+    (put cmd 'repeat-map 'dape-repeat-map)))
+#+end_src
+* Focus
+#+begin_src emacs-lisp
+(use-package focus)
+#+end_src
+* Provide
+:PROPERTIES:
+:CUSTOM_ID: provide
+:END:
+#+begin_src emacs-lisp
+(provide 'eglot-configuration)
+#+end_src

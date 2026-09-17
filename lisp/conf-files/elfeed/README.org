@@ -45,11 +45,15 @@
 
 (use-package elfeed
   :commands elfeed
-  :init
-  (setq elfeed-db-directory (concat user-emacs-directory "elfeed/db/")
-        elfeed-enclosure-default-dir (concat user-emacs-directory "elfeed/enclosures/"))
+  ;; :init
+  ;; (setq elfeed-db-directory (concat user-emacs-directory "elfeed/db/")
+  ;;       elfeed-enclosure-default-dir (concat user-emacs-directory "elfeed/enclosures/"))
   :config
-
+  (add-hook 'elfeed-new-entry-hook
+            (elfeed-make-tagger 
+             :feed-title "emacs"
+             :entry-title '("string mutation" "process-send-string" "31\\.2" "immutable")
+             :add '(emacs-critical)))
   ;; (add-hook 'elfeed-search-mode-hook #'elfeed-update)
   (make-directory elfeed-db-directory t)
 
@@ -92,7 +96,7 @@
 (use-package elfeed-org
   :config
   (elfeed-org)
-  (setq rmh-elfeed-org-files (list "~/.emacs.d/elfeed.org"))
+  (setq rmh-elfeed-org-files (list "~/.emacs.d/var/elfeed/elfeed.org"))
   )
 #+end_src
 * Elfeed-Tube

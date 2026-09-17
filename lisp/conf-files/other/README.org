@@ -58,6 +58,9 @@
 - [[#use-proxy][Use-Proxy]]
 - [[#wc][WC]]
 - [[#awesome][Awesome]]
+- [[#char-menu][Char-menu]]
+- [[#inhibit-mouse-test][Inhibit-Mouse (test)]]
+- [[#repeat-mode][Repeat-Mode]]
 - [[#provide][Provide]]
 :END:
 * Введение
@@ -154,17 +157,53 @@
   ;; :general
   ;; (:states 'normal '("TAB"))
   :config
-  (defun my-setup-easy-session ()
-    ;; (easysession-load-including-geometry)
-    (easysession-save-mode)
-    (remove-hook 'server-after-make-frame-hook #'my-setup-easy-session))
+  ;; (defun my-setup-easy-session ()
+  ;;   ;; (easysession-load-including-geometry)
+  ;;   (easysession-save-mode)
+  ;;   (remove-hook 'server-after-make-frame-hook #'my-setup-easy-session))
+  ;; Save every 10 minutes
+  (setq easysession-save-interval (* 10 60))
 
-  (add-hook 'server-after-make-frame-hook #'my-setup-easy-session)
+  ;; Save the current session when using `easysession-switch-to'
+  (setq easysession-switch-to-save-session t)
+
+  ;; Do not exclude the current session when switching sessions
+  (setq easysession-switch-to-exclude-current nil)
+
+  ;; Display the active session name in the mode-line lighter.
+  ;; (setq easysession-save-mode-lighter-show-session-name t)
+
+  ;; Optionally, the session name can be shown in the modeline info area:
+  (setq easysession-mode-line-misc-info t)
+  ;; non-nil: Make `easysession-setup' load the session automatically.
+  ;; (nil: session is not loaded automatically; the user can load it manually.)
+  (setq easysession-setup-load-session t)
+
+  ;; The `easysession-setup' function adds hooks:
+  ;; - To enable automatic session loading during `emacs-startup-hook', or
+  ;;   `server-after-make-frame-hook' when running in daemon mode.
+  ;; - To save the session at regular intervals, and when Emacs exits.
+  
+  ;; (add-hook 'server-after-make-frame-hook #'my-setup-easy-session)
   (leader-key
     "TAB" '(:ignore t :wk "Session")
     "TAB TAB" '(easysession-switch-to :wk "Switch")
-    "TAB s" '(easysession-save-as :wk "Save")
-    "TAB d" '(easysession-delete :wk "Delete")))
+    "TAB s" '(easysession-save :wk "Save")
+    "TAB d" '(easysession-delete :wk "Delete")
+    "TAB r" '(easysession-rename :wk "Rename")
+    "TAB R" '(easysession-reset :wk "Reset")
+    "TAB S" '(easysession-save-session-and-close-frames :wk "Save/Close frames")
+    "TAB u" '(easysession-unload :wk "Unload"))
+  (add-hook 'easysession-new-session-hook #'easysession-reset)
+  
+  (defun my/easysession-no-main-saved ()
+    "Only save the main session."
+    (when (not (string= "main" (easysession-get-current-session-name)))
+      t))
+  (setq easysession-save-mode-predicate 'my/easysession-no-main-saved)
+
+
+  (easysession-setup))
     #+end_src
 
 #+RESULTS:
@@ -195,10 +234,13 @@
 (use-package flycheck
   :diminish
   :ensure t
+  :custom
+  (flycheck-idle-change-delay 0.8)
   :config
   (setq-default flycheck-disabled-checkers
 		        (append flycheck-disabled-checkers
-			            '(javascript-jshint json-jsonlist org-lint emacs-lisp-checkdoc)))
+			            '(javascript-jshint json-jsonlist ;; org-lint
+                                            emacs-lisp-checkdoc)))
   (flycheck-add-mode 'javascript-eslint 'web-mode)
 
   (add-hook 'after-init-hook #'global-flycheck-mode))
@@ -451,6 +493,9 @@
 (use-package consult
   :custom
   (xref-show-definitions-functions #'consult-xref)
+  (consult-async-input-debounce 0.05)
+  (consult-async-input-throttle 0.1)
+  (consult-async-refresh-delay 0.05)
   :config
   ;; (consult-preview-at-point-mode)
   (recentf-mode)
@@ -936,6 +981,7 @@
 :END:
 #+begin_src emacs-lisp
 (use-package use-proxy
+  :commands (my/toggle-tmenu)
   :custom
   (use-proxy-http-proxy "localhost:2080")
   (use-proxy-https-proxy "localhost:2080"))
@@ -971,6 +1017,58 @@
     (assoc
      (completing-read "Font awesome: " (fontawesome--construct-candidates))
      (fontawesome--construct-candidates))))))
+#+end_src
+
+* Char-menu
+:PROPERTIES:
+:CUSTOM_ID: char-menu
+:END:
+#+begin_src emacs-lisp
+(use-package char-menu
+  :custom char-menu '(("—" "‘’" "“”" "…" "«»" "–"
+                       ("Typography" "•" "©" "†" "‡" "°" "·" "§" "№" "★")
+                       ("Math"       "≈" "≡" "≠" "∞" "×" "±" "∓" "÷" "√")
+                       ("Arrows"     "←" "→" "↑" "↓" "⇐" "⇒" "⇑" "⇓")
+                       ("Greek"      "α" "β" "Y" "δ" "ε" "ζ" "η" "θ" "ι" "κ" "λ" "μ"
+                        "ν" "ξ" "ο" "π" "ρ" "σ" "τ" "υ" "φ" "χ" "ψ" "ω"))))
+#+end_src
+
+#+RESULTS:
+: [nil 27250 8062 543470 nil elpaca-process-queues nil nil 691000 nil]
+
+* Inhibit-Mouse (test)
+:PROPERTIES:
+:CUSTOM_ID: inhibit-mouse-test
+:END:
+#+begin_src emacs-lisp
+(use-package inhibit-mouse
+  :custom
+  ;; Disable highlighting of clickable text such as URLs and hyperlinks when
+  ;; hovered by the mouse pointer.
+  (inhibit-mouse-adjust-mouse-highlight t)
+
+  ;; Disables the use of tooltips (show-help-function) during mouse events.
+  (inhibit-mouse-adjust-show-help-function t)
+  (inhibit-mouse-misc-events '("wheel-left" "wheel-right" "pinch"))
+  :init
+  (if (daemonp)
+      (add-hook 'server-after-make-frame-hook #'inhibit-mouse-mode)
+    (inhibit-mouse-mode 1)))
+#+end_src
+
+* Repeat-Mode
+:PROPERTIES:
+:CUSTOM_ID: repeat-mode
+:END:
+#+begin_src emacs-lisp
+(use-package repeat
+  :ensure nil
+  ;; :custom
+  ;; (repeat-exit-timeout)
+  )
+
+(use-package repeat-help
+  :hook (repeat-mode . repeat-help-mode))
 #+end_src
 
 * Provide

@@ -26,6 +26,7 @@
 - [[#general-keybindigs][General Keybindigs]]
   - [[#transient-window][Transient-Window]]
   - [[#transient-toggle][Transient-Toggle]]
+- [[#calc][Calc]]
 - [[#wgrep][Wgrep]]
 - [[#smartparens][Smartparens]]
 - [[#helpful][Helpful]]
@@ -50,6 +51,7 @@
   - [[#evil-textobj-tree-sitter][Evil-Textobj-Tree-Sitter]]
   - [[#evil-anzu][Evil-Anzu]]
   - [[#evil-better-visual-line][Evil-Better-Visual-Line]]
+  - [[#evil-insert-plus][Evil-Insert-Plus]]
   - [[#enhanced-evil-paredit][Enhanced-Evil-Paredit]]
 - [[#diminish][Diminish]]
 - [[#exec-path-from-shell][Exec-path-from-shell]]
@@ -103,7 +105,16 @@
   (custom-file (concat user-emacs-directory "secrets.el"))
   (tab-width 4)
   (large-file-warning-threshold (* 20 1024 1024))
+  (scroll-margin 3)
+  (hscroll-margin 2)
+  (hscroll-step 1)
+  (scroll-conservatively 20)
+  ;; (use-package-compute-statistics t)
   :config
+  ;; (setq debug-on-error t)
+  ;; (setenv "LC_ALL" "C")
+  ;; (setenv "LANG" "C")
+  ;; (setenv "LANGUAGE" "C")
   ;; (setq-default package-archives
   ;;               '(("melpa" . "https://www.mirrorservice.org/sites/melpa.org/packages/")
   ;;                 ;;("melpa" . "https://melpa.org/packages/")
@@ -259,6 +270,9 @@ Otherwise, return the path as is."
   (buffer-terminator-interval (* 10 60)) ; 10 minutes
 
   :config
+  (setq buffer-terminator-rules-alist '((keep-buffer-property . special) (keep-buffer-property . process)
+                                        (keep-buffer-property . visible) (kill-buffer-property . inactive)
+                                        (keep-buffer-name-regexp . ("\\` \\*ghostel\\*<?[0-9]*>?\\'") )))
   (buffer-terminator-mode 1))
 #+end_src
 * Elpaca Fixes
@@ -365,12 +379,13 @@ Otherwise, return the path as is."
     )
 
   (leader-key
-    "g" '(:ignore t :wk "Git/Docker")
+    "g" '(:ignore t :wk "System Wide")
     "g g" '(magit :wk "Start Magit")
     "g s" '(magit-status :wk "Status")
     "g d" '(magit-diff :wk "Diff")
     "g t" '(git-timemachine :wk "Timemachine")
-    "g D" '(docker :wk "Docker")
+    "g d" '(docker :wk "Docker")
+    "g D" '(daemons :wk "Daemons") 
     )
 
   (leader-key
@@ -452,6 +467,7 @@ Otherwise, return the path as is."
     "h E" '(:ignore t :wk "Elpaca")
     "h E e" '(elpaca-manager :wk "Manager")
     "h E f" '(elpaca-fetch-all :wk "Fetch")
+    "h E u" '((lambda () (interactive) (let ((current-prefix-arg '(4))) (call-interactively 'elpaca-update-menus))) :wk "Update all menus")
     "h t" '(consult-theme :wk "Change theme")
     "h M" '(describe-mode :wk "Describe mode")
     "h p" '(describe-package :wk "Describe package")
@@ -609,7 +625,16 @@ Otherwise, return the path as is."
           (casual-lib-quit-one)])
 
 #+end_src
-
+* Calc
+:PROPERTIES:
+:CUSTOM_ID: calc
+:END:
+#+begin_src emacs-lisp
+(use-package calc
+  :ensure nil
+  :general
+  (:states 'normal "SPC a c" 'calc))
+#+end_src
 * Wgrep
 :PROPERTIES:
 :CUSTOM_ID: wgrep
@@ -690,7 +715,17 @@ Otherwise, return the path as is."
   (evil-set-leader nil (kbd "SPC"))
   (evil-define-key 'normal org-mode-map (kbd "C-M-<up>") 'org-demote-subtree)
   (evil-set-undo-system 'undo-redo)
-  (evil-mode))
+  (evil-mode)
+  ;; По-другому расположить evil-insert-plus не получилось, иначе жалуется, что загружен макрос
+  (use-package evil-insert-plus
+  :commands (evil-insert-plus--vcount)
+  :bind (:map evil-normal-state-map
+              ("I" . evil-insert-plus)
+              ("A" . evil-append-plus)
+              :map evil-visual-state-map
+              ("I" . evil-insert-plus)
+              ("A" . evil-append-plus))
+  ))
 
 ;; (use-package evil-tutor :ensure t :demand t)
 (elpaca-wait)
@@ -706,21 +741,31 @@ Otherwise, return the path as is."
 #+begin_src emacs-lisp
 (use-package evil-collection :ensure t :demand t
   :after evil
+  :custom
+  (evil-collection-calendar-want-org-bindings t)
   :config
   (setq evil-collection-mode-list '(
                                     calc
                                     devdocs
+                                    (package-menu package)
 				                    doc-view
                                     ebib
 				                    elfeed
 				                    elisp-mode
 				                    elpaca
+                                    eldoc
+                                    tabulated-list
 				                    embark
 				                    evil-mc
+                                    evil-ghostel
 				                    flycheck
 				                    flymake
+                                    info
 				                    imenu
 				                    imenu-list
+                                    edebug
+                                    debug
+                                    debbugs
 				                    js2-mode
 				                    org
 				                    org-roam
@@ -731,27 +776,29 @@ Otherwise, return the path as is."
 				                    which-key
 				                    xref
 				                    yaml-mode
- 				        bookmark
- 				        bufler
- 				        compile
- 				        consult
- 				        corfu
- 				        dashboard
- 				        dired
- 				        dired-sidebar
- 				        forge
- 				        git-timemachine
- 				        ibuffer
- 				        indent
- 				        minibuffer
- 				        sh-script
- 				        vertico
- 				        vterm
+                                    dape
+ 				                    bookmark
+ 				                    bufler
+ 				                    compile
+ 				                    consult
+ 				                    corfu
+ 				                    dashboard
+ 				                    dired
+ 				                    dired-sidebar
+ 				                    forge
+ 				                    git-timemachine
+ 				                    ibuffer
+ 				                    indent
+ 				                    minibuffer
+ 				                    sh-script
+ 				                    vertico
+ 				                    vterm
                                     (custom cus-edit)
                                     (image image-mode)
                                     (magit magit-submodule)
                                     arc-mode
                                     calendar
+                                    gptel
                                     cider
                                     cmake-mode
                                     daemons
@@ -763,6 +810,7 @@ Otherwise, return the path as is."
                                     org-agenda
                                     guix
                                     help
+                                    leetcode
                                     helpful
                                     image+
                                     image-dired
@@ -778,8 +826,10 @@ Otherwise, return the path as is."
                                     tar-mode
                                     telega
                                     trashed
+                                    which-key
                                     wdired
                                     wgrep
+                                    with-editor
                                     woman
                                     xwidget
                                     (pdf pdf-view)))
@@ -798,7 +848,6 @@ Otherwise, return the path as is."
 #+end_src
 
 #+RESULTS:
-
 ** Smartparens
 :PROPERTIES:
 :CUSTOM_ID: smartparens-0
@@ -1064,6 +1113,31 @@ Otherwise, return the path as is."
   :config
   (evil-better-visual-line-on))
 #+end_src
+** Evil-Insert-Plus
+:PROPERTIES:
+:CUSTOM_ID: evil-insert-plus
+:END:
+#+begin_src emacs-lisp
+;; (use-package evil-insert-plus
+;;   :defer t
+;;   ;; :after evil
+;;   ;; :init
+;;   ;; (require 'evil-macros)
+;;   ;; :commands (evil-insert-plus--vcount)
+;;   ;; :bind (:map evil-normal-state-map
+;;   ;;             ("I" . evil-insert-plus)
+;;   ;;             ("A" . evil-append-plus)
+;;   ;;             :map evil-visual-state-map
+;;   ;;             ("I" . evil-insert-plus)
+;;   ;;             ("A" . evil-append-plus))
+;;   ;; :config
+;;   ;; (define-key evil-normal-state-map (kbd "I") 'evil-insert-plus)
+;;   ;; (define-key evil-normal-state-map (kbd "A") 'evil-append-plus)
+;;   ;; (define-key evil-visual-state-map (kbd "I") 'evil-insert-plus)
+;;   ;; (define-key evil-visual-state-map (kbd "A") 'evil-append-plus)
+;;   )
+#+end_src
+
 ** TODO Enhanced-Evil-Paredit 
 :PROPERTIES:
 :CUSTOM_ID: enhanced-evil-paredit
@@ -1144,10 +1218,10 @@ Otherwise, return the path as is."
   ;; (dired "")
   (setq shell-file-name "/bin/zsh"
         vterm-max-scrollback 5000)
-  (leader-key
-    "o t" '(vterm-other-window :wk "Opens Vterm in other window")
-    "o T" '(vterm :wk "Open VTerm instead of this buffer")
-    )
+  ;; (leader-key
+  ;;   "o t" '(vterm-other-window :wk "Opens Vterm in other window")
+  ;;   "o T" '(vterm :wk "Open VTerm instead of this buffer")
+  ;;   )
   )
 (use-package vterm-toggle
   :after vterm
@@ -1174,10 +1248,13 @@ Otherwise, return the path as is."
 :END:
 #+begin_src emacs-lisp
 (use-package ghostel
+  :custom
+  (ghostel-max-scrollback (* 10 1024 1024))
   :bind (("C-x m" . ghostel)
          :map ghostel-semi-char-mode-map
          ("C-s"  . consult-line)
          ("C-k"  . my/ghostel-send-C-k-and-kill)
+         ("C-d" . my/ghostel-send-C-d-and-kill)
          ;; ;; I'm used to go up/down the shell history with M-n/p from eshell
          ;; ;; Simulate this behavior in ghostel by sending C-p and C-n
          ("M-p" . (lambda () (interactive) (ghostel-send-key "p" "ctrl")))
@@ -1185,6 +1262,7 @@ Otherwise, return the path as is."
          :map project-prefix-map
          ("m" . ghostel-project)
          ("M" . ghostel-project-list-buffers))
+  :commands (ghostel-spawn my/ghostel-bottom-window ghostel-other)
   :init
   (defun ghostel-spawn (&optional args)
     (let ((name (or args ""))
@@ -1195,7 +1273,20 @@ Otherwise, return the path as is."
           (ghostel name)
         (ghostel "Ghostel"))))
   
+  (defun my/ghostel-bottom-window (number)
+    (interactive "p")
+    (let ((display-buffer-alist '(("^\\*ghostel" . (display-buffer-in-side-window
+                                                     (side . bottom)
+                                                     (slot . 0)
+                                                     (window-height . 0.35))))))
+      (ghostel number)))
+  
+  (leader-key
+    "o t" '(my/ghostel-bottom-window :wk "Opens Ghostel in other window")
+    "o T" '(ghostel-other :wk "Open Ghostel instead of this buffer")
+    )
   :config
+  
   (defun my/ghostel-send-C-k-and-kill ()
     "Send `C-k' to ghostel.
 Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
@@ -1203,6 +1294,13 @@ Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
     (kill-ring-save (point) (line-end-position))
     (ghostel-send-key "k" "ctrl"))
 
+  (defun my/ghostel-send-C-d-and-kill ()
+    "Send `C-k' to ghostel.
+Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
+    (interactive)
+    (ghostel-send-key "d" "ctrl")
+    (evil-quit))
+  
   (add-to-list 'project-switch-commands '(ghostel-project "Ghostel") t)
   (add-to-list 'project-switch-commands '(ghostel-project-list-buffers "Ghostel buffers") t)
   (add-to-list 'ghostel-eval-cmds '("magit-status-setup-buffer" magit-status-setup-buffer)))
@@ -1341,6 +1439,10 @@ Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
     )
   )
 #+end_src
+
+#+RESULTS:
+: [nil 27308 10328 146439 nil elpaca-process-queues nil nil 603000 nil]
+
 ** Image-Dired+
 :PROPERTIES:
 :CUSTOM_ID: image-dired
@@ -1418,6 +1520,18 @@ Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
   :config
   (leader-key
     "p" '(:ignore t :wk "Project"))
+  
+  ;;======================================================
+  ;; https://github.com/joaotavora/eglot/issues/129
+  ;;======================================================
+  (defun my-projectile-project-find-function (dir)
+    (let ((root (projectile-project-root dir)))
+      (and root (cons 'transient root))))
+
+
+  (with-eval-after-load 'project
+    (add-to-list 'project-find-functions 'my-projectile-project-find-function))
+  ;;======================================================
   (add-to-list 'projectile-globally-ignored-directories "node_modules")
   ;; (pushnew! projectile-project-root-files "package.json")
   ;; (pushnew! projectile-globally-ignored-directories "^node_modules$" "^flow-typed$")
@@ -1433,6 +1547,20 @@ Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
   :ensure nil
   :custom
   (tramp-default-method "ssh")
+  (tramp-use-scp-direct-remote-copying nil)
+  (shell-history-file-name t)
+  (remote-file-name-inhibit-locks t)
+  (tramp-use-scp-direct-remote-copying t)
+  (remote-file-name-inhibit-auto-save-visited t)
+  (tramp-copy-size-limit (* 1024 1024))
+  :config
+  (connection-local-set-profile-variables
+   'remote-direct-async-process
+   '((tramp-direct-async-process . t)))
+
+  (connection-local-set-profiles
+   '(:application tramp :protocol "scp")
+   'remote-direct-async-process)
   ;; :config
   ;; (setq tramp-default-method "ssh"
   ;;       tramp-verbose 6)

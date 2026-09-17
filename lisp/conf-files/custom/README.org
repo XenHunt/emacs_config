@@ -23,7 +23,6 @@
   - [[#line-numbers][Line Numbers]]
   - [[#nerd-icons][Nerd-Icons]]
   - [[#all-the-icons][ALL-THE-ICONS]]
-  - [[#outline-indent][Outline-Indent]]
   - [[#spacious-padding][Spacious-padding]]
   - [[#page-break-lines][Page-Break-Lines]]
   - [[#dashboard][Dashboard]]
@@ -210,13 +209,11 @@
 		      )
   ;; Делаем так, чтобы у нас для графики был Nerd Font
   (add-to-list 'default-frame-alist '(font . "JetBrainsMono Nerd Font"))
-  (setq org-hide-emphasis-markers t)
   )
-
+(my/set-fonts)
+(add-hook 'server-after-make-frame-hook (lambda () (run-with-idle-timer 2 nil #'my/set-fonts)))
+(add-hook 'after-init-hook (lambda () (run-with-idle-timer 2 nil #'my/set-fonts)))
 #+end_src
-
-#+RESULTS:
-: my/set-fonts
 
 ** Removing Bars
 :PROPERTIES:
@@ -283,20 +280,6 @@
 ;; (use-package all-the-icons-dired
 ;;   :hook (dired-mode . (lambda () (all-the-icons-dired-mode t))))
 #+end_src
-** Outline-Indent
-:PROPERTIES:
-:CUSTOM_ID: outline-indent
-:END:
-#+begin_src emacs-lisp
-(use-package outline-indent
-  :ensure t
-  :custom
-  (outline-indent-ellipsis " ▼ "))
-#+end_src
-
-#+RESULTS:
-: [nil 26436 37702 488240 nil elpaca-process-queues nil nil 855000 nil]
-
 ** Spacious-padding
 :PROPERTIES:
 :CUSTOM_ID: spacious-padding
@@ -479,8 +462,8 @@
 (use-package prism
   ;; :elpaca (prism :fetcher github :repo "alphapapa/prism.el")
   :hook (
-	 ((python-mode python-ts-mode html-mode vue-html-mode) . prism-whitespace-mode)
-	 ((javascript-mode js-ts-mode js-mode js2-mode css-mode typescript-mode typescript-ts-mode tsx-ts-mode json-mode yaml-mode html-mode markdown-mode  latex-mode bash-mode scheme-mode janet-mode janet-ts-mode go-mode go-ts-mode lisp-mode sh-mode bash-ts-mode qml-ts-mode) . prism-mode)
+	 ((python-mode python-ts-mode html-mode vue-html-mode yaml-mode yaml-ts-mode) . prism-whitespace-mode)
+	 ((javascript-mode js-ts-mode js-mode js2-mode css-mode typescript-mode typescript-ts-mode tsx-ts-mode json-mode yaml-mode html-mode markdown-mode  latex-mode bash-mode scheme-mode janet-mode janet-ts-mode go-mode go-ts-mode lisp-mode sh-mode bash-ts-mode qml-ts-mode lua-mode lua-ts-mode) . prism-mode)
 	 )
   :mode
   (("\\.html\\'" . (lambda () (prism-whitespace-mode) (setq-local prism-whitespace-indent-offset 2))))

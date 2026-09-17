@@ -13,18 +13,13 @@
 - [[#fast-loading][Fast-Loading]]
 - [[#org-mode][Org-Mode]]
   - [[#ret---open-link-or-exec-src-block][RET - open link or exec src block]]
-  - [[#auto-fill-mode][Auto-Fill-Mode]]
-  - [[#hover-links][Hover Links]]
-  - [[#org-custom-todos][Org Custom TODOS]]
-  - [[#org-inline-images][Org Inline Images]]
+  - [[#org-babel][Org-Babel]]
   - [[#org-appear][Org-Appear]]
   - [[#toc][Toc]]
   - [[#highlight-todo][Highlight TODO]]
-  - [[#org-bullets][Org-Bullets]]
   - [[#org-modern][Org-Modern]]
   - [[#org-modern-indent][Org-Modern-Indent]]
   - [[#org-tempo][Org Tempo]]
-  - [[#org-headings-size][Org Headings Size]]
   - [[#org-auto-tangle][Org-Auto-Tangle]]
   - [[#org-detangle-fix][Org-Detangle-Fix]]
   - [[#org-fragtog][Org-Fragtog]]
@@ -32,7 +27,6 @@
   - [[#ob-async][OB-Async]]
   - [[#ob-mermaid][OB-Mermaid]]
   - [[#chatu][Chatu]]
-  - [[#org-babel-load-languages][ORG-Babel-Load-Languages]]
   - [[#org-download][Org-Download]]
   - [[#org-ref][Org-Ref]]
   - [[#corg][Corg]]
@@ -40,6 +34,7 @@
   - [[#org-sticky-header][Org-Sticky-Header]]
   - [[#org-transclusion][Org-Transclusion]]
   - [[#org-tag-beautify][Org-Tag-Beautify]]
+  - [[#valign][Valign]]
   - [[#раскладка][Раскладка]]
     - [[#agenda][Agenda]]
 - [[#provide][Provide]]
@@ -63,6 +58,7 @@
 ;; -*- lexical-binding: t;  no-byte-compile: t -*-
 #+end_src
 
+
 * Org-Mode
 :PROPERTIES:
 :CUSTOM_ID: org-mode
@@ -72,16 +68,39 @@
 ;; (use-package org-mode
 ;;   :ensure nil
 ;;   :config
-  ;; (require 'org-crypt)
+;; (require 'org-crypt)
 ;;   (org-crypt-use-before-save-magic)
 ;;   (setq org-tags-exclude-from-inheritance '("crypt")))
 (use-package org
+  :defer t
   :ensure nil
+  :custom-face
+  (org-level-1 ((t (:inherit outline-1 :height 1.7))))
+  (org-level-2 ((t (:inherit outline-2 :height 1.6))))
+  (org-level-3 ((t (:inherit outline-3 :height 1.5))))
+  (org-level-4 ((t (:inherit outline-4 :height 1.4))))
+  (org-level-5 ((t (:inherit outline-5 :height 1.3))))
+  (org-level-6 ((t (:inherit outline-5 :height 1.2))))
+  (org-level-7 ((t (:inherit outline-5 :height 1.1))))
   :custom
   (org-capture-bookmark nil "Отключаем закладку в org-capture")
+  (org-mouse-1-follows-link t)
+  (org-descriptive-links t)
+  (org-todo-keywords '((sequence "TODO" "DONE")
+                       (sequence "TODO-READING" "READING" "|" "FINISHED-READING")))
+  (org-startup-with-inline-images t)
+  (org-startup-indented nil)
+  (org-pretty-entities t)
+  (org-hide-emphasis-markers t)
+  (org-src-fontify-natively t)
+  (org-confirm-babel-evaluate nil)
+  :general
+  (:states 'normal "SPC a a" 'org-agenda)
   :hook
   (org-mode . (lambda ()
-                (setq-local org-preview-latex-image-directory (get-cache-path "images/" t)))))
+                (setq-local org-preview-latex-image-directory (get-cache-path "images/" t))))
+  ;; (org-mode visual-line-mode)
+  )
 #+end_src
 
 #+RESULTS:
@@ -95,99 +114,80 @@
 Мое решение (и =gptel=) для объединения открытия ссылки или запуска src block'а в Emacs одно клавишой =RET=.
 
 #+begin_src emacs-lisp
+(after! org-mode
+  (defun my/org-babel-execute-maybe ()
+    "If point is at a source code block, execute it with org-babel."
+    (interactive)
+    (require 'org)
+    (let ((context (org-element-context)))
+      (when (and context
+                 (eq (car context) 'src-block))
+        (org-babel-execute-src-block))))
 
-(defun my/org-babel-execute-maybe ()
-  "If point is at a source code block, execute it with org-babel."
-  (interactive)
-  (require 'org)
-  (let ((context (org-element-context)))
-    (when (and context
-               (eq (car context) 'src-block))
-      (org-babel-execute-src-block))))
+  (defun my/org-link-maybe ()
+    "If point is at an org-mode link, open it."
+    (interactive)
+    (require 'org)
+    (let ((context (org-element-context)))
+      (when (and context
+                 (eq (car context) 'link)
+                 ;; Ensure the link is not part of a src-block
+                 (not (eq (org-element-property :parent context) 'src-block)))
+        (org-open-at-point))))
 
-(defun my/org-link-maybe ()
-  "If point is at an org-mode link, open it."
-  (interactive)
-  (require 'org)
-  (let ((context (org-element-context)))
-    (when (and context
-               (eq (car context) 'link)
-               ;; Ensure the link is not part of a src-block
-               (not (eq (org-element-property :parent context) 'src-block)))
-      (org-open-at-point))))
+  (defun my/org-dynamic-block-maybe ()
+    "Update org dynamic block if point is at a line starting with #+BEGIN:."
+    (interactive)
+    (require 'org)
+    (save-excursion
+      (beginning-of-line)
+      (when (looking-at-p "^\\s-*#\\+BEGIN:")
+        (org-update-dblock))))
+  (defun my/ret-keybindings ()
+    "It combines my maybe commands together."
+    (interactive)
+    (my/org-babel-execute-maybe)
+    (my/org-link-maybe)
+    (my/org-dynamic-block-maybe))
 
-(defun my/org-dynamic-block-maybe ()
-  "Update org dynamic block if point is at a line starting with #+BEGIN:."
-  (interactive)
-  (require 'org)
-  (save-excursion
-    (beginning-of-line)
-    (when (looking-at-p "^\\s-*#\\+BEGIN:")
-      (org-update-dblock))))
-(defun my/ret-keybindings ()
-  "It combines my maybe commands together."
-  (interactive)
-  (my/org-babel-execute-maybe)
-  (my/org-link-maybe)
-  (my/org-dynamic-block-maybe))
-
-(evil-define-key 'normal org-mode-map (kbd "RET") 'my/ret-keybindings)
+  (evil-define-key 'normal org-mode-map (kbd "RET") 'my/ret-keybindings))
 ;; (add-hook 'org-mode-hook #'auto-fill-mode)
-;; (setq org-agenda-files '("~/.org/roam/2024-08-28-22:33:31-список.org"))
+;; (setq org-agenda-files '("~/.org/roam/2024-08-28-22:33:31-список.org")))
 #+end_src
 
 #+RESULTS:
-** Auto-Fill-Mode
+
+** Org-Babel
 :PROPERTIES:
-:CUSTOM_ID: auto-fill-mode
+:CUSTOM_ID: org-babel
 :END:
 #+begin_src emacs-lisp
-;; (use-package visual-fill-column
-;;   ;; :hook
-;;   ;; (org-mode visual-line)
-;;   :init
-;;   (add-hook 'visual-line-mode-hook #'visual-fill-column-for-vline))
-(add-hook 'org-mode-hook #'visual-line-mode)
+(use-package ob
+  :ensure nil
+  :defer t
+  :config
+  (require 'ob-clojure)
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((emacs-lisp . t)
+     (shell . t)
+     (mermaid . t)
+     (clojure . t)
+     (python . t)
+     ;; (jupyter . t)
+     )))
 #+end_src
-** Hover Links 
-:PROPERTIES:
-:CUSTOM_ID: hover-links
-:END:
-#+begin_src emacs-lisp
-(setq org-mouse-1-follows-link t)
-(setq org-descriptive-links t)
-#+end_src
-
-** Org Custom TODOS
-:PROPERTIES:
-:CUSTOM_ID: org-custom-todos
-:END:
-#+begin_src emacs-lisp
-(setq-default org-todo-keywords '((sequence "TODO" "DONE")
-                                  (sequence "TODO-READING" "READING" "|" "FINISHED-READING")))
-#+end_src
-
-** Org Inline Images
-:PROPERTIES:
-:CUSTOM_ID: org-inline-images
-:END:
-#+begin_src  emacs-lisp
-(setq org-startup-with-inline-images t)
-#+end_src
-
-#+RESULTS:
-: t
 
 ** Org-Appear 
 :PROPERTIES:
 :CUSTOM_ID: org-appear
 :END:
 
-=org-appear= - это пакет, позволяющий динамически скрывать/показывать специальные конструкции, такие как *выделение*, /курсив/, =хорошее выделение=, _подчеркивание_, [[ссылки]].
+=org-appear= - это пакет, позволяющий динамически скрывать/показывать специальные конструкции, такие как *выделение*, /курсив/, =хорошее выделение=, _подчеркивание_, ссылки.
 
 #+begin_src emacs-lisp
 (use-package org-appear
-  :defer 1
+  :after org
   :custom
   (org-appear-autoemphasis t)
   (org-appear-autolinks t)
@@ -217,12 +217,13 @@
 
 #+begin_src emacs-lisp
 (use-package org-make-toc
-  :defer 2
+  :after org
   :config
   (setq org-make-toc-insert-custom-ids t)
   (add-hook 'org-mode-hook #'org-make-toc-mode)
   (my/set-fonts)
   )
+  (my/set-fonts)
 (elpaca-wait)
 #+end_src
 ** Highlight TODO 
@@ -234,6 +235,7 @@
 
 #+begin_src emacs-lisp
 (use-package hl-todo
+  :after org
   :ensure (:depth nil)
   :hook ((org-mode . hl-todo-mode)
          (prog-mode . hl-todo-mode))
@@ -244,6 +246,7 @@
           ("TODO-READING" warning bold)
           ("READING" font-lock-keyword-face bold)
           ("FIXME"      error bold)
+          ("WARNING" error bold)
           ("HACK"       font-lock-constant-face bold)
           ("REVIEW"     font-lock-keyword-face bold)
           ("NOTE"       success bold)
@@ -254,30 +257,13 @@
 (use-package consult-todo
   :after (consult hl-todo))
 #+end_src
-** Org-Bullets
-:PROPERTIES:
-:CUSTOM_ID: org-bullets
-:END:
-
-=org-bullets= - это пакет, меняющий заголовки и превращающий их в нечто более красивое.
-
-#+begin_src emacs-lisp
-(setq org-startup-indented nil
-      org-pretty-entities t)
-;; (use-package org-bullets
-;;   :config
-;;   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
-(elpaca-wait)
-#+end_src
-
-#+RESULTS:
-
 ** Org-Modern
 :PROPERTIES:
 :CUSTOM_ID: org-modern
 :END:
 #+begin_src emacs-lisp
 (use-package org-modern
+  :after org
   :hook (org-mode . org-modern-mode)
   :custom
   ;; (org-modern-hide-stars " ")		; adds extra indentation
@@ -316,35 +302,17 @@
 
 #+RESULTS:
 : [nil 26321 37179 983531 nil elpaca-process-queues nil nil 850000 nil]
-
 ** Org Tempo 
 :PROPERTIES:
 :CUSTOM_ID: org-tempo
 :END:
 
 #+begin_src emacs-lisp
-(require 'org-tempo)
-(add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
-(add-to-list 'org-structure-template-alist '("py" . "src python"))
-(add-to-list 'org-structure-template-alist '("sq" . "src sql"))
-#+end_src
-
-#+RESULTS:
-: ((sq . src sql) (py . src python) (el . src emacs-lisp) (a . export ascii) (c . center) (C . comment) (e . example) (E . export) (h . export html) (l . export latex) (q . quote) (s . src) (v . verse))
-
-** Org Headings Size 
-:PROPERTIES:
-:CUSTOM_ID: org-headings-size
-:END:
-#+begin_src emacs-lisp
-(custom-set-faces
- '(org-level-1 ((t (:inherit outline-1 :height 1.7))))
- '(org-level-2 ((t (:inherit outline-2 :height 1.6))))
- '(org-level-3 ((t (:inherit outline-3 :height 1.5))))
- '(org-level-4 ((t (:inherit outline-4 :height 1.4))))
- '(org-level-5 ((t (:inherit outline-5 :height 1.3))))
- '(org-level-6 ((t (:inherit outline-5 :height 1.2))))
- '(org-level-7 ((t (:inherit outline-5 :height 1.1)))))
+(after! org
+  (require 'org-tempo)
+  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+  (add-to-list 'org-structure-template-alist '("py" . "src python"))
+  (add-to-list 'org-structure-template-alist '("sq" . "src sql")))
 #+end_src
 
 ** Org-Auto-Tangle 
@@ -356,6 +324,7 @@
 
 #+begin_src emacs-lisp
 (use-package org-auto-tangle
+  :after org
   :hook (org-mode . org-auto-tangle-mode)
   :config
   (setq org-auto-tangle-default t))
@@ -370,13 +339,15 @@
 org файл, где находится tangled src blocks. К счастью, я нашел
 решение:
 #+begin_src emacs-lisp
-(defun org-babel-detangle-no-buffer-pop-up (orig-fun &rest args)
-  (save-excursion
-    (let ((display-buffer-alist
-           '((".*" (display-buffer-no-window) (allow-no-window . t)))))
-      (apply orig-fun args))))
+(after! ob-tangle
+  (defun org-babel-detangle-no-buffer-pop-up (orig-fun &rest args)
+    (save-excursion
+      (let ((display-buffer-alist
+             '((".*" (display-buffer-no-window) (allow-no-window . t)))))
+        (apply orig-fun args))))
 
-(advice-add 'org-babel-detangle :around #'org-babel-detangle-no-buffer-pop-up)
+  (advice-add 'org-babel-detangle :around #'org-babel-detangle-no-buffer-pop-up))
+
 #+end_src
 
 ** Org-Fragtog
@@ -388,11 +359,11 @@ org файл, где находится tangled src blocks. К счастью, �
 
 #+begin_src emacs-lisp 
 (use-package org-fragtog
-:after org
-:hook (org-mode . org-fragtog-mode) ; this auto-enables it when you enter an org-buffer, remove if you do not want this
-:config
-;; whatever you want
-)
+  :after org
+  :hook (org-mode . org-fragtog-mode) ; this auto-enables it when you enter an org-buffer, remove if you do not want this
+  :config
+  ;; whatever you want
+  )
 #+end_src
 
 ** Org-LaTeX-Impatient
@@ -418,10 +389,10 @@ org файл, где находится tangled src blocks. К счастью, �
 
 #+begin_src emacs-lisp
 (use-package ob-async
+  :after org
   :config
-
-(setq ob-async-no-async-languages-alist '("jupyter-python" "jupyter-julia" "jupyter-R"))
-)
+  (setq ob-async-no-async-languages-alist '("jupyter-python" "jupyter-julia" "jupyter-R"))
+  )
 #+end_src
 
 ** OB-Mermaid
@@ -429,7 +400,8 @@ org файл, где находится tangled src blocks. К счастью, �
 :CUSTOM_ID: ob-mermaid
 :END:
 #+begin_src emacs-lisp
-(use-package ob-mermaid)
+(use-package ob-mermaid
+  :after ob)
 (elpaca-wait)
 #+end_src
 
@@ -442,6 +414,7 @@ org файл, где находится tangled src blocks. К счастью, �
 :END:
 #+begin_src emacs-lisp
 (use-package chatu
+  :after org
   :ensure (chatu :host github :type git :repo "XenHunt/chatu" :branch "chatu-skip-lines-fix" 
                  :files ("*.el" "*.el.in" "dir" "*.info"
                          "*.texi" "*.texinfo" "doc/dir"
@@ -460,6 +433,7 @@ org файл, где находится tangled src blocks. К счастью, �
   :commands (chatu-add
              chatu-open))
 (use-package consult-chatu              ;
+  :after chatu
   :ensure (consult-chatu :host github :type git :repo "XenHunt/consult-chatu" :branch "master" files ("*.el") :protocol ssh))
 
 (elpaca-wait)
@@ -467,28 +441,6 @@ org файл, где находится tangled src blocks. К счастью, �
 
 #+RESULTS:
 : [nil 26891 26806 68629 nil elpaca-process-queues nil nil 883000 nil]
-
-** ORG-Babel-Load-Languages 
-:PROPERTIES:
-:CUSTOM_ID: org-babel-load-languages
-:END:
-#+begin_src emacs-lisp
-(setq org-src-fontify-natively t)
-(setq org-confirm-babel-evaluate nil)
-(require 'ob-clojure)
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((emacs-lisp . t)
-   (shell . t)
-   (mermaid . t)
-   (clojure . t)
-   (python . t)
-   ;; (jupyter . t)
-   ))
-
-#+end_src
-
-#+RESULTS:
 
 ** Org-Download 
 :PROPERTIES:
@@ -499,7 +451,7 @@ org файл, где находится tangled src blocks. К счастью, �
 
 #+begin_src emacs-lisp
 (use-package org-download
-  :defer 4
+  :after org
   :hook ((org-mode dired-mode) . (lambda ()
             (setq-local org-download-image-dir (get-cache-path "images" t))))
   :config
@@ -513,10 +465,6 @@ org файл, где находится tangled src blocks. К счастью, �
 :END:
 
 =org-ref= позволяет создавать цитаты, кросреференсы, индексы и глоссарии как ссылку в =org=.
-
-:PROPERTIES:
-:CUSTOM_ID: org-ref
-:END:
 #+begin_src emacs-lisp
 ;; (use-package org-ref
 ;; :no-require t)
@@ -531,6 +479,7 @@ org файл, где находится tangled src blocks. К счастью, �
 
 #+begin_src emacs-lisp
 (use-package corg
+  :after org
   :ensure (:host github :repo "isamert/corg.el"))
 #+end_src
 ** Verb
@@ -542,7 +491,6 @@ org файл, где находится tangled src blocks. К счастью, �
 
 #+begin_src emacs-lisp
 (use-package verb
-  :defer 5
   :after org
   :config
   ;; (verb-util--log)
@@ -554,6 +502,7 @@ org файл, где находится tangled src blocks. К счастью, �
 :END:
 #+begin_src emacs-lisp
 (use-package org-sticky-header
+  :after org
   :hook (org-mode . org-sticky-header-mode))
 #+end_src
 
@@ -566,9 +515,7 @@ org файл, где находится tangled src blocks. К счастью, �
 #+begin_src emacs-lisp
 (use-package org-transclusion
   :after org
-  :hook (org-mode . org-transclusion-mode)
-  :init
-  )
+  :hook (org-mode . org-transclusion-mode))
 #+end_src
 
 #+RESULTS:
@@ -583,6 +530,16 @@ org файл, где находится tangled src blocks. К счастью, �
 ;;   :custom (org-tag-beautify-data-dir "~/.emacs.d/.cache/org-tag-beautify/data/")
 ;;   :init (org-tag-beautify-mode 1))
 #+end_src
+** Valign
+:PROPERTIES:
+:CUSTOM_ID: valign
+:END:
+#+begin_src emacs-lisp
+;; (use-package valign
+;;   :after org-mode
+;;   :config
+;;   (add-hook 'org-mode-hook #'valign-mode))
+#+end_src
 ** Раскладка
 :PROPERTIES:
 :CUSTOM_ID: раскладка
@@ -590,202 +547,211 @@ org файл, где находится tangled src blocks. К счастью, �
 [[https://github.com/doomemacs/doomemacs/blob/master/modules/lang/org/config.el][Doom-Config Org-Mode]]
 
 #+begin_src emacs-lisp
-(general-define-key
- :states 'normal
- :keymaps 'org-mode-map
- :prefix "]"
- "h" 'org-next-visible-heading
- )
+(after! org
+  (general-define-key
+   :states 'normal
+   :keymaps 'org-mode-map
+   :prefix "]"
+   "h" 'org-next-visible-heading
+   )
 
-(general-define-key
- :states 'normal
- :keymaps 'org-mode-map
- :prefix "["
- "h" 'org-previous-visible-heading
- )
+  (general-define-key
+   :states 'normal
+   :keymaps 'org-mode-map
+   :prefix "["
+   "h" 'org-previous-visible-heading
+   )
 
-(general-define-key
- :states 'normal
- :keymaps 'org-mode-map
- :prefix "SPC"
+  (general-define-key
+   :states 'normal
+   :keymaps 'org-mode-map
+   :prefix "SPC"
 
- "m #" 'org-update-statistics-cookies
- "m '" 'org-edit-special
- "m *" 'org-ctrl-c-star
- "m +" 'org-ctrl-c-minus
- "m ," 'org-switchb
- "m ." 'org-goto
- "m @" 'org-cite-insert
- "m ." 'consult-org-heading
- "m /" 'consult-org-agenda
- "m A" 'org-archive-subtree-default
- "m e" 'org-export-dispatch
- "m E" 'org-emphasize
- "m f" 'org-footnote-action
- "m h" 'org-toggle-heading
- "m i" 'org-toggle-item
- "m I" 'org-id-get-create
- "m k" 'org-babel-remove-result
- "m n" 'org-store-link
- "m o" 'org-set-property
- "m q" 'org-set-tags-command
- "m t" 'org-todo
- "m T" 'org-todo-list
- "m x" 'org-toggle-checkbox
- 
- ;; Attachments
- "m a a" 'org-attach
- "m a d" 'org-attach-delete-one
- "m a D" 'org-attach-delete-all
- "m a n" 'org-attach-new
- "m a o" 'org-attach-open
- "m a O" 'org-attach-open-in-emacs
- "m a r" 'org-attach-reveal
- "m a R" 'org-attach-reveal-in-emacs
- "m a u" 'org-attach-url
- "m a s" 'org-attach-set-directory
- "m a S" 'org-attach-sync
- "m a c" 'org-download-screenshot
- "m a p" 'org-download-clipboard
- "m a P" 'org-download-yank
+   "m #" 'org-update-statistics-cookies
+   "m '" 'org-edit-special
+   "m *" 'org-ctrl-c-star
+   "m +" 'org-ctrl-c-minus
+   "m ," 'org-switchb
+   "m ." 'org-goto
+   "m @" 'org-cite-insert
+   "m ." 'consult-org-heading
+   "m /" 'consult-org-agenda
+   "m A" 'org-archive-subtree-default
+   "m e" 'org-export-dispatch
+   "m E" 'org-emphasize
+   "m f" 'org-footnote-action
+   "m h" 'org-toggle-heading
+   "m i" 'org-toggle-item
+   "m I" 'org-id-get-create
+   "m k" 'org-babel-remove-result
+   "m n" 'org-store-link
+   "m o" 'org-set-property
+   "m q" 'org-set-tags-command
+   "m t" 'org-todo
+   "m T" 'org-todo-list
+   "m x" 'org-toggle-checkbox
+   
+   ;; Attachments
+   "m a a" 'org-attach
+   "m a d" 'org-attach-delete-one
+   "m a D" 'org-attach-delete-all
+   "m a n" 'org-attach-new
+   "m a o" 'org-attach-open
+   "m a O" 'org-attach-open-in-emacs
+   "m a r" 'org-attach-reveal
+   "m a R" 'org-attach-reveal-in-emacs
+   "m a u" 'org-attach-url
+   "m a s" 'org-attach-set-directory
+   "m a S" 'org-attach-sync
+   "m a c" 'org-download-screenshot
+   "m a p" 'org-download-clipboard
+   "m a P" 'org-download-yank
 
- ;; Transclusion
- "m a t t" 'org-transclusion-make-from-link
- "m a t a" 'org-transclusion-add
- "m a t A" 'org-transclusion-add-all
- "m a t r" 'org-transclusion-remove
- "m a t d" 'org-transclusion-detach
- "m a t l" 'org-transclusion-live-sync-start
- "m a t L" 'org-transclusion-live-sync-exit
- "m a t o" 'org-transclusion-open-source
- 
- ;; Tables
- "m b -" 'org-table-insert-hline
- "m b a" 'org-table-align
- "m b b" 'org-table-blank-field
- "m b e" 'org-table-edit-field
- "m b f" 'org-table-edit-formulas
- "m b h" 'org-table-field-info
- "m b s" 'org-table-sort-lines
- "m b r" 'org-table-recalculate
- "m b R" 'org-table-recalculate-buffer-tables
- "m b d c" 'org-table-delete-column
- "m b d r" 'org-table-kill-row
- "m b i c" 'org-table-insert-column
- "m b i h" 'org-table-insert-hline
- "m b i r" 'org-table-insert-row
- "m b i H" 'org-table-hline-and-move
- "m b t f" 'org-table-toggle-formula-debugger
- "m b t o" 'org-table-toggle-coordinate-overlays
+   ;; Transclusion
+   "m a t t" 'org-transclusion-make-from-link
+   "m a t a" 'org-transclusion-add
+   "m a t A" 'org-transclusion-add-all
+   "m a t r" 'org-transclusion-remove
+   "m a t d" 'org-transclusion-detach
+   "m a t l" 'org-transclusion-live-sync-start
+   "m a t L" 'org-transclusion-live-sync-exit
+   "m a t o" 'org-transclusion-open-source
+   
+   ;; Tables
+   "m b -" 'org-table-insert-hline
+   "m b a" 'org-table-align
+   "m b b" 'org-table-blank-field
+   "m b e" 'org-table-edit-field
+   "m b f" 'org-table-edit-formulas
+   "m b h" 'org-table-field-info
+   "m b s" 'org-table-sort-lines
+   "m b r" 'org-table-recalculate
+   "m b R" 'org-table-recalculate-buffer-tables
 
- ;; Clock
- "m c c" 'org-clock-cancel
- "m c d" 'org-clock-mark-default-task
- "m c e" 'org-clock-modify-effort-estimate
- "m c E" 'org-set-effort
- "m c g" 'org-clock-goto
- "m c i" 'org-clock-in
- "m c I" 'org-clock-in-last
- "m c o" 'org-clock-out
- "m c r" 'org-clock-resolve-clock
- "m c R" 'org-clock-report
- "m c t" 'org-evaluate-time-range
- "m c =" 'org-clock-timestamps-up
- "m c -" 'org-clock-timestamps-down
+   ;; Wide tables workflow
+   "m b m" 'org-mark-element
+   "m b w" 'org-table-wrap-region
+   "m b T" 'org-table-transpose-table-at-point
+   "m b t t" 'toggle-truncate-lines
+   
+   "m b d c" 'org-table-delete-column
+   "m b d r" 'org-table-kill-row
+   "m b i c" 'org-table-insert-column
+   "m b i h" 'org-table-insert-hline
+   "m b i r" 'org-table-insert-row
+   "m b i H" 'org-table-hline-and-move
+   "m b t f" 'org-table-toggle-formula-debugger
+   "m b t o" 'org-table-toggle-coordinate-overlays
 
- ;; Dates
- "m d d" 'org-deadline
- "m d s" 'org-schedule
- "m d t" 'org-time-stamp
- "m d T" 'org-time-stamp-inactive
+   ;; Clock
+   "m c c" 'org-clock-cancel
+   "m c d" 'org-clock-mark-default-task
+   "m c e" 'org-clock-modify-effort-estimate
+   "m c E" 'org-set-effort
+   "m c g" 'org-clock-goto
+   "m c i" 'org-clock-in
+   "m c I" 'org-clock-in-last
+   "m c o" 'org-clock-out
+   "m c r" 'org-clock-resolve-clock
+   "m c R" 'org-clock-report
+   "m c t" 'org-evaluate-time-range
+   "m c =" 'org-clock-timestamps-up
+   "m c -" 'org-clock-timestamps-down
 
- ;; Goto
- "m g g" 'consult-org-heading
- "m g G" 'consult-org-agenda
- "m g c" 'org-clock-goto
- "m g i" 'org-id-goto
- "m g r" 'org-refile-goto-last-stored
- "m g x" 'org-capture-goto-last-stored
+   ;; Dates
+   "m d d" 'org-deadline
+   "m d s" 'org-schedule
+   "m d t" 'org-time-stamp
+   "m d T" 'org-time-stamp-inactive
 
- ;; Links
- "m l i" 'org-id-store-link
- "m l l" 'org-insert-link
- "m l L" 'org-insert-all-links
- "m l s" 'org-store-link
- "m l S" 'org-insert-last-stored-link
- "m l t" 'org-toggle-link-display
+   ;; Goto
+   "m g g" 'consult-org-heading
+   "m g G" 'consult-org-agenda
+   "m g c" 'org-clock-goto
+   "m g i" 'org-id-goto
+   "m g r" 'org-refile-goto-last-stored
+   "m g x" 'org-capture-goto-last-stored
 
- ;; Publish (Зачем это надо - непонятно)
+   ;; Links
+   "m l i" 'org-id-store-link
+   "m l l" 'org-insert-link
+   "m l L" 'org-insert-all-links
+   "m l s" 'org-store-link
+   "m l S" 'org-insert-last-stored-link
+   "m l t" 'org-toggle-link-display
 
- "m P a" 'org-publish-all
- "m P f" 'org-publish-current-file
- "m P p" 'org-publish
- "m P P" 'org-publish-current-project
- "m P s" 'org-publish-sitemap
+   ;; Publish (Зачем это надо - непонятно)
 
- ;; Priority
- "m p d" 'org-priority-down
- "m p p" 'org-priority
- "m p u" 'org-priority-up
+   "m P a" 'org-publish-all
+   "m P f" 'org-publish-current-file
+   "m P p" 'org-publish
+   "m P P" 'org-publish-current-project
+   "m P s" 'org-publish-sitemap
 
- ;; Tree/Subtree
+   ;; Priority
+   "m p d" 'org-priority-down
+   "m p p" 'org-priority
+   "m p u" 'org-priority-up
 
- "m s a" 'org-toggle-archive-tag
- "m s b" 'org-tree-to-indirect-buffer
- "m s c" 'org-clone-subtree-with-time-shift
- "m s d" 'org-cut-subtree
- "m s h" 'org-promote-subtree
- "m s j" 'org-move-subtree-down
- "m s k" 'org-move-subtree-up
- "m s l" 'org-demote-subtree
- "m s n" 'org-narrow-to-subtree
- "m s r" 'org-refile
- "m s s" 'org-sparse-tree
- "m s A" 'org-archive-subtree-default
- "m s N" 'widen
- "m s S" 'org-sort
- 
- ;; Chatu
- "m a c" 'consult-chatu-new
- )
+   ;; Tree/Subtree
 
-(leader-key
-  "n" '(my/org-roam-tmenu :wk "Note menu"))
+   "m s a" 'org-toggle-archive-tag
+   "m s b" 'org-tree-to-indirect-buffer
+   "m s c" 'org-clone-subtree-with-time-shift
+   "m s d" 'org-cut-subtree
+   "m s h" 'org-promote-subtree
+   "m s j" 'org-move-subtree-down
+   "m s k" 'org-move-subtree-up
+   "m s l" 'org-demote-subtree
+   "m s n" 'org-narrow-to-subtree
+   "m s r" 'org-refile
+   "m s s" 'org-sparse-tree
+   "m s A" 'org-archive-subtree-default
+   "m s N" 'widen
+   "m s S" 'org-sort
+   
+   ;; Chatu
+   "m a c" 'consult-chatu-new
+   )
+
+  (leader-key
+    "n" '(my/org-roam-tmenu :wk "Note menu"))
 
 
-;; (general-def 'normal 'override "C-x C-x" """)
-#+end_src
+  ;; (general-def 'normal 'override "C-x C-x" """)
+ #+end_src
 *** Agenda
 :PROPERTIES:
 :CUSTOM_ID: agenda
 :END:
 #+begin_src emacs-lisp
-(general-def
- :states 'normal
- :keymaps 'org-agenda-mode-map
- :prefix "SPC m"
- 
- "q" 'org-agenda-set-tags
- "r" 'org-agenda-refile
- "t" 'org-agenda-todo
- 
- ;; Date
- "d d" 'org-agenda-deadline
- "d s" 'org-agenda-schedule
+(after! org-agenda
+  (general-def
+    :states 'normal
+    :keymaps 'org-agenda-mode-map
+    :prefix "SPC m"
+    
+    "q" 'org-agenda-set-tags
+    "r" 'org-agenda-refile
+    "t" 'org-agenda-todo
+    
+    ;; Date
+    "d d" 'org-agenda-deadline
+    "d s" 'org-agenda-schedule
 
- ;; Clock
- "c c" 'org-agenda-clock-cancel
- "c g" 'org-agenda-clock-goto
- "c i" 'org-agenda-clock-in
- "c o" 'org-agenda-clock-out
- "c r" 'org-agenda-clockreport-mode
- "c s" 'org-agenda-show-clocking-issues
+    ;; Clock
+    "c c" 'org-agenda-clock-cancel
+    "c g" 'org-agenda-clock-goto
+    "c i" 'org-agenda-clock-in
+    "c o" 'org-agenda-clock-out
+    "c r" 'org-agenda-clockreport-mode
+    "c s" 'org-agenda-show-clocking-issues
 
- ;;Priority
- "p d" 'org-agenda-priority-down
- "p p" 'org-agenda-priority
- "p u" 'org-agenda-priority-up
-)
+    ;;Priority
+    "p d" 'org-agenda-priority-down
+    "p p" 'org-agenda-priority
+    "p u" 'org-agenda-priority-up
+    )))
 #+end_src
 
 * Provide

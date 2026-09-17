@@ -1,0 +1,70 @@
+#+TITLE:XenHunt Config (DB)
+#+AUTHOR: Evgeny Berlizov (XenHunt)
+#+DESCRIPTION: XenHunt's config of database working
+#+STARTUP: content
+#+PROPERTY: header-args :tangle db-config.el :results nil
+* Содержание
+:PROPERTIES:
+:TOC:      :include all :depth 100 :force (nothing) :ignore (this) :local (nothing)
+:END:
+:CONTENTS:
+- [[#введение][Введение]]
+- [[#fast-loading][Fast-Loading]]
+- [[#pg][Pg]]
+- [[#clutch][Clutch]]
+- [[#provide][Provide]]
+:END:
+* Введение
+:PROPERTIES:
+:CUSTOM_ID: введение
+:END:
+
+Эта часть конфига посвящена моей попытке интегрировать clutch (UI для работы с БД) в мой workflow.
+
+* Fast-Loading
+:PROPERTIES:
+:CUSTOM_ID: fast-loading
+:END:
+
+Быстрая загрузка модуля.
+
+#+begin_src emacs-lisp
+;; -*- lexical-binding: t;  no-byte-compile: t -*-
+#+end_src
+
+* Pg
+:PROPERTIES:
+:CUSTOM_ID: pg
+:END:
+#+begin_src emacs-lisp
+(use-package pg)
+#+end_src
+
+* Clutch
+:PROPERTIES:
+:CUSTOM_ID: clutch
+:END:
+#+begin_src emacs-lisp
+(use-package clutch
+  :custom
+  (clutch-connect-timeout-seconds 10)
+  (clutch-read-idle-timeout-seconds 30)
+  (clutch-query-timeout-seconds 20)
+  (clutch-jdbc-rpc-timeout-seconds 15)
+  (clutch-jdbc-validate-after-idle-seconds 300)
+  (clutch-connection-alist
+   '(("test-camunda"  . (:backend pg
+                                  :host "127.0.0.1" :port 5432
+                                  :user "camunda"
+                                  :password "camunda"
+                                  :database "camunda"
+                                  :connect-timeout 5
+                                  :read-idle-timeout 60)))))
+#+end_src
+* Provide
+:PROPERTIES:
+:CUSTOM_ID: provide
+:END:
+#+begin_src emacs-lisp
+(provide 'db-config)
+#+end_src

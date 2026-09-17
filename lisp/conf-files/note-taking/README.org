@@ -21,9 +21,8 @@
     - [[#embark][Embark]]
     - [[#roam-integrations][Roam Integrations]]
   - [[#ltex-plus][Ltex-Plus]]
+  - [[#vulpea-test][Vulpea-Test]]
 - [[#provide][Provide]]
-:END:
-
 * Fast-Loading
 :PROPERTIES:
 :CUSTOM_ID: fast-loading
@@ -46,7 +45,7 @@
 :END:
 #+begin_src emacs-lisp
 (use-package org-noter
-  :defer 6
+  :after org
   :custom
   (org-noter-auto-save-last-location t)
   (org-noter-always-create-frame nil)
@@ -86,20 +85,22 @@
 
 #+begin_src emacs-lisp
 (use-package org-roam
-  :defer 3
+  :commands (org-roam-node-find)
   :custom
   (org-roam-complete-everywhere t)
+  (org-roam-db-autosync-idle-delay 10)
+
   :config
-  (if (not (file-directory-p (file-truename "~/.org/roam")))
-      (make-directory (file-truename "~/.org/roam")))
-  (setq org-roam-directory (file-truename "~/.org/roam"))
+  (if (not (file-directory-p (file-truename "~/org/roam")))
+      (make-directory (file-truename "~/org/roam")))
+  (setq org-roam-directory (file-truename "~/org/roam"))
   (setq org-roam-node-display-template "${title:*} ${tags:45}")
   (org-roam-db-autosync-enable)
   
   (defun my/make-rpg-template (key desc template-file tags)
     "Вспомогательная функция для генерации шаблонов RPG заметок."
     (list key desc 'plain
-          `(file ,(concat "~/.org/roam/templates/tabletop/BlackCrusade/" template-file))
+          `(file ,(concat "~/org/roam/templates/tabletop/BlackCrusade/" template-file))
           :if-new `(file+head 
                     ,(concat "tabletop/BlackCrusade/%<%Y-%m-%d-%H:%M:%S>-${slug}.org")
                     ,(concat "#+title: ${title}\n#+category: ${title}\n#+date: %U\n#+filetags: " tags))))
@@ -112,41 +113,41 @@
                               "#+title: ${title}\n#+category: ${title}\n#+date: %U\n")
            :unnarrowed t)
           ("b" "book notes" plain
-           (file "~/.org/roam/templates/book_notes_template.org")
+           (file "~/org/roam/templates/book_notes_template.org")
            :if-new (file+head "%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
                               "#+title: ${title}\n#+category: ${title}\n#+date: %U\n#+filetags: :Book_notes:\n#+pers_rating:\n")
            :unnarrowed t)
           ("m" "library or module of pr-ing language" plain
-           (file "~/.org/roam/templates/programming_module_template.org")
+           (file "~/org/roam/templates/programming_module_template.org")
            :if-new (file+head "%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
                               "#+title: ${title}\n#+category: ${title}\n#+date: %U\n#+filetags: :Library:Programming:\n")
            :unnarrowed t
            )
           ("l" "lecture" plain
-           (file "~/.org/roam/templates/lecture_template.org")
+           (file "~/org/roam/templates/lecture_template.org")
            :if-new (file+head "%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
                               "#+title: ${title}\n#+category: ${title}\n#+date: %U\n#+filetags: :Lecture:\n")
            :unnarrowed t
            )
           ("B" "programming book notes" plain
-           (file "~/.org/roam/templates/programming_book_template.org")
+           (file "~/org/roam/templates/programming_book_template.org")
            :if-new (file+head "%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
                               "#+title: ${title}\n#+category: ${title}\n#+date: %U\n#+filetags: :Book_notes:Programming:\n#+pers_rating:\n")
            :unnarrowed t
            )
           ("h" "habr article" plain
-           (file "~/.org/roam/templates/habr_article_template.org")
+           (file "~/org/roam/templates/habr_article_template.org")
            :if-new (file+head "%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
                               "#+title: ${title}\n#+category: ${title}\n#+date: %U\n#+filetags: :Article:Programming:Habr:\n#+pers_rating:\n")
            :unnarrowed t
            )
           ("o" "definition" plain
-           (file "~/.org/roam/templates/definition.org")
+           (file "~/org/roam/templates/definition.org")
            :if-new (file+head "%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
                               "#+title: ${title}\n#+category: ${title}\n#+date: %U\n")
            :unnarrowed t)
           ("t" "data type" plain
-           (file "~/.org/roam/templates/data_type.org")
+           (file "~/org/roam/templates/data_type.org")
            :if-new (file+head "%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
                               "#+title: ${title}\n#+category: ${title}\n#+date: %U\n#+filetags: :Data_Type:Programming:")
            :unnarrowed t)
@@ -160,7 +161,7 @@
           ;; Dark Heresy 2e
           ("rd" "Dark Heresy 2e")
           ("rdc" "Character Sheet" plain
-           (file "~/.org/roam/templates/tabletop/DH2/char_sheet.org")
+           (file "~/org/roam/templates/tabletop/DH2/char_sheet.org")
            :if-new (file+head "tabletop/DarkHeresy2e/%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
                               "#+title: ${title}\n#+filetags: :Dark_Heresy2e:Character_Sheet:\n#+date: %U")
 
@@ -208,7 +209,7 @@
         org-roam-ui-open-on-start t))
 (use-package consult-org-roam
   ;; :ensure t
-  :after org-roam
+  :after (org-roam consult)
   ;; :init
   ;; (require 'consult-org-roam)
   ;; Activate the minor mode
@@ -238,14 +239,16 @@
   ;; ("C-c n r" . consult-org-roam-search)
   )
 (use-package consult-notes
+  :after consult
   :commands (consult-notes
              consult-notes-search-in-all-notes
              ;; if using org-roam 
              consult-notes-org-roam-find-node
              consult-notes-org-roam-find-node-relation)
   :config
-  (consult-notes-org-roam-mode) 
-  (setq consult-notes-file-dir-sources '(("Roam"  ?o  "~/.org/roam/"))) ;; Set notes dir(s), see below
+  (after! org-roam
+    (consult-notes-org-roam-mode))
+  (setq consult-notes-file-dir-sources '(("Roam"  ?o  "~/org/roam/"))) ;; Set notes dir(s), see below
   ;; ;; Set org-roam integration, denote integration, or org-heading integration e.g.:
   ;; (setq consult-notes-org-headings-files '("~/path/to/file1.org"
   ;;                                          "~/path/to/file2.org"))
@@ -253,7 +256,6 @@
   )
 (elpaca-wait)
 #+end_src
-
 
 *** Org-QL-Roam
 :PROPERTIES:
@@ -264,7 +266,6 @@
 
 #+begin_src emacs-lisp 
 (use-package org-roam-ql
-  :defer 3
   :after (org-roam)
   )
 #+end_src
@@ -279,6 +280,7 @@
 Включаем lexical-binding
 #+begin_src emacs-lisp
 ;; -*- lexical-binding: t;  no-byte-compile: t -*-
+(require 'org-roam)
 #+end_src
 **** Extra functions
 :PROPERTIES:
@@ -304,7 +306,10 @@
 
 (defun my/org-roam-refresh-agenda-list ()
   (interactive)
-  (setq org-agenda-files (my/org-roam-list-notes-by-tag "Project")))
+  (let ((tags '("Project" "TODO")))
+    (dolist (elem tags)
+      (let ((notes (my/org-roam-list-notes-by-tag elem)))
+        (mapc (lambda (el) (add-to-list 'org-agenda-files el)) notes)))))
 
 ;; Build the agenda list the first time for the session
 (my/org-roam-refresh-agenda-list)
@@ -408,27 +413,27 @@ capture was not aborted."
   "Transient menu for org-roam"
   [["Node"
     ("f" "Find" org-roam-node-find :transient nil)
-    ("I" "Create id for heading" org-id-get-create :transient t)
+    ("I" "Create id for heading" org-id-get-create :transient t :if (lambda () (derived-mode-p 'org-mode)))
     ("c" "Capture" org-roam-capture :transient nil)
-    ("e" "Extract subtree" org-roam-extract-subtree :transient nil)
-    ("R" "Refile current (caution!!!)" org-roam-refile :transient nil)
+    ("e" "Extract subtree" org-roam-extract-subtree :transient nil :if (lambda () (derived-mode-p 'org-mode)))
+    ("R" "Refile current (caution!!!)" org-roam-refile :transient nil :if (lambda () (derived-mode-p 'org-mode)))
     ("s" "Search ripgrep" consult-org-roam-search :transient nil)
     ("d" "Dailies>" my/org-roam-dailies-tmenu :if (lambda () (require 'org-roam-dailies nil 'no-error)))]
    ["Projects"
     ("C" "Capture" my/org-roam-capture-task :transient nil)
     ("p" "Find" my/org-roam-find-project :transient nil)]
    ]
-  [["Tag"
+  [["Tag" :if (lambda () (derived-mode-p 'org-mode))
     ("t" "Add" org-roam-tag-add :transient t)
     ("T" "Remove" org-roam-tag-remove :transient t)]
-   ["Alias"
+   ["Alias" :if (lambda () (derived-mode-p 'org-mode))
     ("a" "Add" org-roam-alias-add :transient t)
     ("A" "Remove" org-roam-alias-remove :transient t)]
-   ["Headings"
+   ["Headings" :if (lambda () (derived-mode-p 'org-mode))
     ("[" "Previous" org-previous-visible-heading :transient t)
     ("]" "Next" org-next-visible-heading :transient t)
     ]
-   ["Links"
+   ["Links"  :if (lambda () (derived-mode-p 'org-mode))
     ("i" "Insert" org-roam-node-insert :transient nil)
     ("F" "Forward" consult-org-roam-forward-links :transient nil)
     ("B" "Backlinks" consult-org-roam-backlinks :transient nil)
@@ -451,9 +456,7 @@ capture was not aborted."
 
 Импортируем пакет
 #+begin_src emacs-lisp :tangle note-taking.el
-(after! org-roam
-  (message "Loading org-roam-menu")
-  (require 'org-roam-menu))
+(autoload 'my/org-roam-tmenu "org-roam-menu" "Transient menu for org-roam" t)
 #+end_src
 
 ** Org-Citar
@@ -561,7 +564,7 @@ capture was not aborted."
     (call-interactively #'citar-create-note)))
 
 
-(transient-define-prefix my/bibliography-tmenu ()
+(transient-define-prefix my/bibliography-tmenu-- ()
   "Transient menu for managing bibligraphy (manage with ebib and making notes)"
   [["Bibliographic notes"
     ("c" "Capture" my/citar-org-roam-add-entry :transient nil)
@@ -578,23 +581,67 @@ capture was not aborted."
     ("i" "Import literature" ebib-import-file :transient nil)]]
 [:class transient-row
         (casual-lib-quit-one)])
-
+(defun my/bibliography-tmenu ()
+  (interactive)
+  (require 'ebib)
+  (my/bibliography-tmenu--))
 #+end_src
 
-** Ltex-Plus
+** Vulpea-Test
 :PROPERTIES:
-:CUSTOM_ID: ltex-plus
+:CUSTOM_ID: vulpea-test
 :END:
 #+begin_src emacs-lisp
-(use-package lsp-ltex-plus
-  :init
-  (lsp-ltex-plus-enable-for-modes
-    :restrict-to '(org-mode markdown-mode latex-mode LaTeX-mode))
-  )
+(use-package vulpea
+  :after org
+  :custom
+  (vulpea-db-sync-directories (list "~/org"))
+  (vulpea-db-async-extraction 'full)
+
+
+  ;; (vulpea-db-parse-method 'single-temp-buffer)
+
+  (vulpea-db-sync-debug t)
+  (vulpea-db-worker-debug t)
+
+  ;; (vulpea-db-index-plain-links nil)
+  :config
+
+  (vulpea-db-autosync-mode +1))
 #+end_src
 
-#+RESULTS:
-: [nil 27198 41165 486059 nil elpaca-process-queues nil nil 353000 nil]
+*** Consult-Vulpea
+:PROPERTIES:
+:CUSTOM_ID: consult-vulpea
+:END:
+#+begin_src emacs-lisp
+(use-package consult-vulpea
+  :ensure t
+  :after vulpea
+  :config
+  (consult-vulpea-mode 1))
+#+end_src
+
+*** Embark-Vulpea
+:PROPERTIES:
+:CUSTOM_ID: embark-vulpea
+:END:
+#+begin_src emacs-lisp
+(use-package embark-vulpea
+  :after vulpea
+  :ensure (embark-vulpea :host github :repo "fabcontigiani/embark-vulpea"))
+#+end_src
+
+*** Vulpea-Capf
+:PROPERTIES:
+:CUSTOM_ID: vulpea-capf
+:END:
+#+begin_src emacs-lisp
+(use-package vulpea-capf
+  :after vulpea
+  :ensure (vulpea-capf :host github :repo "neonmei/vulpea-capf")
+  :hook (org-mode . vulpea-capf-mode))
+#+end_src
 
 * Provide
 :PROPERTIES:

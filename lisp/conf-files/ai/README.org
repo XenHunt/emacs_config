@@ -16,6 +16,7 @@
 - [[#gptel][Gptel]]
   - [[#gptel-itself][Gptel Itself]]
   - [[#gptel-commit][Gptel-Commit]]
+  - [[#gptel-agent][Gptel-Agent]]
 - [[#codeium][Codeium]]
 - [[#consult-omni][Consult-Omni]]
 - [[#chatgpt-shell][Chatgpt-Shell]]
@@ -101,9 +102,16 @@
 :END:
 #+begin_src emacs-lisp
 (use-package gptel
-  :defer 4
+  :commands (gptel)
+  :general
+  (:states 'normal "SPC e g g" 'gptel)
+  (:states 'normal "SPC e g m" 'gptel-menu)
+  (:states 'normal "SPC e g c" 'gptel-add)
+  (:states 'normal "SPC e g f" 'gptel-add-file)
+  (:states 'normal "SPC e g a" 'gptel-abort)
+  (:states 'normal "SPC e g s" 'gptel-send)
   :custom
-  (gptel-model 'qwen3:30b-a3b)
+  (gptel-model 'llama.cpp)
   (gptel-default-mode #'org-mode)
   :config
 
@@ -114,10 +122,25 @@
    '((markdown-mode . "[Response] ")
      (org-mode . "*** Response: ")
      (text-mode . "[Response]"))
-   gptel-backend (gptel-make-ollama "Ollama"
+   gptel-backend (gptel-make-openai "open-webui-local"
+                   :host "127.0.0.1:3000"          ; Адрес Open WebUI
+                   :endpoint "/api/chat/completions"           ; Специальный эндпоинт Open WebUI
+                   :protocol "http"
+                   :stream t
+                   :models '("llama.cpp")             ; Имя модели, как она называется в Open WebUI
+                   :key "sk-9e70ebebf57d4cf387e2521b1e0b4f69"))
+  
+  (gptel-make-ollama "Ollama"
                    :host "localhost:11434"
                    :stream t
-                   :models (get-ollama-symbol-models)))
+                   :models (get-ollama-symbol-models))
+  
+  (gptel-make-openai "llama-cpp"          ;Any name
+    :stream t                             ;Stream responses
+    :protocol "http"
+    :host "localhost:8085"                ;Llama.cpp server location
+    :models '(llama.cpp))                    ;Any names, doesn't matter for Llama
+
   ;; (add-to-list 'gptel-directives '(clojure-teacher . "You are a professional programmer-teacher in Clojure. Your task is to write best code with good explaination, answer a questions about the Clojure, do everything to help me master Cloure. Respond concisely."))
   ;; (add-to-list 'gptel-directives '(org-helper . "You are a helper in writing declartive config for Emacs in Org files. Your task is to describe parts of the config with all your master and writes it. Respond concisely."))
   ;; (add-to-list 'gptel-di)
@@ -343,111 +366,119 @@ Example:
 
 #+RESULTS:
 : [nil 26932 23 410782 nil elpaca-process-queues nil nil 656000 nil]
-
+** Gptel-Agent
+:PROPERTIES:
+:CUSTOM_ID: gptel-agent
+:END:
+#+begin_src emacs-lisp
+(use-package gptel-agent
+  :after gptel
+  :commands (gptel-agent))
+#+end_src
 * Codeium 
 :PROPERTIES:
 :CUSTOM_ID: codeium
 :END:
 #+begin_src emacs-lisp
-(use-package codeium
-  :ensure (codeium :host github :repo "Exafunction/codeium.el")
-  :defer 10
-  ;; :custom
-  ;; (setq codeium/metadata/api_key (auth-source-search
-  ;; 				  :host "codeium"
-  ;; 				  :user "api"
-  ;; 				  :require '(:secret)
-  ;; 				  :secret))
+;; (use-package codeium
+;;   :ensure (codeium :host github :repo "Exafunction/codeium.el")
+;;   :defer 10
+;;   ;; :custom
+;;   ;; (setq codeium/metadata/api_key (auth-source-search
+;;   ;; 				  :host "codeium"
+;;   ;; 				  :user "api"
+;;   ;; 				  :require '(:secret)
+;;   ;; 				  :secret))
 
-  ;; if you use straight
-  ;; :straight '(:type git :host github :repo "Exafunction/codeium.el")
-  ;; otherwise, make sure that the codeium.el file is on load-path
+;;   ;; if you use straight
+;;   ;; :straight '(:type git :host github :repo "Exafunction/codeium.el")
+;;   ;; otherwise, make sure that the codeium.el file is on load-path
 
-  :init
-  ;; use globally
-  ;; (add-to-list 'completion-at-point-functions 'codeium-completion-at-point) ;; ПОЧЕМУ-ТО не работает нормально
-  ;; or on a hook
-  ;; (add-hook 'python-mode-hook
-  ;;     (lambda ()
-  ;;         (setq-local completion-at-point-functions '(codeium-completion-at-point))))
+;;   :init
+;;   ;; use globally
+;;   ;; (add-to-list 'completion-at-point-functions 'codeium-completion-at-point) ;; ПОЧЕМУ-ТО не работает нормально
+;;   ;; or on a hook
+;;   ;; (add-hook 'python-mode-hook
+;;   ;;     (lambda ()
+;;   ;;         (setq-local completion-at-point-functions '(codeium-completion-at-point))))
 
-  ;; if you want multiple completion backends, use cape (https://github.com/minad/cape):
-  ;; (add-hook 'python-mode-hook
-  ;;     (lambda ()
-  ;;         (setq-local completion-at-point-functions
-  ;;             (list (cape-super-capf #'codeium-completion-at-point #'lsp-completion-at-point)))))
-  ;; an async company-backend is coming soon!
+;;   ;; if you want multiple completion backends, use cape (https://github.com/minad/cape):
+;;   ;; (add-hook 'python-mode-hook
+;;   ;;     (lambda ()
+;;   ;;         (setq-local completion-at-point-functions
+;;   ;;             (list (cape-super-capf #'codeium-completion-at-point #'lsp-completion-at-point)))))
+;;   ;; an async company-backend is coming soon!
 
-  ;; codeium-completion-at-point is autoloaded, but you can
-  ;; optionally set a timer, which might speed up things as the
-  ;; codeium local language server takes ~0.2s to start up
+;;   ;; codeium-completion-at-point is autoloaded, but you can
+;;   ;; optionally set a timer, which might speed up things as the
+;;   ;; codeium local language server takes ~0.2s to start up
 
-  ;; (add-hook 'emacs-startup-hook
-  ;;           (lambda () (run-with-timer 0.4 nil #'codeium-init)))
+;;   ;; (add-hook 'emacs-startup-hook
+;;   ;;           (lambda () (run-with-timer 0.4 nil #'codeium-init)))
 
-  ;; :defer t ;; lazy loading, if you want
-  :config
-  ;;(setq use-dialog-box nil) ;; do not use popup boxes
+;;   ;; :defer t ;; lazy loading, if you want
+;;   :config
+;;   ;;(setq use-dialog-box nil) ;; do not use popup boxes
 
-  ;; if you don't want to use customize to save the api-key
-  ;; (setq codeium/metadata/api_key "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")
+;;   ;; if you don't want to use customize to save the api-key
+;;   ;; (setq codeium/metadata/api_key "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")
 
-  ;; get codeium status in the modeline
-  ;;(setq codeium-mode-line-enable
-  ;;      (lambda (api) (not (memq api '(CancelRequest Heartbeat AcceptCompletion)))))
-  ;;(add-to-list 'mode-line-format '(:eval (car-safe codeium-mode-line)) t)
-  ;; alternatively for a more extensive mode-line
-  (add-to-list 'mode-line-format '(-50 "" codeium-mode-line) t)
+;;   ;; get codeium status in the modeline
+;;   ;;(setq codeium-mode-line-enable
+;;   ;;      (lambda (api) (not (memq api '(CancelRequest Heartbeat AcceptCompletion)))))
+;;   ;;(add-to-list 'mode-line-format '(:eval (car-safe codeium-mode-line)) t)
+;;   ;; alternatively for a more extensive mode-line
+;;   (add-to-list 'mode-line-format '(-50 "" codeium-mode-line) t)
 
-  ;; use M-x codeium-diagnose to see apis/fields that would be sent to the local language server
-  (setq codeium-api-enabled
-	(lambda (api)
-          (memq api '(GetCompletions Heartbeat CancelRequest GetAuthToken RegisterUser auth-redirect AcceptCompletion))))
-  ;; you can also set a config for a single buffer like this:
-  ;; (add-hook 'python-mode-hook
-  ;;     (lambda ()
-  ;;         (setq-local codeium/editor_options/tab_size 4)))
+;;   ;; use M-x codeium-diagnose to see apis/fields that would be sent to the local language server
+;;   (setq codeium-api-enabled
+;; 	(lambda (api)
+;;           (memq api '(GetCompletions Heartbeat CancelRequest GetAuthToken RegisterUser auth-redirect AcceptCompletion))))
+;;   ;; you can also set a config for a single buffer like this:
+;;   ;; (add-hook 'python-mode-hook
+;;   ;;     (lambda ()
+;;   ;;         (setq-local codeium/editor_options/tab_size 4)))
 
-  ;; You can overwrite all the codeium configs!
-  ;; for example, we recommend limiting the string sent to codeium for better performance
-  (defun my-codeium/document/text ()
-    (buffer-substring-no-properties (max (- (point) 3000) (point-min)) (min (+ (point) 1000) (point-max))))
-  ;; if you change the text, you should also change the cursor_offset
-  ;; warning: this is measured by UTF-8 encoded bytes
-  (defun my-codeium/document/cursor_offset ()
-    (codeium-utf8-byte-length
-     (buffer-substring-no-properties (max (- (point) 3000) (point-min)) (point))))
-  (setq codeium/document/text 'my-codeium/document/text)
-  (setq codeium/document/cursor_offset 'my-codeium/document/cursor_offset))
+;;   ;; You can overwrite all the codeium configs!
+;;   ;; for example, we recommend limiting the string sent to codeium for better performance
+;;   (defun my-codeium/document/text ()
+;;     (buffer-substring-no-properties (max (- (point) 3000) (point-min)) (min (+ (point) 1000) (point-max))))
+;;   ;; if you change the text, you should also change the cursor_offset
+;;   ;; warning: this is measured by UTF-8 encoded bytes
+;;   (defun my-codeium/document/cursor_offset ()
+;;     (codeium-utf8-byte-length
+;;      (buffer-substring-no-properties (max (- (point) 3000) (point-min)) (point))))
+;;   (setq codeium/document/text 'my-codeium/document/text)
+;;   (setq codeium/document/cursor_offset 'my-codeium/document/cursor_offset))
 
-(defun my/complete-codeium ()
-  "Manual codeium running"
-  (interactive)
-  (when (not (member 'codeium-completion-at-point completion-at-point-functions))
-    (setq capb completion-at-point-functions) ; Резервируем в переменную capb текущее состояние
-    (setq completion-at-point-functions '(codeium-completion-at-point t)) ; Подключаем Codeium
-    (call-interactively 'corfu-complete) ; Вызываем Company
-    (setq completion-at-point-functions capb)
-    (kill-local-variable 'capb))) ; Возвращаем все на свои места
+;; (defun my/complete-codeium ()
+;;   "Manual codeium running"
+;;   (interactive)
+;;   (when (not (member 'codeium-completion-at-point completion-at-point-functions))
+;;     (setq capb completion-at-point-functions) ; Резервируем в переменную capb текущее состояние
+;;     (setq completion-at-point-functions '(codeium-completion-at-point t)) ; Подключаем Codeium
+;;     (call-interactively 'corfu-complete) ; Вызываем Company
+;;     (setq completion-at-point-functions capb)
+;;     (kill-local-variable 'capb))) ; Возвращаем все на свои места
 
-(defun my/strict-complete-codeium ()
-  "Manual codeium running, but works even when auto completion is on"
-  (interactive)
-  (setq capb completion-at-point-functions) ; Резервируем в переменную capb текущее состояние
-  (setq completion-at-point-functions '(codeium-completion-at-point t)) ; Подключаем Codeium
-  (call-interactively 'corfu-complete) ; Вызываем Company
-  (setq completion-at-point-functions capb)
-  (kill-local-variable 'capb)) ; Возвращаем все на свои места
+;; (defun my/strict-complete-codeium ()
+;;   "Manual codeium running, but works even when auto completion is on"
+;;   (interactive)
+;;   (setq capb completion-at-point-functions) ; Резервируем в переменную capb текущее состояние
+;;   (setq completion-at-point-functions '(codeium-completion-at-point t)) ; Подключаем Codeium
+;;   (call-interactively 'corfu-complete) ; Вызываем Company
+;;   (setq completion-at-point-functions capb)
+;;   (kill-local-variable 'capb)) ; Возвращаем все на свои места
 
-(defun my/toggle-codeium ()
-  "Manually toggle codeium auto completion"
-  (interactive)
-  (if (member 'codeium-completion-at-point completion-at-point-functions)
-      (progn
-	(setq completion-at-point-functions (delq 'codeium-completion-at-point completion-at-point-functions))
-	(message "Codeium auto complete off"))
-    (add-to-list 'completion-at-point-functions 'codeium-completion-at-point)
-    (message "Codeium auto complete on")))
+;; (defun my/toggle-codeium ()
+;;   "Manually toggle codeium auto completion"
+;;   (interactive)
+;;   (if (member 'codeium-completion-at-point completion-at-point-functions)
+;;       (progn
+;; 	(setq completion-at-point-functions (delq 'codeium-completion-at-point completion-at-point-functions))
+;; 	(message "Codeium auto complete off"))
+;;     (add-to-list 'completion-at-point-functions 'codeium-completion-at-point)
+;;     (message "Codeium auto complete on")))
 #+end_src
 * Consult-Omni
 :PROPERTIES:
@@ -455,9 +486,10 @@ Example:
 :END:
 #+begin_src emacs-lisp
 (use-package consult-omni
-  :defer 1
+  :defer t
   :ensure (consult-omni :type git :host github :repo "armindarvish/consult-omni" :branch "develop" :files (:defaults "sources/*.el"))
   :after consult
+  :commands (consult-omni-apps consult-omni-fd consult-omni-git-grep consult-omni-ripgrep-all consult-omni-ripgrep)
   :custom
   (consult-omni-gptel-model "llama3.1:8b")
   (consult-omni-show-preview t)

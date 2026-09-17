@@ -75,3 +75,10 @@
 /persist/
 /secrets.el
 */*tex-config.el
+/var/
+/vulpea..*
+/vulpea
+/vulpea.*
+/etc/
+/lisp/test/
+/lsp-ltex-plus/
