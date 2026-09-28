@@ -13,6 +13,7 @@
 - [[#загрузка-конфига][Загрузка конфига]]
   - [[#загрузка-скриптов][Загрузка скриптов]]
   - [[#base][Base]]
+  - [[#completions][Completions]]
   - [[#custom][Custom]]
   - [[#fold][Fold]]
   - [[#other][Other]]
@@ -104,6 +105,14 @@
 #+begin_src emacs-lisp
 (add-to-list 'load-path "~/.emacs.d/lisp/conf-files/other/")
 (require 'other)
+#+end_src
+** Completions
+:PROPERTIES:
+:CUSTOM_ID: completions
+:END:
+#+begin_src emacs-lisp
+(add-to-list 'load-path "~/.emacs.d/lisp/conf-files/completion/")
+(require 'completions)
 #+end_src
 ** Org
 :PROPERTIES:

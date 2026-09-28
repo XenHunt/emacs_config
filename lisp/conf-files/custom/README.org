@@ -105,20 +105,25 @@
 (use-package doom-themes
   :config
   ;; (load-theme 'doom-moonlight t)
+  
   (setq doom-themes-enable-bold t    ; Включаем bold
         doom-themes-enable-italic t); Включаем italic
   (set-frame-parameter nil 'alpha-background 90) ; Set transparency to 85%
   (add-to-list 'default-frame-alist '(alpha-background . 90)) ; Set transparency for new frames
   (doom-themes-org-config)
-  (custom-set-faces '(region ((t (:inherit nil :background "purple4"))))
-                    '(doom-modeline-evil-insert-state ((t (:foreground "firebrick4"))))
-                    '(doom-modeline-evil-visual-state ((t (:inherit doom-modeline-warning :foreground "purple2"))))
-                    '(org-verbatim ((t (:foreground "green1"))))
-                    ;; '(whitespace-tab)
-                    '(lsp-signature-posframe ((t (:inherit lsp-ui-doc-background))))
-                    '(lsp-signature-postframe ((t (:inherit (lsp-ui-doc-background)))))
-                    '(isearch-fail ((t (:foreground "white" :background "red"))))))
-#+end_src
+  ;; (custom-set-faces '(region ((t (:inherit nil :background "purple4"))))
+  ;;                   '(doom-modeline-evil-insert-state ((t (:foreground "firebrick4"))))
+  ;;                   '(doom-modeline-evil-visual-state ((t (:inherit doom-modeline-warning :foreground "purple2"))))
+  ;;                   '(org-verbatim ((t (:foreground "green1"))))
+  ;;                   ;; '(whitespace-tab)
+  ;;                   '(lsp-signature-posframe ((t (:inherit lsp-ui-doc-background))))
+  ;;                   '(lsp-signature-postframe ((t (:inherit (lsp-ui-doc-background)))))
+  ;;                   '(isearch-fail ((t (:foreground "white" :background "red")))))
+  
+  (load-file "/home/berlizoves/.emacs.d/themes/doom-slaanesh-theme.el")
+  (load-theme 'doom-slaanesh t)
+  )
+  #+end_src
 ** Spacemacs Theme
 :PROPERTIES:
 :CUSTOM_ID: spacemacs-theme
@@ -162,8 +167,7 @@
 ;;   :ensure (:type git :host github :repo "thongpv87/rose-pine-emacs" :branch "main" :main "rose-pine-color-theme.el" :files ("*.el"))
 ;;   :init
 ;;   (add-to-list 'custom-theme-load-path (concat elpaca-builds-directory "/rose-pine-emacs")))
-(load-file "/home/berlizoves/.emacs.d/themes/slaanesh-dark-theme.el")
-(load-theme 'slaanesh-dark t)
+;; (load-theme 'slaanesh-dark t)
 #+end_src
 
 #+RESULTS:
@@ -176,6 +180,8 @@
 #+begin_src emacs-lisp
 (use-package doom-modeline
   :ensure t
+  :custom
+  (doom-modeline-modal-icon nil)
   :init (doom-modeline-mode 1))
 #+end_src
 ** Fonts
@@ -440,8 +446,8 @@
 :END:
 #+begin_src emacs-lisp
 (use-package rainbow-delimiters
-  ;; :hook ((emacs-lisp-mode . rainbow-delimiters-mode)
-  ;;        (prog-mode . rainbow-delimiters-mode))
+  :hook ((emacs-lisp-mode . rainbow-delimiters-mode)
+         (prog-mode . rainbow-delimiters-mode))
   )
 #+end_src
 ** Rainbow Identifiers 
@@ -459,36 +465,36 @@
 :CUSTOM_ID: prismel
 :END:
 #+begin_src emacs-lisp
-(use-package prism
-  ;; :elpaca (prism :fetcher github :repo "alphapapa/prism.el")
-  :hook (
-	 ((python-mode python-ts-mode html-mode vue-html-mode yaml-mode yaml-ts-mode) . prism-whitespace-mode)
-	 ((javascript-mode js-ts-mode js-mode js2-mode css-mode typescript-mode typescript-ts-mode tsx-ts-mode json-mode yaml-mode html-mode markdown-mode  latex-mode bash-mode scheme-mode janet-mode janet-ts-mode go-mode go-ts-mode lisp-mode sh-mode bash-ts-mode qml-ts-mode lua-mode lua-ts-mode) . prism-mode)
-	 )
-  :mode
-  (("\\.html\\'" . (lambda () (prism-whitespace-mode) (setq-local prism-whitespace-indent-offset 2))))
-  :init
-  ;;(message (member 'prism-mode #'emacs-lisp-mode-hook))
-  (defun my/set-elisp-prism()
-  (interactive)
-  ;; (message  (string(memq 'prism-mode emacs-lisp-mode-hook)))
-    (unless (member 'prism-mode emacs-lisp-mode-hook)
-      (add-hook 'emacs-lisp-mode-hook #'prism-mode)
-      )
-    )
+;; (use-package prism
+;;   ;; :elpaca (prism :fetcher github :repo "alphapapa/prism.el")
+;;   :hook (
+;; 	 ((python-mode python-ts-mode html-mode vue-html-mode yaml-mode yaml-ts-mode) . prism-whitespace-mode)
+;; 	 ((javascript-mode js-ts-mode js-mode js2-mode css-mode typescript-mode typescript-ts-mode tsx-ts-mode json-mode yaml-mode html-mode markdown-mode  latex-mode bash-mode scheme-mode janet-mode janet-ts-mode go-mode go-ts-mode lisp-mode sh-mode bash-ts-mode qml-ts-mode lua-mode lua-ts-mode) . prism-mode)
+;; 	 )
+;;   :mode
+;;   (("\\.html\\'" . (lambda () (prism-whitespace-mode) (setq-local prism-whitespace-indent-offset 2))))
+;;   :init
+;;   ;;(message (member 'prism-mode #'emacs-lisp-mode-hook))
+;;   (defun my/set-elisp-prism()
+;;   (interactive)
+;;   ;; (message  (string(memq 'prism-mode emacs-lisp-mode-hook)))
+;;     (unless (member 'prism-mode emacs-lisp-mode-hook)
+;;       (add-hook 'emacs-lisp-mode-hook #'prism-mode)
+;;       )
+;;     )
 
-  (defun my/set-clojure-prism ()
-    (unless (member 'prism-mode clojure-mode-hook)
-      (add-hook 'clojure-mode-hook #'prism-mode))
-    (unless (member 'prism-mode clojure-ts-mode-hook)
-      (add-hook 'clojure-ts-mode-hook #'prism-mode)))
+;;   (defun my/set-clojure-prism ()
+;;     (unless (member 'prism-mode clojure-mode-hook)
+;;       (add-hook 'clojure-mode-hook #'prism-mode))
+;;     (unless (member 'prism-mode clojure-ts-mode-hook)
+;;       (add-hook 'clojure-ts-mode-hook #'prism-mode)))
 
-  (add-hook 'server-after-make-frame-hook 'my/set-elisp-prism)
+;;   (add-hook 'server-after-make-frame-hook 'my/set-elisp-prism)
 
-  (add-hook 'server-after-make-frame-hook 'my/set-clojure-prism)
-  ;; (my/set-elisp-prism)
-  ;; (prism-set-colors)
-  )
+;;   (add-hook 'server-after-make-frame-hook 'my/set-clojure-prism)
+;;   ;; (my/set-elisp-prism)
+;;   ;; (prism-set-colors)
+;;   )
 #+end_src
 ** Ligatures 
 :PROPERTIES:
@@ -522,6 +528,20 @@
 :END:
 #+begin_src emacs-lisp
 (use-package highlight-indent-guides
+  :custom
+  (highlight-indent-guides-method 'bitmap)
+  (highlight-indent-guides-auto-stack-character-face-perc 150)
+  (highlight-indent-guides-auto-odd-face-perc 150)
+  (highlight-indent-guides-auto-even-face-perc 150)
+  ;; Don't know what is it
+  ;; (highlight-indent-guides-auto-top-odd-face-perc 550) ;;
+  ;; (highlight-indent-guides-auto-top-even-face-perc 250) ;
+  ;; Bitmap
+  (highlight-indent-guides-auto-character-face-perc 350)
+  ;; Shit
+  (highlight-indent-guides-auto-stack-odd-face-perc 250)
+  (highlight-indent-guides-auto-stack-even-face-perc 250)
+  (highlight-indent-guides-auto-top-character-face-perc 250)
   :hook (prog-mode . highlight-indent-guides-mode)
   )
 #+end_src

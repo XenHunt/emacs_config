@@ -75,7 +75,17 @@
   (eglot-autoshutdown t)
   (eglot-events-buffer-config '(:size 0 :format short))
   (eglot-sync-connect nil)
+  :init
+  (defun my/eglot-setup-completions ()
+    (let ((completions '()))
+      (add-to-list 'completions #'cape-dabbrev)
+      (add-to-list 'completions (my/emoji-capf))
+      (add-to-list 'completions #'cape-file)
+      (add-to-list 'completions (my/eglot-super-capf))
+      (add-to-list 'completions #'yasnippet-capf)
+      (setq-local completion-at-point-functions completions)))
   :config
+  (add-to-list 'eglot-managed-mode-hook #'my/eglot-setup-completions)
   (add-to-list 'eglot-server-programs
                '(qml-ts-mode . ("qmlls" "-E")))
   (add-to-list 'eglot-server-programs
@@ -96,7 +106,7 @@
                '(jenkinsfile-mode . ("jenkinsfile-lsp")))
   
   (add-to-list 'eglot-server-programs
-               '((python-mode python-ts-mode) . ("rass" "python")))
+               '((python-mode python-ts-mode) . ("rass" "--" "ty" "server" "--" "ruff" "server" "--preview")))
 
   (after! flycheck
     (global-flycheck-eglot-mode))

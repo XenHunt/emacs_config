@@ -58,7 +58,6 @@
 ;; -*- lexical-binding: t;  no-byte-compile: t -*-
 #+end_src
 
-
 * Org-Mode
 :PROPERTIES:
 :CUSTOM_ID: org-mode
@@ -174,6 +173,7 @@
      (mermaid . t)
      (clojure . t)
      (python . t)
+     (csharp . t)
      ;; (jupyter . t)
      )))
 #+end_src

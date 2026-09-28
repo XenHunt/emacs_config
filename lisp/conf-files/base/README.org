@@ -409,7 +409,7 @@ Otherwise, return the path as is."
     "s i" '(consult-imenu :wk "Imenu")
     "s f" '(consult-omni-fd :wk "File")
     "s a" '(consult-omni-apps :wk "Apps")
-    "s t" '(consult-omni-ripgrep :wk "Text")
+    "s t" '(consult-ripgrep :wk "Text")
     "s T" '(consult-omni-ripgrep-all :wk "Text (even pdf, archives and etc)")
     "s g" '(consult-omni-git-grep :wk "Git Files")
     "s m" '(consult-man :wk "Man pages")

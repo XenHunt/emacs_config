@@ -43,6 +43,7 @@
   - [[#go][Go]]
   - [[#qml][QML]]
   - [[#csharp][CSharp]]
+    - [[#csharp-babel][CSharp-Babel]]
   - [[#lua][Lua]]
   - [[#jupyter][Jupyter]]
     - [[#code-cells][Code-Cells]]
@@ -149,6 +150,14 @@
   (push '(emacs-lisp-mode
           ("emacs:bytecompile" . (lambda () (byte-compile-file (buffer-file-name)))))
         compile-multi-config)
+  (after! dape
+    (advice-add #'compile-multi :around (lambda (orig-fun &rest args)
+                                          (if (bound-and-true-p dape-active-mode)
+                                              (let ((display-buffer-alist 
+                                                     '(("\\*\\(compilation\\|compile-multi\\)\\*" 
+                                                        (display-buffer-no-window)))))
+                                                (apply orig-fun args))
+                                            (apply orig-fun args)))))
   )
 #+end_src
 
@@ -672,7 +681,8 @@ DOCS are documentation strings to set."
 
 (use-package csharp-mode
   :ensure nil
-  :hook ((csharp-mode csharp-ts-mode) . prism-mode))
+  ;; :hook ((csharp-mode csharp-ts-mode) . prism-mode)
+  )
 (after! web-mode
 
   ;; Подсветка и отступы для Razor
@@ -693,6 +703,20 @@ DOCS are documentation strings to set."
 
 #+RESULTS:
 : [nil 26786 4999 666513 nil elpaca-process-queues nil nil 190000 nil]
+*** CSharp-Babel
+:PROPERTIES:
+:CUSTOM_ID: csharp-babel
+:END:
+#+begin_src emacs-lisp
+(use-package ob-csharp
+  :ensure (ob-csharp :host codeberg :repo "buoso/csharp-babel" :branch "dev" :main "ob-csharp.el")
+  :after ob
+  :custom
+  (org-babel-default-header-args:csharp '((main (no)) (nugetconfig . :any) (framework . :any)
+                                          (class (no nil :any)) (references . :any) (usings . :any)
+                                          (cmdline . :any) (:async t))))
+#+end_src
+
 ** Lua
 :PROPERTIES:
 :CUSTOM_ID: lua
@@ -913,8 +937,9 @@ inside a Jupyter src-block, return nil."
   :mode "\\.vue\\'"
   :config
   (add-to-list 'apheleia-mode-alist '(vue-mode . prettier))
-  (after! prism
-    (add-to-list 'prism-whitespace-mode-indents '(vue-mode . vue-html-tab-width))))
+  ;; (after! prism
+  ;;   (add-to-list 'prism-whitespace-mode-indents '(vue-mode . vue-html-tab-width)))
+  )
 ;; (use-package vue-ts-mode
 ;;   :mode "\\.vue\\'"
 ;;   :ensure (vue-ts-mode
