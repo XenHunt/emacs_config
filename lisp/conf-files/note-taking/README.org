@@ -474,7 +474,7 @@ capture was not aborted."
   :hook
   (LaTeX-mode . citar-capf-setup)
   (org-mode . citar-capf-setup)
-  :init
+  :config
   (defvar citar-indicator-notes-icons
     (citar-indicator-create
      :symbol (nerd-icons-mdicon

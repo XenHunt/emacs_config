@@ -77,13 +77,12 @@
   (eglot-sync-connect nil)
   :init
   (defun my/eglot-setup-completions ()
-    (let ((completions '()))
-      (add-to-list 'completions #'cape-dabbrev)
-      (add-to-list 'completions (my/emoji-capf))
-      (add-to-list 'completions #'cape-file)
-      (add-to-list 'completions (my/eglot-super-capf))
-      (add-to-list 'completions #'yasnippet-capf)
-      (setq-local completion-at-point-functions completions)))
+    (setq-local completion-at-point-functions (list
+                                               #'yasnippet-capf
+                                               (my/eglot-super-capf)
+                                               #'cape-file
+                                               (my/emoji-capf)
+                                               #'cape-dabbrev)))
   :config
   (add-to-list 'eglot-managed-mode-hook #'my/eglot-setup-completions)
   (add-to-list 'eglot-server-programs
@@ -185,6 +184,12 @@
     (read-only-mode +1)
     )
   (advice-add #'eldoc-box-focus-frame :after #'my/eldoc-box-add-evil-unfocus)
+  (after! embark
+    (defun my-eldoc-box-clear-before-embark (&rest _)
+    "Закрывает childframe `eldoc-box` перед запуском embark-act."
+    (when (fboundp 'eldoc-box--quit-frame-not-in-childframe)
+      (eldoc-box--quit-frame-not-in-childframe)))
+    (advice-add #'embark-act :before #'my-eldoc-box-clear-before-embark))
   :bind
   (:map eldoc-mode
         ("C-c f" . eldoc-box-focus-frame)
