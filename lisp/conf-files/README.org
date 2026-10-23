@@ -13,10 +13,10 @@
 - [[#загрузка-конфига][Загрузка конфига]]
   - [[#загрузка-скриптов][Загрузка скриптов]]
   - [[#base][Base]]
-  - [[#completions][Completions]]
   - [[#custom][Custom]]
   - [[#fold][Fold]]
   - [[#other][Other]]
+  - [[#completions][Completions]]
   - [[#org][Org]]
   - [[#programming][Programming]]
   - [[#tex][Tex]]
@@ -161,7 +161,7 @@
 :CUSTOM_ID: ai
 :END:
 
-Эта часть посвящена добавлению ИИ (=Codeium= и =gptel=) в =Emacs=. Подробнее: [[./ai/README.org][README для ИИ]]
+Эта часть посвящена добавлению ИИ (=gptel=) в =Emacs=. Подробнее: [[./ai/README.org][README для ИИ]]
 
 #+begin_src emacs-lisp
 (add-to-list 'load-path "~/.emacs.d/lisp/conf-files/ai/")

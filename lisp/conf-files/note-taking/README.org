@@ -49,8 +49,7 @@
   :custom
   (org-noter-auto-save-last-location t)
   (org-noter-always-create-frame nil)
-  (org-noter-notes-search-path "~/.org/roam/citar-notes")
-  (org-noter-notes-path (file-truename "~/.org/roam/citar-notes"))
+  (org-noter-notes-search-path (file-truename "~/org/roam/citar-notes"))
   :init
   ;; (setq org-noter-notes-path (file-truename "~/.org/roam/citar-notes"))
   
@@ -85,15 +84,15 @@
 
 #+begin_src emacs-lisp
 (use-package org-roam
+  ;; :if nil
   :commands (org-roam-node-find)
   :custom
   (org-roam-complete-everywhere t)
   (org-roam-db-autosync-idle-delay 10)
-
+  (org-roam-directory (file-truename "~/org/roam"))
   :config
   (if (not (file-directory-p (file-truename "~/org/roam")))
       (make-directory (file-truename "~/org/roam")))
-  (setq org-roam-directory (file-truename "~/org/roam"))
   (setq org-roam-node-display-template "${title:*} ${tags:45}")
   (org-roam-db-autosync-enable)
   
@@ -101,7 +100,7 @@
     "Вспомогательная функция для генерации шаблонов RPG заметок."
     (list key desc 'plain
           `(file ,(concat "~/org/roam/templates/tabletop/BlackCrusade/" template-file))
-          :if-new `(file+head 
+          :target `(file+head 
                     ,(concat "tabletop/BlackCrusade/%<%Y-%m-%d-%H:%M:%S>-${slug}.org")
                     ,(concat "#+title: ${title}\n#+category: ${title}\n#+date: %U\n#+filetags: " tags))))
   
@@ -109,46 +108,46 @@
         `(
           ("d" "default" plain
            "%?"
-           :if-new (file+head "%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
+           :target (file+head "%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
                               "#+title: ${title}\n#+category: ${title}\n#+date: %U\n")
            :unnarrowed t)
           ("b" "book notes" plain
            (file "~/org/roam/templates/book_notes_template.org")
-           :if-new (file+head "%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
+           :target (file+head "%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
                               "#+title: ${title}\n#+category: ${title}\n#+date: %U\n#+filetags: :Book_notes:\n#+pers_rating:\n")
            :unnarrowed t)
           ("m" "library or module of pr-ing language" plain
            (file "~/org/roam/templates/programming_module_template.org")
-           :if-new (file+head "%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
+           :target (file+head "%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
                               "#+title: ${title}\n#+category: ${title}\n#+date: %U\n#+filetags: :Library:Programming:\n")
            :unnarrowed t
            )
           ("l" "lecture" plain
            (file "~/org/roam/templates/lecture_template.org")
-           :if-new (file+head "%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
+           :target (file+head "%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
                               "#+title: ${title}\n#+category: ${title}\n#+date: %U\n#+filetags: :Lecture:\n")
            :unnarrowed t
            )
           ("B" "programming book notes" plain
            (file "~/org/roam/templates/programming_book_template.org")
-           :if-new (file+head "%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
+           :target (file+head "%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
                               "#+title: ${title}\n#+category: ${title}\n#+date: %U\n#+filetags: :Book_notes:Programming:\n#+pers_rating:\n")
            :unnarrowed t
            )
           ("h" "habr article" plain
            (file "~/org/roam/templates/habr_article_template.org")
-           :if-new (file+head "%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
+           :target (file+head "%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
                               "#+title: ${title}\n#+category: ${title}\n#+date: %U\n#+filetags: :Article:Programming:Habr:\n#+pers_rating:\n")
            :unnarrowed t
            )
           ("o" "definition" plain
            (file "~/org/roam/templates/definition.org")
-           :if-new (file+head "%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
+           :target (file+head "%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
                               "#+title: ${title}\n#+category: ${title}\n#+date: %U\n")
            :unnarrowed t)
           ("t" "data type" plain
            (file "~/org/roam/templates/data_type.org")
-           :if-new (file+head "%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
+           :target (file+head "%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
                               "#+title: ${title}\n#+category: ${title}\n#+date: %U\n#+filetags: :Data_Type:Programming:")
            :unnarrowed t)
           
@@ -162,7 +161,7 @@
           ("rd" "Dark Heresy 2e")
           ("rdc" "Character Sheet" plain
            (file "~/org/roam/templates/tabletop/DH2/char_sheet.org")
-           :if-new (file+head "tabletop/DarkHeresy2e/%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
+           :target (file+head "tabletop/DarkHeresy2e/%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
                               "#+title: ${title}\n#+filetags: :Dark_Heresy2e:Character_Sheet:\n#+date: %U")
 
            :unnarrowed t)
@@ -193,7 +192,7 @@
   
   (setq org-roam-dailies-capture-templates
         '(("d" "default" entry "* %<%I:%M %p>\n%?"
-           :if-new (file+head "%<%Y-%m-%d>.org" "#+title:%<%Y-%m-%d>\n#+filetags: :Dailies:"))))
+           :target (file+head "%<%Y-%m-%d>.org" "#+title:%<%Y-%m-%d>\n#+filetags: :Dailies:"))))
   )
 (elpaca-wait)
 ;; (use-package websoket
@@ -255,7 +254,7 @@
   ;; (consult-notes-org-headings-mode)
   )
 (elpaca-wait)
-#+end_src
+  #+end_src
 
 *** Org-QL-Roam
 :PROPERTIES:
@@ -268,6 +267,35 @@
 (use-package org-roam-ql
   :after (org-roam)
   )
+#+end_src
+
+*** Легкая загрузку проектов в Org-Agenda
+:PROPERTIES:
+:CUSTOM_ID: легкая-загрузку-проектов-в-org-agenda
+:END:
+#+begin_src emacs-lisp
+(after! org-roam
+  (defun my/org-roam-filter-by-tag (tag-name)
+    ;; (message (format "tag-name - %s" tag-name))
+    (lambda (node)
+      (member tag-name (org-roam-node-tags node))))
+
+  (defun my/org-roam-list-notes-by-tag (tag-name)
+    (mapcar #'org-roam-node-file
+            (seq-filter
+             (my/org-roam-filter-by-tag tag-name)
+             (org-roam-node-list))))
+
+  (defun my/org-roam-refresh-agenda-list ()
+    (interactive)
+    (require 'org-roam)
+    (let ((tags '("Project" "TODO")))
+      (dolist (elem tags)
+        (let ((notes (my/org-roam-list-notes-by-tag elem)))
+          (mapc (lambda (el) (add-to-list 'org-agenda-files el)) notes)))))
+
+  ;; Build the agenda list the first time for the session after 5 sec
+  (add-hook 'after-init-hook (lambda () (run-with-idle-timer 5 nil #'my/org-roam-refresh-agenda-list ))))
 #+end_src
 
 *** Org-Roam-Menu (Transient)
@@ -288,33 +316,6 @@
 :END:
 
 Доп функции от =System Crafters=: [[https://systemcrafters.net/build-a-second-brain-in-emacs/5-org-roam-hacks/]]
-
-:PROPERTIES:
-:CUSTOM_ID: extra-functions
-:END:
-#+begin_src emacs-lisp
-(defun my/org-roam-filter-by-tag (tag-name)
-  ;; (message (format "tag-name - %s" tag-name))
-  (lambda (node)
-    (member tag-name (org-roam-node-tags node))))
-
-(defun my/org-roam-list-notes-by-tag (tag-name)
-  (mapcar #'org-roam-node-file
-          (seq-filter
-           (my/org-roam-filter-by-tag tag-name)
-           (org-roam-node-list))))
-
-(defun my/org-roam-refresh-agenda-list ()
-  (interactive)
-  (let ((tags '("Project" "TODO")))
-    (dolist (elem tags)
-      (let ((notes (my/org-roam-list-notes-by-tag elem)))
-        (mapc (lambda (el) (add-to-list 'org-agenda-files el)) notes)))))
-
-;; Build the agenda list the first time for the session
-(my/org-roam-refresh-agenda-list)
-#+end_src
-
 #+begin_src emacs-lisp
 (defun my/org-roam-project-finalize-hook ()
   "Adds the captured project file to `org-agenda-files' if the
@@ -344,25 +345,178 @@ capture was not aborted."
    nil
    :templates
    '(("p" "project" plain "* Описание\n\n%^{Описание}\n\n* Tasks\n\n** TODO Add initial tasks %?"
-      :if-new (file+head "%<%Y-%m-%d-%H:%M:%S>-${slug}.org" "#+title: ${title}\n#+category: ${title}\n#+filetags: Project")
+      :target (file+head "%<%Y-%m-%d-%H:%M:%S>-${slug}.org" "#+title: ${title}\n#+category: ${title}\n#+filetags: Project")
       :unnarrowed t))))
 #+end_src
+***** Захват задач
+:PROPERTIES:
+:CUSTOM_ID: захват-задач
+:END:
+
+При помощи *qwen3.8* получилось сделать более продуманный вариант задач для каждого из проектов.
 
 #+begin_src emacs-lisp
+(defcustom my/org-roam-project-tasks-heading "Tasks"
+  "Название корневого заголовка задач в проекте."
+  :type 'string)
+
+(defvar my/org-roam-task-parent-history nil
+  "История выбора родительской задачи для новой задачи.")
+
+(defun my/org-roam--ensure-project-tasks-heading (file)
+  "Убедиться, что в FILE есть корневой заголовок задач.
+Название заголовка берётся из `my/org-roam-project-tasks-heading'."
+  (when (and file (file-exists-p file))
+    (with-current-buffer (find-file-noselect file)
+      (widen)
+      (unless (derived-mode-p 'org-mode)
+        (org-mode))
+      (goto-char (point-min))
+      (unless (org-find-exact-headline-in-buffer
+               my/org-roam-project-tasks-heading nil t)
+        (goto-char (point-max))
+        (unless (bolp) (insert "\n"))
+        (insert "\n* " my/org-roam-project-tasks-heading "\n")))))
+
+(defun my/org-roam--unique-label (label seen)
+  "Сделать LABEL уникальным, используя хэш-таблицу SEEN."
+  (let ((base label)
+        (n 2))
+    (while (gethash label seen)
+      (setq label (format "%s [%d]" base n)
+            n (1+ n)))
+    (puthash label t seen)
+    label))
+
+(defun my/org-roam--format-task-label (plist)
+  "Человекочитаемый подписи для кандидата задачи.
+PLIST содержит :olp, :level и :root-level."
+  (let* ((olp (plist-get plist :olp))
+         (level (plist-get plist :level))
+         (root-level (plist-get plist :root-level)))
+    (if (= level root-level)
+        (format "%s (корень задач)" (car olp))
+      (concat
+       (make-string (* 2 (- level root-level)) ?\s)
+       (mapconcat #'identity olp " › ")))))
+
+(defun my/org-roam--project-task-candidates (file)
+  "Список кандидатов вида (LABEL . PLIST) для заголовков внутри `Tasks' в FILE.
+
+Каждый PLIST содержит:
+  :olp        — outline path до заголовка;
+  :level      — уровень заголовка;
+  :root-level — уровень корневого заголовка задач."
+  (let ((candidates '())
+        (seen (make-hash-table :test #'equal)))
+    (with-current-buffer (find-file-noselect file)
+      (widen)
+      (unless (derived-mode-p 'org-mode)
+        (org-mode))
+      (goto-char (point-min))
+      (if-let* ((pos (org-find-exact-headline-in-buffer
+                      my/org-roam-project-tasks-heading nil t)))
+          (progn
+            (goto-char pos)
+            (let* ((root-level (org-current-level))
+                   (root-marker (point-marker))
+                   (root-end (save-excursion
+                               (org-end-of-subtree t)
+                               (point-marker))))
+              ;; Сам корень задач.
+              (push (list :olp (mapcar #'substring-no-properties
+                                       (org-get-outline-path t))
+                          :level root-level
+                          :root-level root-level)
+                    candidates)
+
+              ;; Все заголовки внутри поддерева Tasks.
+              (org-map-entries
+               (lambda ()
+                 (when (and (> (point) root-marker)
+                            (< (point) root-end)
+                            (> (org-current-level) root-level))
+                   (push (list :olp (mapcar #'substring-no-properties
+                                            (org-get-outline-path t))
+                               :level (org-current-level)
+                               :root-level root-level)
+                         candidates)))
+               nil nil)))
+        ;; Если заголовка задач ещё нет, даём виртуальный корень.
+        (push (list :olp (list my/org-roam-project-tasks-heading)
+                    :level 1
+                    :root-level 1)
+              candidates)))
+
+    (setq candidates (nreverse candidates))
+    (mapcar
+     (lambda (plist)
+       (let ((label (my/org-roam--format-task-label plist)))
+         (cons (my/org-roam--unique-label label seen) plist)))
+     candidates)))
+
+(defun my/org-roam--select-project-task-parent (file)
+  "Выбрать родительский заголовок внутри `Tasks' в FILE."
+  (let* ((candidates (my/org-roam--project-task-candidates file)))
+    (if (= 1 (length candidates))
+        ;; Если внутри только корень задач — не спрашиваем зря.
+        (cdar candidates)
+      (let* ((labels (mapcar #'car candidates))
+             (choice (if (fboundp 'consult--read)
+                         (consult--read
+                          labels
+                          :prompt "К какой задаче прикрепить новую: "
+                          :require-match t
+                          :sort nil
+                          :history 'my/org-roam-task-parent-history)
+                       (completing-read
+                        "К какой задаче прикрепить новую: "
+                        labels nil t nil
+                        'my/org-roam-task-parent-history))))
+        (cdr (assoc choice candidates))))))
+
 (defun my/org-roam-capture-task ()
+  "Создать задачу в Org-Roam-проекте и прикрепить её к выбранному родителю.
+
+Родителя можно выбрать среди заголовков внутри корневого `Tasks'.
+Таким образом можно строить произвольное дерево задач"
   (interactive)
-  ;; Add the project file to the agenda after capture is finished
-  (add-hook 'org-capture-after-finalize-hook #'my/org-roam-project-finalize-hook)
+  (let ((node (org-roam-node-read nil (my/org-roam-filter-by-tag "Project"))))
+    (unless node
+      (user-error "Проект не выбран"))
+    (let* ((file (org-roam-node-file node))
+           (existing-file (and file (file-exists-p file))))
+      (let* ((parent (if existing-file
+                         (my/org-roam--select-project-task-parent file)
+                       (list :olp (list my/org-roam-project-tasks-heading)
+                             :level 1
+                             :root-level 1)))
+             (olp (plist-get parent :olp))
+             (level (or (plist-get parent :level) 1))
+             (task-heading (concat (make-string (1+ level) ?*) " TODO %?"))
+             (new-project-head (concat "#+title: ${title}\n"
+                                       "#+category: ${title}\n"
+                                       "#+filetags: Project\n"
+                                       "* Описание\n"
+                                       "%^{Описание}\n"
+                                       "* " my/org-roam-project-tasks-heading "\n"))
+             (templates
+              (if existing-file
+                  `(("t" "project task" plain ,task-heading
+                     :target (file+olp ,file ,olp)
+                     :unnarrowed t))
+                `(("t" "project task" plain ,task-heading
+                   :target (file+head+olp "%<%Y-%m-%d-%H:%M:%S>-${slug}.org"
+                                          ,new-project-head
+                                          ,olp)
+                   :unnarrowed t)))))
+        ;; Если заголовка `Tasks' в существующем проекте вдруг нет — создадим его.
+        (when existing-file
+          (my/org-roam--ensure-project-tasks-heading file))
 
-  ;; Capture the new task, creating the project file if necessary
-  (org-roam-capture- :node (org-roam-node-read
-                            nil
-                            (my/org-roam-filter-by-tag "Project"))
-                     :templates '(("p" "project" plain "** TODO %?"
-                                   :if-new (file+head+olp "%<%Y%m%d%H%M%S>-${slug}.org"
-                                                          "#+title: ${title}\n#+category: ${title}\n#+filetags: Project\n* Описание\n\n%^{Описание}"
-                                                          ("Tasks"))))))
-
+        (add-hook 'org-capture-after-finalize-hook
+                  #'my/org-roam-project-finalize-hook)
+        (org-roam-capture- :node node :templates templates)))))
 #+end_src
 
 **** Само меню
@@ -413,36 +567,37 @@ capture was not aborted."
   "Transient menu for org-roam"
   [["Node"
     ("f" "Find" org-roam-node-find :transient nil)
-    ("I" "Create id for heading" org-id-get-create :transient t :if (lambda () (derived-mode-p 'org-mode)))
+    ("I" "Create id for heading" org-id-get-create :transient t :if-mode 'org-mode)
     ("c" "Capture" org-roam-capture :transient nil)
-    ("e" "Extract subtree" org-roam-extract-subtree :transient nil :if (lambda () (derived-mode-p 'org-mode)))
-    ("R" "Refile current (caution!!!)" org-roam-refile :transient nil :if (lambda () (derived-mode-p 'org-mode)))
-    ("s" "Search ripgrep" consult-org-roam-search :transient nil)
+    ("e" "Extract subtree" org-roam-extract-subtree :transient nil :if-mode 'org-mode)
+    ("R" "Refile current (caution!!!)" org-roam-refile :transient nil :if-mode 'org-mode)
+    ("s" "Search ripgrep" consult-vulpea-grep :transient nil)
     ("d" "Dailies>" my/org-roam-dailies-tmenu :if (lambda () (require 'org-roam-dailies nil 'no-error)))]
    ["Projects"
     ("C" "Capture" my/org-roam-capture-task :transient nil)
     ("p" "Find" my/org-roam-find-project :transient nil)]
    ]
-  [["Tag" :if (lambda () (derived-mode-p 'org-mode))
-    ("t" "Add" org-roam-tag-add :transient t)
-    ("T" "Remove" org-roam-tag-remove :transient t)]
-   ["Alias" :if (lambda () (derived-mode-p 'org-mode))
-    ("a" "Add" org-roam-alias-add :transient t)
-    ("A" "Remove" org-roam-alias-remove :transient t)]
-   ["Headings" :if (lambda () (derived-mode-p 'org-mode))
+  [["Tag" :if-mode 'org-mode
+    ("t" "Add" vulpea-buffer-tags-add :transient t)
+    ("T" "Remove" vulpea-buffer-tags-remove :transient t)]
+   ["Alias" :if-mode 'org-mode
+    ("a" "Add" vulpea-buffer-alias-add :transient t)
+    ("A" "Remove" vulpea-buffer-alias-remove :transient t)]
+   ["Headings" :if-mode 'org-mode
     ("[" "Previous" org-previous-visible-heading :transient t)
     ("]" "Next" org-next-visible-heading :transient t)
     ]
-   ["Links"  :if (lambda () (derived-mode-p 'org-mode))
-    ("i" "Insert" org-roam-node-insert :transient nil)
+   ["Links"  :if-mode 'org-mode
+    ("i" "Insert" vulpea-insert :transient nil)
     ("F" "Forward" consult-org-roam-forward-links :transient nil)
-    ("B" "Backlinks" consult-org-roam-backlinks :transient nil)
+    ("B" "Backlinks" vulpea-find-backlink :transient nil)
     ]]
 
   [["Extra"
     ("u" "Org-Roam-UI>" my/org-roam-ui-tmenu :if (lambda () (require 'org-roam-ui nil 'no-error)))
     ("b" "Toggle org-roam-buffer" org-roam-buffer-toggle :transient t)
-    ("l" "Bibliography>" my/bibliography-tmenu)]]
+    ("l" "Bibliography>" my/bibliography-tmenu)
+    ("V" "Vulpea UI sidebar" vulpea-ui-toggle-sidebar :transient t :if (lambda () (require 'vulpea-ui nil 'no-error)))]]
   [:class transient-row
           (casual-lib-quit-one)])
 #+end_src
@@ -456,7 +611,8 @@ capture was not aborted."
 
 Импортируем пакет
 #+begin_src emacs-lisp :tangle note-taking.el
-(autoload 'my/org-roam-tmenu "org-roam-menu" "Transient menu for org-roam" t)
+(after! org-roam
+  (autoload 'my/org-roam-tmenu "org-roam-menu" "Transient menu for org-roam" t))
 #+end_src
 
 ** Org-Citar
@@ -509,6 +665,13 @@ capture was not aborted."
         (list citar-indicator-files-icons
               citar-indicator-notes-icons
               citar-indicator-links-icons)))
+
+;; Интеграция с citar (замена citar-org-roam)
+;; (use-package citar-vulpea
+;;   :after (vulpea citar)
+;;   ;; :ensure (citar-vulpea :host github :repo "d12frosted/citar-vulpea")
+;;   :config
+;;   (citar-vulpea-mode))
 #+end_src
 
 *** Embark
@@ -555,7 +718,7 @@ capture was not aborted."
                                       ("l" "literature note" plain
                                        "*** %^{Что за заголовок для новой заметки?}\n:PROPERTIES:\n:NOTER_PAGE: %^{Что за страница для заметки?}\n:END:\n\n%?"
                                        
-                                       :if-new (file+head+olp
+                                       :target (file+head+olp
                                                 "citar-notes/${citar-citekey}.org"
                                                 "#+title: ${citar-citekey} (${citar-date}).\n#+filetags: Book_Note\n#+created: %U\n#+last_modified: %U\n\n* ${note-title}\n:PROPERTIES:\n:NOTER_DOCUMENT: %(my/citar-get-file \"${citar-citekey}\")\n:ROAM_REFS: @${citar-citekey}\n:END:\n\n** Описание книги\n\n%^{Кратко опиши про что книга}\n\n** Заметки\n"
                                                 ("${note-title}" "Заметки"))
@@ -563,84 +726,112 @@ capture was not aborted."
         (citar-org-roam-capture-template-key "l"))
     (call-interactively #'citar-create-note)))
 
+(defun my/citar-vulpea-add-entry ()
+  "Add new entry to book note with vulpea."
+  (interactive)
+  (let ((org-capture-templates
+         '(("l" "literature note" plain
+            "*** %^{Что за заголовок для новой заметки?}
+:PROPERTIES:
+:NOTER_PAGE: %^{Что за страница для заметки?}
+:END:
+%?"
+            :target (file+head+olp
+                     "citar-notes/${citar-citekey}.org"
+                     "#+title: ${citar-citekey} (${citar-date}).\n#+filetags: Book_Note\n#+created: %U\n#+last_modified: %U
+:PROPERTIES:
+:ID: %(org-id-new)
+:END:\n* ${note-title}
+:PROPERTIES:
+:NOTER_DOCUMENT: %(my/citar-get-file \"${citar-citekey}\")
+:ROAM_REFS: @${citar-citekey}\n:END:\n* Описание книги
+%^{Кратко опиши про что книга}\n* Заметки"
+                     ("${note-title}" "Заметки"))
+            :hook org-id-get-create)))
+        (citar-vulpea-capture-template-key "l"))
+    (call-interactively #'citar-create-note)))
 
 (transient-define-prefix my/bibliography-tmenu-- ()
-  "Transient menu for managing bibligraphy (manage with ebib and making notes)"
+  "Transient menu for managing bibliography"
   [["Bibliographic notes"
-    ("c" "Capture" my/citar-org-roam-add-entry :transient nil)
+    ("c" "Capture" my/citar-vulpea-add-entry :transient nil)
     ("f" "Find" citar-open-note :transient nil)]
    ["Ebib"
     :if (lambda () (= 0 (length ebib--buffer-alist)))
-    ("s" "Start" ebib :transient nil)
-    ;; ("S" "Stop" ebib-quit :if (lambda () (< 0 (length ebib--buffer-alist))) :transient nil)
-    ;; ("i" "Import literature" ebib-import-file :if (lambda () (< 0 (length ebib--buffer-alist))) :transient nil)
-   ]
+    ("s" "Start" ebib :transient nil)]
    ["Ebib"
     :if (lambda () (< 0 (length ebib--buffer-alist)))
     ("S" "Stop" ebib-quit :transient nil)
     ("i" "Import literature" ebib-import-file :transient nil)]]
-[:class transient-row
-        (casual-lib-quit-one)])
+  [:class transient-row
+   (casual-lib-quit-one)])
+
 (defun my/bibliography-tmenu ()
   (interactive)
   (require 'ebib)
   (my/bibliography-tmenu--))
 #+end_src
 
-** Vulpea-Test
+** Vulpea
 :PROPERTIES:
-:CUSTOM_ID: vulpea-test
+:CUSTOM_ID: vulpea-0
 :END:
 #+begin_src emacs-lisp
 (use-package vulpea
   :after org
   :custom
-  (vulpea-db-sync-directories (list "~/org"))
+  (vulpea-db-sync-directories (list (expand-file-name "~/org")))
   (vulpea-db-async-extraction 'full)
-
-
-  ;; (vulpea-db-parse-method 'single-temp-buffer)
-
-  (vulpea-db-sync-debug t)
-  (vulpea-db-worker-debug t)
-
-  ;; (vulpea-db-index-plain-links nil)
+  (vulpea-buffer-alias-property "ROAM_ALIASES")
+  (vulpea-db-parse-method 'single-temp-buffer)
+  (vulpea-db-index-plain-links nil)
   :config
+  ;; Включаем автоматическую синхронизацию
+  (vulpea-db-autosync-mode +1)
+  )
 
-  (vulpea-db-autosync-mode +1))
-#+end_src
-
-*** Consult-Vulpea
-:PROPERTIES:
-:CUSTOM_ID: consult-vulpea
-:END:
-#+begin_src emacs-lisp
 (use-package consult-vulpea
   :ensure t
   :after vulpea
+  :custom
+  (consult-vulpea-buffer-narrow-key ?r)
   :config
-  (consult-vulpea-mode 1))
-#+end_src
+  (consult-vulpea-mode 1)
+  )
 
-*** Embark-Vulpea
-:PROPERTIES:
-:CUSTOM_ID: embark-vulpea
-:END:
-#+begin_src emacs-lisp
 (use-package embark-vulpea
-  :after vulpea
-  :ensure (embark-vulpea :host github :repo "fabcontigiani/embark-vulpea"))
-#+end_src
+  :ensure (embark-vulpea :host github :repo "fabcontigiani/embark-vulpea")
+  :after (vulpea embark)
+  )
 
-*** Vulpea-Capf
-:PROPERTIES:
-:CUSTOM_ID: vulpea-capf
-:END:
-#+begin_src emacs-lisp
 (use-package vulpea-capf
   :after vulpea
   :ensure (vulpea-capf :host github :repo "neonmei/vulpea-capf")
   :hook (org-mode . vulpea-capf-mode))
+#+end_src
+
+** Consult-Notes
+:PROPERTIES:
+:CUSTOM_ID: consult-notes
+:END:
+#+begin_src emacs-lisp
+(use-package consult-notes
+  :after consult
+  :commands (consult-notes
+             consult-notes-search-in-all-notes)
+  :config
+  ;; Настройка источников файлов
+  (setq consult-notes-file-dir-sources '(("Roam" ?o "~/org/roam/")))
+  
+  ;; Добавляем vulpea notes как источник
+  (defun my/consult-notes-vulpea-find ()
+    "Find vulpea note via consult."
+    (interactive)
+    (consult-vulpea-find))
+  
+  ;; Добавляем vulpea в список источников
+  (add-to-list 'consult-notes-sources
+               '("Vulpea" ?v my/consult-notes-vulpea-find)))
 #+end_src
 
 * Provide

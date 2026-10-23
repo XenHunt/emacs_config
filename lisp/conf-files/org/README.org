@@ -22,7 +22,7 @@
   - [[#org-tempo][Org Tempo]]
   - [[#org-auto-tangle][Org-Auto-Tangle]]
   - [[#org-detangle-fix][Org-Detangle-Fix]]
-  - [[#org-fragtog][Org-Fragtog]]
+  - [[#org-fragtoglatex-to-svg-for-org][Org-Fragtog/Latex-To-SVG-For-Org]]
   - [[#org-latex-impatient][Org-LaTeX-Impatient]]
   - [[#ob-async][OB-Async]]
   - [[#ob-mermaid][OB-Mermaid]]
@@ -98,6 +98,8 @@
   :hook
   (org-mode . (lambda ()
                 (setq-local org-preview-latex-image-directory (get-cache-path "images/" t))))
+  :config
+  (add-to-list 'org-modules 'org-habit)
   ;; (org-mode visual-line-mode)
   )
 #+end_src
@@ -350,20 +352,22 @@ org файл, где находится tangled src blocks. К счастью, �
 
 #+end_src
 
-** Org-Fragtog
+** Org-Fragtog/Latex-To-SVG-For-Org
 :PROPERTIES:
-:CUSTOM_ID: org-fragtog
+:CUSTOM_ID: org-fragtoglatex-to-svg-for-org
 :END:
 
 =org-fragtog= - это пакет похожий на =org-appear=, но для =LaTex= функций и конструкций. 
-
 #+begin_src emacs-lisp 
-(use-package org-fragtog
-  :after org
-  :hook (org-mode . org-fragtog-mode) ; this auto-enables it when you enter an org-buffer, remove if you do not want this
-  :config
-  ;; whatever you want
-  )
+;; (use-package org-fragtog
+;;   :after org
+;;   :hook (org-mode . org-fragtog-mode) ; this auto-enables it when you enter an org-buffer, remove if you do not want this
+;;   :config
+;;   ;; whatever you want
+;;   )
+(use-package latex-to-svg-for-org
+  :ensure t                  ; with straight: :straight t
+  :hook (org-mode . latex-to-svg-for-org-mode))
 #+end_src
 
 ** Org-LaTeX-Impatient

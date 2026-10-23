@@ -374,6 +374,15 @@
   :config
   (leader-key
     "sr" '(consult-recoll :wk "Documents")))
+
+(use-package consult-ghostel
+  :after (consult ghostel)
+  :hook (after-init . consult-ghostel-mode)
+  :bind (;; ("C-x m" . consult-ghosteld)
+         :map project-prefix-map
+         ("m" . consult-ghostel-project)
+         :map ghostel-semi-char-mode-map
+         ("C-c h" . consult-ghostel-history)))
 #+end_src
 
 * Embark

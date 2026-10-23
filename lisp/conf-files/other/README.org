@@ -139,33 +139,41 @@
 :END:
 #+begin_src emacs-lisp
 (use-package easysession
-  :defer 2
+  ;; :defer 2
   ;; :commands
   ;; (easysession-switch-to easysession-save-as)
   ;; :general
   ;; (:states 'normal '("TAB"))
-  :config
-  ;; (defun my-setup-easy-session ()
-  ;;   ;; (easysession-load-including-geometry)
-  ;;   (easysession-save-mode)
-  ;;   (remove-hook 'server-after-make-frame-hook #'my-setup-easy-session))
+  :init
+  (defun my/easysession-no-main-saved ()
+    "Only save the main session."
+    (when (not (string= "main" (easysession-get-current-session-name)))
+      t))
+  :custom
+  
   ;; Save every 10 minutes
-  (setq easysession-save-interval (* 10 60))
+  (easysession-save-interval (* 10 60))
 
   ;; Save the current session when using `easysession-switch-to'
-  (setq easysession-switch-to-save-session t)
+  (easysession-switch-to-save-session t)
 
   ;; Do not exclude the current session when switching sessions
-  (setq easysession-switch-to-exclude-current nil)
+  (easysession-switch-to-exclude-current nil)
 
   ;; Display the active session name in the mode-line lighter.
   ;; (setq easysession-save-mode-lighter-show-session-name t)
 
   ;; Optionally, the session name can be shown in the modeline info area:
-  (setq easysession-mode-line-misc-info t)
+  (easysession-mode-line-misc-info t)
   ;; non-nil: Make `easysession-setup' load the session automatically.
   ;; (nil: session is not loaded automatically; the user can load it manually.)
-  (setq easysession-setup-load-session t)
+  (easysession-setup-load-session t)
+  (easysession-save-mode-predicate 'my/easysession-no-main-saved)
+  :config
+  ;; (defun my-setup-easy-session ()
+  ;;   ;; (easysession-load-including-geometry)
+  ;;   (easysession-save-mode)
+  ;;   (remove-hook 'server-after-make-frame-hook #'my-setup-easy-session))
 
   ;; The `easysession-setup' function adds hooks:
   ;; - To enable automatic session loading during `emacs-startup-hook', or
@@ -184,15 +192,14 @@
     "TAB u" '(easysession-unload :wk "Unload"))
   (add-hook 'easysession-new-session-hook #'easysession-reset)
   
-  (defun my/easysession-no-main-saved ()
-    "Only save the main session."
-    (when (not (string= "main" (easysession-get-current-session-name)))
-      t))
-  (setq easysession-save-mode-predicate 'my/easysession-no-main-saved)
+  
+  ;; (setq easysession-save-mode-predicate '#my/easysession-no-main-saved)
 
 
-  (easysession-setup))
-    #+end_src
+  (easysession-setup)
+  ;; (switch-to-buffer "*dashboard*")
+  )
+  #+end_src
 
 #+RESULTS:
 : [nil 26444 1065 868595 nil elpaca-process-queues nil nil 730000 nil]
@@ -229,7 +236,7 @@
   (:states 'normal :keymaps 'bookmark-bmenu-mode-map "C-o" 'casual-bookmarks-tmenu)
   (:states 'normal :keymaps 'calendar-mode-map "C-o" 'casual-calendar-tmenu)
   (:states 'normal :keymaps 'ibuffer-mode-map "C-o" 'casual-ibuffer-tmenu)
-  (:states 'normal :keymaps 'calc-mode-map "C-o" 'casual-calc-tmenu)
+  (:states 'normal :keymaps '(calc-mode-map calc-alg-map) "C-o" 'casual-calc-tmenu)
   (:states 'normal :keymaps 'dired-mode-map "C-o" 'casual-dired-tmenu)
   (:states 'normal :keymaps 'dired-mode-map "s" 'casual-dired-sort-by-tmenu)
   (:states 'normal :keymaps 'image-mode-map "C-o" 'casual-image-tmenu)
@@ -414,7 +421,7 @@
 :CUSTOM_ID: guix
 :END:
 #+begin_src emacs-lisp
-(use-package guix)
+;; (use-package guix)
 #+end_src
 
 * Leetcode
@@ -540,11 +547,22 @@
 :CUSTOM_ID: auto-dim-other-buffer
 :END:
 #+begin_src emacs-lisp
-(use-package auto-dim-other-buffers
+;; (use-package auto-dim-other-buffers
+;;   :config
+;;   (auto-dim-other-buffers-mode t)
+;;   (custom-set-faces '(auto-dim-other-buffers ((t (:background "black"))))))
+(use-package dimmer
   :config
-  (auto-dim-other-buffers-mode t)
-  (custom-set-faces '(auto-dim-other-buffers ((t (:background "black"))))))
+  (dimmer-configure-magit)
+  (dimmer-configure-org)
+  (dimmer-configure-posframe)
+  (dimmer-configure-which-key)
+  (dimmer-mode t)
+  )
 #+end_src
+
+#+RESULTS:
+: [nil 27351 34247 796717 nil elpaca-process-queues nil nil 248000 nil]
 
 * Systemd
 :PROPERTIES:

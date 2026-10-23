@@ -27,8 +27,11 @@
 + Jinx (авто проверка правописания);
 + LSP и другие программистские штуки:
   + Treesitter;
-  + Lsp-mode
-  + Lsp-UI
+  + +Lsp-mode+
+  + +Lsp-UI+
+  + Eglot
+  + Eldoc
+  + Dape-Mode
   + Python;
   + Docker;
   + Clojure;

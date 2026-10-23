@@ -681,8 +681,69 @@ DOCS are documentation strings to set."
 
 (use-package csharp-mode
   :ensure nil
-  ;; :hook ((csharp-mode csharp-ts-mode) . prism-mode)
+  :init
+  (defun my/smart-semicolon ()
+    "Вставляет ; умно: в конце строки, если её там нет, иначе в позиции курсора."
+    (interactive)
+    (let ((eol-char (char-before (line-end-position))))
+      (if (and eol-char 
+               (or (member eol-char '(?\; ?\} ?\{ ?\,))
+                   (looking-back "^[ \t]*for\s?([a-zA-Z_0-9\s;=+*/-]*" (line-beginning-position)))
+               (not (looking-back "^[ \t]*" (line-beginning-position)))
+               ;; (not (looking-back "^[ \t]*for.*" (line-beginning-position)))
+               )
+          ;; Уже есть символ завершения - вставляем здесь
+          (insert ";")
+        ;; Вставляем в конец строки
+        (save-excursion
+          (end-of-line)
+          (insert ";")))))
+
+  (defun my/smart-enter ()
+    "Умный Enter для C# с проверкой активных completion UI."
+    (interactive)
+    (cond
+     ;; Проверяем, активен ли Corfu popup
+     ((and (boundp 'corfu-mode) corfu-mode
+           ;; Проверяем наличие overlay'я Corfu
+           (seq-some (lambda (ov) 
+                       (eq (overlay-get ov 'category) 'corfu))
+                     (overlays-in (point-min) (point-max))))
+      (call-interactively #'corfu-insert))
+     
+     ;; Проверяем Company (если используешь)
+     ((and (boundp 'company-mode) company-mode
+           (boundp 'company-pseudo-tooltip-overlay)
+           company-pseudo-tooltip-overlay)
+      (call-interactively #'company-complete-selection))
+     
+     ;; Стандартное поведение
+     (t
+      (let ((eol-char (char-before (line-end-position))))
+        (when (and eol-char
+                   (not (member eol-char '(?\; ?\} ?\{)))
+                   (not (looking-back "^[ \t]*" (line-beginning-position)))
+                   (not (nth 4 (syntax-ppss))))
+          (save-excursion
+            (end-of-line)
+            (insert ";"))))
+      (newline-and-indent))))
+  :config
+  ;; (let ((c-like-maps (list csharp-ts-mode-map csharp-mode-map c-mode-map c++-mode-map java-mode-map)))
+  ;;   (dolist (mode-map c-like-maps)
+  ;;     (evil-define-key 'insert mode-map 
+  ;;       (kbd ";") #'my/smart-semicolon)
+  ;;     (evil-define-key 'insert mode-map 
+  ;;       (kbd "RET") #'my/smart-enter)
+  ;;     ))
+  (evil-define-key 'insert csharp-ts-mode-map 
+    (kbd ";") #'my/smart-semicolon)
+  ;; (evil-define-key 'insert csharp-ts-mode-map 
+  ;;   (kbd "RET") #'my/smart-enter)
+  ;; (evil-define-key 'normal csharp-ts-mode-map 
+  ;;   (kbd "o") #'my/smart-enter)
   )
+
 (after! web-mode
 
   ;; Подсветка и отступы для Razor

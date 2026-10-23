@@ -52,6 +52,7 @@
   - [[#evil-anzu][Evil-Anzu]]
   - [[#evil-better-visual-line][Evil-Better-Visual-Line]]
   - [[#evil-insert-plus][Evil-Insert-Plus]]
+  - [[#evil-snipe][Evil-Snipe]]
   - [[#enhanced-evil-paredit][Enhanced-Evil-Paredit]]
 - [[#diminish][Diminish]]
 - [[#exec-path-from-shell][Exec-path-from-shell]]
@@ -74,6 +75,7 @@
   - [[#ssh-machine][SSH-Machine]]
 - [[#pass][Pass]]
 - [[#comment-dwim-2][Comment-Dwim-2]]
+- [[#undo-fu][Undo-Fu]]
 - [[#provide][Provide]]
 :END:
 * Введение
@@ -170,11 +172,11 @@ Otherwise, return the path as is."
 :END:
 #+begin_src emacs-lisp
 (defun my/set-emoji-font ()
-    (set-fontset-font t 'emoji "Noto Color Emoji"))
+  (set-fontset-font t 'emoji "Noto Color Emoji"))
 
 (if (daemonp)
-      (add-hook 'server-after-make-frame-hook #'my/set-emoji-font)
-    (my/set-emoji-font))
+    (add-hook 'server-after-make-frame-hook #'my/set-emoji-font)
+  (my/set-emoji-font))
 #+end_src
 
 * По-умолчанию
@@ -229,6 +231,8 @@ Otherwise, return the path as is."
       (text-mode))))
 (add-hook 'server-after-make-frame-hook 'init-text-scratch)
 (add-hook 'after-init-hook 'init-text-scratch)
+;; (toggle-debug-on-error)
+;; (toggle-debug-on-quit)
 #+end_src
 
 * Compile-Angel
@@ -465,6 +469,7 @@ Otherwise, return the path as is."
     "h v" '(helpful-variable :wk "Describe variable")
     "h ." '(helpful-at-point :wk "Help at point")
     "h m" '(helpful-macro :wk "Describe macro")
+    "h s" '(describe-symbol :wk "Describe symbol")
     "h E" '(:ignore t :wk "Elpaca")
     "h E e" '(elpaca-manager :wk "Manager")
     "h E f" '(elpaca-fetch-all :wk "Fetch")
@@ -649,7 +654,7 @@ Otherwise, return the path as is."
 :END:
 #+begin_src emacs-lisp
 ;; (use-package smartparens-config)
-(use-package smartparens-mode
+(use-package smartparens
   :ensure smartparens  ;; install the package
   :hook (prog-mode text-mode markdown-mode) ;; add `smartparens-mode` to these hooks
   :config
@@ -689,7 +694,7 @@ Otherwise, return the path as is."
   :config
   (setq global-aggressive-indent-mode 1)
   )
-  #+end_src
+#+end_src
 * Evil-Mode
 :PROPERTIES:
 :CUSTOM_ID: evil-mode
@@ -706,7 +711,8 @@ Otherwise, return the path as is."
   (setq evil-want-C-i-jump nil)
   (setq evil-want-c-i-jump nil)
   (setq evil-want-fine-undo t)
-
+  :custom
+  (evil-undo-system 'undo-fu)
   :config
   ;; (evil-define-key 'normal 'global (kbd "g c") 'comment-line)
   ;; (evil-define-key 'visual 'global (kbd "g c") 'comment-dwim)
@@ -719,14 +725,14 @@ Otherwise, return the path as is."
   (evil-mode)
   ;; По-другому расположить evil-insert-plus не получилось, иначе жалуется, что загружен макрос
   (use-package evil-insert-plus
-  :commands (evil-insert-plus--vcount)
-  :bind (:map evil-normal-state-map
-              ("I" . evil-insert-plus)
-              ("A" . evil-append-plus)
-              :map evil-visual-state-map
-              ("I" . evil-insert-plus)
-              ("A" . evil-append-plus))
-  ))
+    :commands (evil-insert-plus--vcount)
+    :bind (:map evil-normal-state-map
+                ("I" . evil-insert-plus)
+                ("A" . evil-append-plus)
+                :map evil-visual-state-map
+                ("I" . evil-insert-plus)
+                ("A" . evil-append-plus))
+    ))
 
 ;; (use-package evil-tutor :ensure t :demand t)
 (elpaca-wait)
@@ -774,10 +780,11 @@ Otherwise, return the path as is."
 				                    python
 				                    rjsx-mode
 				                    typescript-mode
-				                    which-key
 				                    xref
 				                    yaml-mode
                                     dape
+                                    diff-hl
+                                    difftastic
  				                    bookmark
  				                    bufler
  				                    compile
@@ -803,6 +810,7 @@ Otherwise, return the path as is."
                                     cider
                                     cmake-mode
                                     daemons
+                                    markdown-mode
                                     diff-mode
                                     disk-usage
                                     docker
@@ -856,6 +864,8 @@ Otherwise, return the path as is."
 #+begin_src emacs-lisp
 (use-package evil-smartparens
   :after smartparens-mode
+  :hook
+  ((lisp-data-mode emacs-lisp-mode clojure-ts-mode clojure-mode scheme-mode) . evil-smartparens-mode)
   :config
   (add-hook 'smartparens-enabled-hook #'evil-smartparens-mode)
   )
@@ -882,13 +892,13 @@ Otherwise, return the path as is."
 
 (use-package embrace
 
-  :ensure (:depth nil)
+  ;; :ensure (:depth nil)
   )
 (elpaca-wait)
 
 
 (use-package evil-embrace
-  :commands embrace-add-pair embrace-add-pair-regexp
+  :after (embrace evil-surround)
   :hook (LaTeX-mode . embrace-LaTeX-mode-hook)
   :hook (org-mode . embrace-org-mode-hook)
   :hook (ruby-mode . embrace-ruby-mode-hook)
@@ -897,8 +907,7 @@ Otherwise, return the path as is."
   ;;        . +evil-embrace-angle-bracket-modes-hook-h)
   ;; :hook (scala-mode . +evil-embrace-scala-mode-hook-h)
   :init
-  (after! evil-surround
-    (evil-embrace-enable-evil-surround-integration))
+  (evil-embrace-enable-evil-surround-integration)
   )
 (elpaca-wait)
 #+end_src
@@ -916,10 +925,13 @@ Otherwise, return the path as is."
 :END:
 #+begin_src emacs-lisp
 (use-package evil-nerd-commenter
-  :commands (evilnc-comment-operator
-             evilnc-inner-comment
-             evilnc-outer-commenter)
+  :after evil
+  ;; :commands (evilnc-comment-operator
+  ;;            evilnc-inner-comment
+  ;;            evilnc-outer-commenter)
   ;; :general ([remap comment-line] #'evilnc-comment-or-uncomment-lines)
+  :config
+  (evilnc-default-hotkeys)
   )
 #+end_src
 ** Visulstar
@@ -1087,8 +1099,27 @@ Otherwise, return the path as is."
   ;; bind `function.inner`(function block without name and args) to `f` for use in things like `vif`, `yif`
   (define-key evil-outer-text-objects-map "c" (evil-textobj-tree-sitter-get-textobj "class.outer"))
   (define-key evil-inner-text-objects-map "c" (evil-textobj-tree-sitter-get-textobj "class.inner"))
-  (define-key evil-inner-text-objects-map "f" (evil-textobj-tree-sitter-get-textobj "function.inner")))
+  (define-key evil-inner-text-objects-map "f" (evil-textobj-tree-sitter-get-textobj "function.inner"))
+  (define-key evil-outer-text-objects-map "i" (evil-textobj-tree-sitter-get-textobj ("conditional.outer" "loop.outer")))
+  (define-key evil-inner-text-objects-map "i" (evil-textobj-tree-sitter-get-textobj ("conditional.inner" "loop.inner")))
+  
+  (evil-define-key 'normal prog-mode-map
+    (kbd "]f") (lambda () (interactive) (evil-textobj-tree-sitter-goto-textobj "function.outer")))
+  (evil-define-key 'normal prog-mode-map
+    (kbd "[f") (lambda () (interactive) (evil-textobj-tree-sitter-goto-textobj "function.outer" t)))
+  (evil-define-key 'normal prog-mode-map
+    (kbd "]c") (lambda () (interactive) (evil-textobj-tree-sitter-goto-textobj "class.outer")))
+  (evil-define-key 'normal prog-mode-map
+    (kbd "[c") (lambda () (interactive) (evil-textobj-tree-sitter-goto-textobj "class.outer" t)))
+  (evil-define-key 'normal prog-mode-map
+    (kbd "]i") (lambda () (interactive) (evil-textobj-tree-sitter-goto-textobj '("conditional.outer" "loop.outer"))))
+  (evil-define-key 'normal prog-mode-map
+    (kbd "[i") (lambda () (interactive) (evil-textobj-tree-sitter-goto-textobj '("conditional.outer" "loop.outer") t)))
+  )
 #+end_src
+
+#+RESULTS:
+: [nil 27332 53087 727050 nil elpaca-process-queues nil nil 611000 nil]
 
 ** Evil-Anzu
 :PROPERTIES:
@@ -1138,7 +1169,28 @@ Otherwise, return the path as is."
 ;;   ;; (define-key evil-visual-state-map (kbd "A") 'evil-append-plus)
 ;;   )
 #+end_src
+** Evil-Snipe
+:PROPERTIES:
+:CUSTOM_ID: evil-snipe
+:END:
+#+begin_src emacs-lisp
+(use-package evil-snipe
+  :after evil-commands
+  :config
+  (evil-define-key '(normal motion) 'global
+    "s" 'evil-snipe-s
+    "S" 'evil-snipe-S)
 
+  (evil-define-key 'operator 'global
+    "z" 'evil-snipe-s
+    "Z" 'evil-snipe-S
+    "x" 'evil-snipe-x
+    "X" 'evil-snipe-X)
+
+  (evil-snipe-override-mode +1)
+  (after! magit
+    (add-hook 'magit-mode-hook 'turn-off-evil-snipe-override-mode)))
+#+end_src
 ** TODO Enhanced-Evil-Paredit 
 :PROPERTIES:
 :CUSTOM_ID: enhanced-evil-paredit
@@ -1146,8 +1198,11 @@ Otherwise, return the path as is."
 #+begin_src emacs-lisp
 (use-package enhanced-evil-paredit
   :ensure t
-  :config
-  (add-hook 'paredit-mode-hook #'enhanced-evil-paredit-mode))
+  :hook (paredit-mode . enhanced-evil-paredit-mode)
+  ((lisp-mode emacs-lisp-mode clojure-ts-mode clojure-mode scheme-mode lisp-data-mode) . paredit-mode)
+  ;; :config
+  ;; (add-hook 'paredit-mode-hook #'enhanced-evil-paredit-mode)
+  )
 #+end_src
 
 #+RESULTS:
@@ -1171,8 +1226,11 @@ Otherwise, return the path as is."
   ;; (exec-path-from-shell-arguments '("-l"))
   :config
   ;; (when (daemonp)
-    (exec-path-from-shell-initialize)
-    ;; )
+  (exec-path-from-shell-initialize)
+  ;; )
+  
+  (add-to-list 'exec-path-from-shell-variables "LANG")
+  (add-to-list 'exec-path-from-shell-variables "LC_ALL")
   )
 #+end_src
 * Editorconfig 
@@ -1392,7 +1450,8 @@ Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
 (use-package dired-open
   :after dired
   :config
-  (setq dired-open-extensions '(("gif" . "sxiv")
+  (setq dired-open-extensions '(("pdf" . "setsid okular")
+                                ("gif" . "sxiv")
                                 ("jpg" . "sxiv")
                                 ("png" . "sxiv")
                                 ("mkv" . "mpv")
@@ -1623,7 +1682,17 @@ Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
 
 #+RESULTS:
 : [nil 26472 19689 121914 nil elpaca-process-queues nil nil 468000 nil]
+* Undo-Fu
+:PROPERTIES:
+:CUSTOM_ID: undo-fu
+:END:
+#+begin_src emacs-lisp
+(use-package undo-fu)
 
+(use-package undo-fu-session
+  :config
+  (global-undo-fu-session-mode +1))
+#+end_src
 * Provide
 :PROPERTIES:
 :CUSTOM_ID: provide
