@@ -112,46 +112,45 @@
 :CUSTOM_ID: ret---open-link-or-exec-src-block
 :END:
 
-Мое решение (и =gptel=) для объединения открытия ссылки или запуска src block'а в Emacs одно клавишой =RET=.
+Моем решение (и =gptel=) для объединения открытия ссылки или запуска src block'а в Emacs одно клавишой =RET=.
 
 #+begin_src emacs-lisp
-(after! org-mode
-  (defun my/org-babel-execute-maybe ()
-    "If point is at a source code block, execute it with org-babel."
+(after! org
+  (defun my/org-smart-return ()
+    "Умная клавиша RET для `org-mode'.
+Выполняет src-block, открывает ссылку, обновляет dynamic-block
+или вызывает `evil-org-return' по умолчанию."
     (interactive)
-    (require 'org)
+    ;; 1. Парсим контекст ОДИН раз для производительности
     (let ((context (org-element-context)))
-      (when (and context
-                 (eq (car context) 'src-block))
-        (org-babel-execute-src-block))))
+      (cond
+       ;; Сценарий 1: Мы внутри src-block
+       ((and (evil-normal-state-p) (eq (car context) 'src-block))
+        (org-babel-execute-src-block))
 
-  (defun my/org-link-maybe ()
-    "If point is at an org-mode link, open it."
-    (interactive)
-    (require 'org)
-    (let ((context (org-element-context)))
-      (when (and context
-                 (eq (car context) 'link)
-                 ;; Ensure the link is not part of a src-block
-                 (not (eq (org-element-property :parent context) 'src-block)))
-        (org-open-at-point))))
+       ;; Сценарий 2: Мы на ссылке (и она не является частью src-block)
+       ((and (evil-normal-state-p)
+             (eq (car context) 'link)
+             (not (eq (org-element-property :parent context) 'src-block)))
+        (org-open-at-point))
 
-  (defun my/org-dynamic-block-maybe ()
-    "Update org dynamic block if point is at a line starting with #+BEGIN:."
-    (interactive)
-    (require 'org)
-    (save-excursion
-      (beginning-of-line)
-      (when (looking-at-p "^\\s-*#\\+BEGIN:")
-        (org-update-dblock))))
-  (defun my/ret-keybindings ()
-    "It combines my maybe commands together."
-    (interactive)
-    (my/org-babel-execute-maybe)
-    (my/org-link-maybe)
-    (my/org-dynamic-block-maybe))
+       ;; Сценарий 3: Мы на строке с #+BEGIN: (динамический блок)
+       ;; Используем save-excursion, чтобы не сдвигать курсор при проверке
+       ((save-excursion
+          (beginning-of-line)
+          (looking-at-p "^\\s-*#\\+BEGIN:"))
+        (org-update-dblock))
 
-  (evil-define-key 'normal org-mode-map (kbd "RET") 'my/ret-keybindings))
+       ;; Сценарий 4: Fallback (по умолчанию)
+       (t
+        ;; call-interactively нужен, чтобы корректно передать управление 
+        ;; интерактивной команде evil-org
+        (call-interactively #'evil-org-return)))))
+
+  ;; Привязка клавиши
+  (after! evil
+    (evil-define-key 'normal org-mode-map (kbd "RET") #'my/org-smart-return))
+  )
 ;; (add-hook 'org-mode-hook #'auto-fill-mode)
 ;; (setq org-agenda-files '("~/.org/roam/2024-08-28-22:33:31-список.org")))
 #+end_src
@@ -365,9 +364,14 @@ org файл, где находится tangled src blocks. К счастью, �
 ;;   :config
 ;;   ;; whatever you want
 ;;   )
+
 (use-package latex-to-svg-for-org
   :ensure t                  ; with straight: :straight t
-  :hook (org-mode . latex-to-svg-for-org-mode))
+  :hook (org-mode . latex-to-svg-for-org-mode)
+  :init
+  (with-eval-after-load 'org
+    (setq org-startup-options
+          (assoc-delete-all "latexpreview" org-startup-options)))) ;
 #+end_src
 
 ** Org-LaTeX-Impatient

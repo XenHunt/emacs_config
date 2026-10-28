@@ -237,22 +237,22 @@
   ;; ("C-c n l" . consult-org-roam-forward-links)
   ;; ("C-c n r" . consult-org-roam-search)
   )
-(use-package consult-notes
-  :after consult
-  :commands (consult-notes
-             consult-notes-search-in-all-notes
-             ;; if using org-roam 
-             consult-notes-org-roam-find-node
-             consult-notes-org-roam-find-node-relation)
-  :config
-  (after! org-roam
-    (consult-notes-org-roam-mode))
-  (setq consult-notes-file-dir-sources '(("Roam"  ?o  "~/org/roam/"))) ;; Set notes dir(s), see below
-  ;; ;; Set org-roam integration, denote integration, or org-heading integration e.g.:
-  ;; (setq consult-notes-org-headings-files '("~/path/to/file1.org"
-  ;;                                          "~/path/to/file2.org"))
-  ;; (consult-notes-org-headings-mode)
-  )
+;; (use-package consult-notes
+;;   :after consult
+;;   :commands (consult-notes
+;;              consult-notes-search-in-all-notes
+;;              ;; if using org-roam 
+;;              consult-notes-org-roam-find-node
+;;              consult-notes-org-roam-find-node-relation)
+;;   :config
+;;   (after! org-roam
+;;     (consult-notes-org-roam-mode))
+;;   (setq consult-notes-file-dir-sources '(("Roam"  ?o  "~/org/roam/"))) ;; Set notes dir(s), see below
+;;   ;; ;; Set org-roam integration, denote integration, or org-heading integration e.g.:
+;;   ;; (setq consult-notes-org-headings-files '("~/path/to/file1.org"
+;;   ;;                                          "~/path/to/file2.org"))
+;;   ;; (consult-notes-org-headings-mode)
+;;   )
 (elpaca-wait)
   #+end_src
 

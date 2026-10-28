@@ -17,6 +17,7 @@
 - [[#evil-integration][Evil integration]]
 - [[#bibtex-capf][BibTex Capf]]
 - [[#ebib][Ebib]]
+- [[#latex-to-svg][Latex-to-SVG]]
 - [[#keybindings][Keybindings]]
 - [[#provide][Provide]]
 :END:
@@ -150,6 +151,15 @@
 
 #+RESULTS:
 : [nil 26953 27944 616377 nil elpaca-process-queues nil nil 839000 nil]
+
+* Latex-to-SVG
+:PROPERTIES:
+:CUSTOM_ID: latex-to-svg
+:END:
+#+begin_src emacs-lisp
+(use-package latex-to-svg-for-latex
+  :hook ((LaTeX-mode latex-mode) . latex-to-svg-for-latex-mode))
+#+end_src
 
 * Keybindings
 :PROPERTIES:

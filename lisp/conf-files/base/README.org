@@ -620,12 +620,18 @@ Otherwise, return the path as is."
                     (format "Proxy %s"
                             (if (equal (use-proxy--proxy-states) "[]g")
                                 "[]" "[x]")))
-     :transient t)]
+     :transient t)
+    ]
    ["Completion"
     ("y" my/toggle--yasnippet-capf
      :description (lambda () (format "Yasnippet CAPF %s" (if (memq 'yasnippet-capf
                                                                    completion-at-point-functions)
                                                              "[x]" "[]")))
+     :transient t)
+    ("v" "Vulpea-Capf" vulpea-capf-mode
+     :if (lambda () (and (fboundp 'vulpea-capf-mode) (derived-mode-p 'org-mode)))
+     :description (lambda ()
+                    (format "Vulpea-Capf %s" (if vulpea-capf-mode "[x]" "[]")))
      :transient t)]]
   [:class transient-row
           (casual-lib-quit-one)])
@@ -717,7 +723,7 @@ Otherwise, return the path as is."
   ;; (evil-define-key 'normal 'global (kbd "g c") 'comment-line)
   ;; (evil-define-key 'visual 'global (kbd "g c") 'comment-dwim)
   (evil-define-key '(normal visual) 'global (kbd "g c") 'comment-dwim-2)
-  (evil-define-key 'normal org-mode-map (kbd "RET") 'org-babel-execute-src-block)
+  ;; (evil-define-key 'normal org-mode-map (kbd "RET") 'org-babel-execute-src-block)
   (evil-define-key 'normal org-mode-map (kbd "C-M-<down>") 'org-promote-subtree)
   (evil-set-leader nil (kbd "SPC"))
   (evil-define-key 'normal org-mode-map (kbd "C-M-<up>") 'org-demote-subtree)
@@ -1044,7 +1050,6 @@ Otherwise, return the path as is."
 :END:
 #+begin_src emacs-lisp
 (use-package evil-org
-  :ensure t
   :after org
   :hook (org-mode . evil-org-mode)
   :config
@@ -1054,7 +1059,7 @@ Otherwise, return the path as is."
 #+end_src
 
 #+RESULTS:
-: [nil 26475 55213 840354 nil elpaca-process-queues nil nil 718000 nil]
+: [nil 27359 2404 780034 nil elpaca-process-queues nil nil 937000 nil]
 
 ** Evil-Lion
 :PROPERTIES:
@@ -1085,6 +1090,9 @@ Otherwise, return the path as is."
   (evil-define-key '(normal visual) 'global (kbd "C-c C-+") 'evil-numbers/inc-at-pt-incremental)
   (evil-define-key '(normal visual) 'global (kbd "C-c C--") 'evil-numbers/dec-at-pt-incremental-))
 #+end_src
+
+#+RESULTS:
+: [nil 27323 61511 126292 nil elpaca-process-queues nil nil 128000 nil]
 
 ** Evil-Textobj-Tree-Sitter
 :PROPERTIES:
@@ -1323,21 +1331,21 @@ Otherwise, return the path as is."
          ("M" . ghostel-project-list-buffers))
   :commands (ghostel-spawn my/ghostel-bottom-window ghostel-other)
   :init
-  (defun ghostel-spawn (&optional args)
-    (let ((name (or args ""))
-          ;; (ghostel-exit-functions '(kill-buffer-and-window))
-          )
-      ;; (message name)
-      (if (not (string-empty-p name))
-          (ghostel name)
-        (ghostel "Ghostel"))))
+  ;; (defun ghostel-spawn (&optional name)
+  ;;   (let ((name (or name ""))
+  ;;         ;; (ghostel-exit-functions '(kill-buffer-and-window))
+  ;;         )
+  ;;     ;; (message name)
+  ;;     (if (not (string-empty-p name))
+  ;;         (ghostel name)
+  ;;       (ghostel "Ghostel"))))
   
   (defun my/ghostel-bottom-window (number)
     (interactive "p")
     (let ((display-buffer-alist '(("^\\*ghostel" . (display-buffer-in-side-window
                                                      (side . bottom)
                                                      (slot . 0)
-                                                     (window-height . 0.35))))))
+                                                     (window-height . 0.4))))))
       (ghostel number)))
   
   (leader-key
