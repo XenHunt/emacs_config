@@ -74,6 +74,7 @@
 #+begin_src emacs-lisp
 (add-to-list 'load-path "~/.emacs.d/lisp/conf-files/base/")
 (require 'base)
+(elpaca-wait)
 #+end_src
 ** Custom
 :PROPERTIES:
@@ -84,6 +85,7 @@
 #+begin_src emacs-lisp
 (add-to-list 'load-path "~/.emacs.d/lisp/conf-files/custom/")
 (require 'beauty)
+(elpaca-wait)
 #+end_src
 ** Fold
 :PROPERTIES:
@@ -94,6 +96,7 @@
 #+begin_src emacs-lisp
 (add-to-list 'load-path "~/.emacs.d/lisp/conf-files/fold/")
 (require 'fold-config)
+(elpaca-wait)
 #+end_src
 ** Other
 :PROPERTIES:
@@ -105,6 +108,7 @@
 #+begin_src emacs-lisp
 (add-to-list 'load-path "~/.emacs.d/lisp/conf-files/other/")
 (require 'other)
+(elpaca-wait)
 #+end_src
 ** Completions
 :PROPERTIES:
@@ -113,6 +117,7 @@
 #+begin_src emacs-lisp
 (add-to-list 'load-path "~/.emacs.d/lisp/conf-files/completion/")
 (require 'completions)
+(elpaca-wait)
 #+end_src
 ** Org
 :PROPERTIES:
@@ -124,6 +129,7 @@
 #+begin_src emacs-lisp
 (add-to-list 'load-path "~/.emacs.d/lisp/conf-files/org/")
 (require 'org-mine)
+(elpaca-wait)
 #+end_src
 ** Programming
 :PROPERTIES:
@@ -135,7 +141,9 @@
 #+begin_src emacs-lisp
 (add-to-list 'load-path "~/.emacs.d/lisp/conf-files/programming/")
 (require 'programming)
+(elpaca-wait)
 (require 'eglot-configuration)
+(elpaca-wait)
 #+end_src
 ** Tex
 :PROPERTIES:
@@ -146,6 +154,7 @@
 #+begin_src emacs-lisp
 (add-to-list 'load-path "~/.emacs.d/lisp/conf-files/tex/")
 (require 'tex-config)
+(elpaca-wait)
 #+end_src
 ** Note-Taking
 :PROPERTIES:
@@ -155,6 +164,7 @@
 #+begin_src emacs-lisp
 (add-to-list 'load-path "~/.emacs.d/lisp/conf-files/note-taking/")
 (require 'note-taking)
+(elpaca-wait)
 #+end_src
 ** AI
 :PROPERTIES:
@@ -166,16 +176,18 @@
 #+begin_src emacs-lisp
 (add-to-list 'load-path "~/.emacs.d/lisp/conf-files/ai/")
 (require 'ai)
+(elpaca-wait)
 #+end_src
 ** USB
 :PROPERTIES:
 :CUSTOM_ID: usb
 :END:
 
-Эта часть подключает =usb-wofi-mount= - скрипт для подключения usb девайсов в мою систему горячиъ клваши в Emacs. Подробнее: [[./usb-mount/README.org][README для usb]], [[https://github.com/luyves/polybar-rofi-usb-mount/blob/master/rofi-usb-mount.sh][Ссылка на оригинальный скрипт (вместо rofi надо замсенить на wofi и все будет работать)]].
+Эта часть подключает =usb-wofi-mount= - скрипт для подключения usb девайсов в мою систему горячиъ клваши в Emacs. Подробнее: [[./usb-mount/README.org][README для usb]], [[https://github.com/luyves/polybar-rofi-usb-mount/blob/master/rofi-usb-mount.sh][Ссылка на оригинальный скрипт (вместо rofi надо заменить на wofi и все будет работать)]].
 #+begin_src emacs-lisp
 (add-to-list 'load-path "~/.emacs.d/lisp/conf-files/usb-mount/")
 (require 'usb-package)
+(elpaca-wait)
 #+end_src
 
 #+RESULTS:
@@ -190,6 +202,7 @@
 #+begin_src emacs-lisp
 (add-to-list 'load-path "~/.emacs.d/lisp/conf-files/telega/")
 (require 'telega-package)
+(elpaca-wait)
 #+end_src
 
 #+RESULTS:
@@ -204,6 +217,7 @@
 #+begin_src emacs-lisp
 (add-to-list 'load-path "~/.emacs.d/lisp/conf-files/irc/")
 (require 'irc-package)
+(elpaca-wait)
 #+end_src
 ** Elfeed
 :PROPERTIES:
@@ -214,6 +228,7 @@
 #+begin_src emacs-lisp
 (add-to-list 'load-path "~/.emacs.d/lisp/conf-files/elfeed/")
 (require 'elfeed-package)
+(elpaca-wait)
 #+end_src
 
 #+RESULTS:
@@ -227,6 +242,7 @@
 #+begin_src emacs-lisp
 (add-to-list 'load-path "~/.emacs.d/lisp/conf-files/db/")
 (require 'db-config)
+(elpaca-wait)
 #+end_src
 * Provide
 :PROPERTIES:

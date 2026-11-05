@@ -84,6 +84,64 @@
                                                (my/emoji-capf)
                                                #'cape-dabbrev)))
   :config
+  
+  ;; eglot-workspace-configuration doesn't change in :custom of use-package
+  (setq-default eglot-workspace-configuration
+        '(:yaml
+          (
+           :validate t
+           :completion t
+           :hover t
+           :schemaStore  (:enable t)
+           :kubernetesCRDStore  (:enable t)
+           :schemas .
+           ((https://json.schemastore.org/github-workflow.json
+             [".github/workflows/*.yml"
+              ".github/workflows/*.yaml"]
+            https://raw.githubusercontent.com/compose-spec/compose-spec/master/schema/compose-spec.json
+             ["docker-compose.yml"
+              "docker-compose.yaml"
+              "docker-compose.*.yml"
+              "docker-compose.*.yaml"]
+            kubernetes
+             ["**/k8s/**/*.yml"
+              "**/k8s/**/*.yaml"
+              "*k8s*.yaml"
+              "*k8s*.yml"
+              "deployment*.yaml"]
+            ))
+           )))
+  (defun my/eglot--contains-8bit-p (s)
+    (catch 'found
+      (dotimes (i (length s))
+        (let ((ch (aref s i)))
+          (when (or (and (>= ch 128) (<= ch 255))
+                    (ignore-errors
+                      (eq (char-charset ch) 'eight-bit)))
+            (throw 'found t))))
+      nil))
+
+  (defun my/eglot--fix-utf8-path (path)
+    "Декодирует unibyte строку (сырые байты) в нормальную UTF-8 строку."
+    (if (and (stringp path)
+             (not (multibyte-string-p path))) ;; Если это сырые байты
+        (condition-case nil
+            (decode-coding-string path 'utf-8) ;; Превращаем их в UTF-8
+          (error path))                        ;; Если не вышло, возвращаем как было
+      path))
+
+  (defun my/eglot--fix-path-to-uri-args (args)
+    (cons (my/eglot--fix-utf8-path (car args)) (cdr args)))
+
+  ;; (when (fboundp 'eglot--uri-to-path)
+  ;;   (advice-add #'eglot--uri-to-path
+  ;;               :filter-return
+  ;;               #'my/eglot--fix-utf8-path))
+
+  ;; (when (fboundp 'eglot--path-to-uri)
+  ;;   (advice-add #'eglot--path-to-uri
+  ;;               :filter-args
+  ;;               #'my/eglot--fix-path-to-uri-args))
   (add-to-list 'eglot-managed-mode-hook #'my/eglot-setup-completions)
   (add-to-list 'eglot-server-programs
                '(qml-ts-mode . ("qmlls" "-E")))

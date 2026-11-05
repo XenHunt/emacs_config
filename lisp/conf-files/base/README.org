@@ -727,6 +727,7 @@ Otherwise, return the path as is."
   (evil-define-key 'normal org-mode-map (kbd "C-M-<down>") 'org-promote-subtree)
   (evil-set-leader nil (kbd "SPC"))
   (evil-define-key 'normal org-mode-map (kbd "C-M-<up>") 'org-demote-subtree)
+  (evil-define-key 'normal elpaca-info-mode-map (kbd "q") 'quit-window)
   (evil-set-undo-system 'undo-redo)
   (evil-mode)
   ;; По-другому расположить evil-insert-plus не получилось, иначе жалуется, что загружен макрос

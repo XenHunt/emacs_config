@@ -139,16 +139,21 @@
 :END:
 #+begin_src emacs-lisp
 (use-package easysession
+  :if nil
   ;; :defer 2
   ;; :commands
   ;; (easysession-switch-to easysession-save-as)
   ;; :general
   ;; (:states 'normal '("TAB"))
   :init
-  (defun my/easysession-no-main-saved ()
-    "Only save the main session."
-    (when (not (string= "main" (easysession-get-current-session-name)))
+  (defcustom my/easysession-predicate-list
+    (list '(not (equal "main" (easysession-get-session-name))))
+    "My list of predicates for `my/easysession-not-main-saved'. It consist of all conditions which must be true to save a session on evaluation")
+  (defun my/easysession-predicate-function ()
+    "Only save the not main session."
+    (when (all #'eval my/easysession-predicate-list)
       t))
+  (setq easysession-save-mode-predicate #'my/easysession-predicate-function)
   :custom
   
   ;; Save every 10 minutes
@@ -168,7 +173,6 @@
   ;; non-nil: Make `easysession-setup' load the session automatically.
   ;; (nil: session is not loaded automatically; the user can load it manually.)
   (easysession-setup-load-session t)
-  (easysession-save-mode-predicate 'my/easysession-no-main-saved)
   :config
   ;; (defun my-setup-easy-session ()
   ;;   ;; (easysession-load-including-geometry)
@@ -194,7 +198,9 @@
   
   
   ;; (setq easysession-save-mode-predicate '#my/easysession-no-main-saved)
-
+  (if (daemonp)
+      (add-hook 'server-after-make-frame-hook #'easysession-load-including-geometry 102)
+    (add-hook 'emacs-startup-hook #'easysession-load-including-geometry 102))
 
   (easysession-setup)
   ;; (switch-to-buffer "*dashboard*")
@@ -373,7 +379,25 @@
   (org-imenu-depth 10)
   (imenu-list-focus-after-activation t)                                    ; Переключение на активированный imenu-list
   :config
-
+  ;; Спасибо Qwen
+  (defun my/imenu-list-fix-subalists (orig-fun entry)
+    "Исправляет ошибку при переходе к родительским элементам imenu (sub-alists)."
+    (if (imenu--subalist-p entry)
+        ;; Это родительский элемент. Пытаемся достать маркер из его текстовых свойств.
+        (let ((marker (get-text-property 0 'org-imenu-marker (car entry))))
+          (if (and marker (markerp marker))
+              ;; Если маркер найден, переходим к нему напрямую
+              (progn
+                (pop-to-buffer imenu-list--displayed-buffer)
+                (goto-char marker)
+                (run-hooks 'imenu-list-after-jump-hook)
+                (imenu-list--show-current-entry))
+            ;; Запасной вариант: просто свернуть/развернуть поддерево
+            (hs-toggle-hiding)))
+      ;; Если это обычный элемент (лист), используем стандартное поведение
+      (funcall orig-fun entry)))
+  
+  (advice-add 'imenu-list--goto-entry :around #'my/imenu-list-fix-subalists)
   (leader-key
     "s RET" '(imenu-list-smart-toggle :wk "Toggle imenu-list")
     ) 
