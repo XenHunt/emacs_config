@@ -33,6 +33,8 @@
   - [[#ligatures][Ligatures]]
   - [[#highlight-indent][Highlight indent]]
   - [[#color-identifiers-mode][Color-Identifiers-Mode]]
+  - [[#olivetti][Olivetti]]
+  - [[#logos][Logos]]
 - [[#provide][Provide]]
 :END:
 * Введение
@@ -551,14 +553,54 @@
 :CUSTOM_ID: color-identifiers-mode
 :END:
 #+begin_src emacs-lisp
-(use-package color-identifiers-mode
-  :hook
-  ((python-ts-mode c-ts-mode bash-ts-mode) . color-identifiers-mode))
+;; (use-package color-identifiers-mode
+;;   :hook
+;;   ((python-ts-mode c-ts-mode bash-ts-mode) . color-identifiers-mode))
 #+end_src
 
 #+RESULTS:
 : [nil 26962 21569 489051 nil elpaca-process-queues nil nil 754000 nil]
 
+
+** Olivetti
+:PROPERTIES:
+:CUSTOM_ID: olivetti
+:END:
+
+#+begin_src emacs-lisp
+(use-package olivetti)
+#+end_src
+
+** Logos
+:PROPERTIES:
+:CUSTOM_ID: logos
+:END:
+
+#+begin_src emacs-lisp
+(use-package logos
+  :after olivetti
+  :custom
+  (logos-outlines-are-pages t)
+  (logos-hide-cursor nil)
+  (logos-hide-mode-line t)
+  (logos-hide-header-line t)
+  (logos-hide-buffer-boundaries t)
+  (logos-hide-fringe t)
+  (logos-variable-pitch nil)
+  (logos-buffer-read-only nil)
+  (logos-scroll-lock nil)
+  (logos-olivetti t)
+  :config
+  (let ((map global-map))
+    (define-key map [remap narrow-to-region] #'logos-narrow-dwim)
+    (define-key map [remap forward-page] #'logos-forward-page-dwim)
+    (define-key map [remap backward-page] #'logos-backward-page-dwim)
+    (define-key map (kbd "<f9>") #'logos-focus-mode))
+  (setq logos-outline-regexp-alist `((emacs-lisp-mode . ,(format "\\(^;;;+ \\|%s\\)" logos-page-delimiter))
+                                     (org-mode . ,(format "\\(^\\*+ +\\|%s\\)" logos-page-delimiter))
+                                     (markdown-mode . ,(format "\\(^\\#+ +\\|%s\\)" logos-page-delimiter))
+                                     (python-mode . ,(format "\\(^\\#\\#\\#+ +\\|%s\\)" logos-page-delimiter)))))
+#+end_src
 * Provide
 :PROPERTIES:
 :CUSTOM_ID: provide
