@@ -630,7 +630,7 @@ DOCS are documentation strings to set."
  :states 'normal
  :keymaps '(python-mode-map python-ts-mode-map)
  :prefix "SPC"
- "m" '(:ignore t :wk "Python commands")
+ "m" '(:ignore t :wk "Mode commands")
  "m i" '(:ignore t :wk "Imports")
  "m i f" '(pyimport-insert-missing :wk "Fix Imports")
  "m i r" '(pyimport-remove-unused :wk "Remove unused")
@@ -763,7 +763,6 @@ DOCS are documentation strings to set."
 #+end_src
 
 #+RESULTS:
-: [nil 26786 4999 666513 nil elpaca-process-queues nil nil 190000 nil]
 *** CSharp-Babel
 :PROPERTIES:
 :CUSTOM_ID: csharp-babel
@@ -1356,13 +1355,27 @@ inside a Jupyter src-block, return nil."
 ;; (use-package cider-eval-sexp-fu)
 (use-package flycheck-clj-kondo)
 (use-package clojure-mode
-  :defer 2)
-(use-package clojure-ts-mode
   :defer 2
-  :after clojure-mode)
-  ;; :preface
+  :config
+  (add-hook 'clojure-mode-hook #'cider-mode)
+  (add-hook 'clojure-mode-hook #'enable-paredit-mode)
+  (add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
+  (add-hook 'clojure-mode-hook #'clj-refactor-mode))
+
+(use-package clojure-ts-mode
+  :after clojure-mode
+  :custom
+  (clojure-ts-semantic-indent-rules '(("->" . ((:block 1)))
+                                      ("->>" . ((:block 1)))))
+  :config
   
-  ;; :hook ((clojure-ts-mode clojure-mode clojurescript-mode) . clojure-lsp-start))
+  (add-hook 'clojure-ts-mode-hook #'cider-mode)
+  (add-hook 'clojure-ts-mode-hook #'enable-paredit-mode)
+  (add-hook 'clojure-ts-mode-hook #'rainbow-delimiters-mode)
+  (add-hook 'clojure-ts-mode-hook #'clj-refactor-mode))
+;; :preface
+
+;; :hook ((clojure-ts-mode clojure-mode clojurescript-mode) . clojure-lsp-start))
 ;; (use-package clj-refactor
 ;;   :init
 ;;   (defun start-clojure-refactor ()

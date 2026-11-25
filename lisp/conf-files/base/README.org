@@ -465,6 +465,8 @@ Otherwise, return the path as is."
     "h e e" '(eval-expression :wk "Expression")
     "h e r" '(eval-region :wk "Region")
     "h e b" '(eval-buffer :wk "Buffer")
+    "h e n" '(eval-defun :wk "Defun")
+    "h e l" '(eval-last-sexp :wk "Last SEXP")
     "h f" '(helpful-function :wk "Describe function")
     "h v" '(helpful-variable :wk "Describe variable")
     "h ." '(helpful-at-point :wk "Help at point")
@@ -521,13 +523,10 @@ Otherwise, return the path as is."
 
   (leader-key
     "t" '(my/toggle-tmenu :wk "Toggle"))
-  
-  (leader-key
-    "C-c" '(:ignore t :wk "Codeium")
-    "C-c t" '(my/toggle-codeium :wk "Toggle Codeium")
-    "C-c c" '(my/strict-complete-codeium :wk "Call Codeium Completion")
-    )
 
+  (leader-key
+    "l" '(org-store-link :wk "Store Org Link"))
+  
   )
 (elpaca-wait)
 #+end_src
@@ -673,7 +672,13 @@ Otherwise, return the path as is."
 :CUSTOM_ID: helpful
 :END:
 #+begin_src emacs-lisp
-(use-package helpful)
+(use-package helpful
+  :config
+  (after! embark
+    (keymap-set embark-symbol-map "h" #'helpful-symbol)
+    (keymap-set embark-variable-map "h" #'helpful-variable)
+    (keymap-set embark-function-map "h" #'helpful-callable)
+    (keymap-set embark-command-map "h" #'helpful-command)))
 #+end_src
 * Expand-region
 :PROPERTIES:
@@ -757,8 +762,11 @@ Otherwise, return the path as is."
   :after evil
   :custom
   (evil-collection-calendar-want-org-bindings t)
+  ;; (evil-collection-setup-minibuffer t)
   :config
   (setq evil-collection-mode-list '(
+                                    agent-shell
+                                    agent-shell-manager
                                     calc
                                     devdocs
                                     (package-menu package)
@@ -792,22 +800,22 @@ Otherwise, return the path as is."
                                     dape
                                     diff-hl
                                     difftastic
- 				                    bookmark
- 				                    bufler
- 				                    compile
- 				                    consult
- 				                    corfu
- 				                    dashboard
- 				                    dired
- 				                    dired-sidebar
- 				                    forge
- 				                    git-timemachine
- 				                    ibuffer
- 				                    indent
- 				                    minibuffer
- 				                    sh-script
- 				                    vertico
- 				                    vterm
+ 				        bookmark
+ 				        bufler
+ 				        compile
+ 				        consult
+ 				        corfu
+ 				        dashboard
+ 				        dired
+ 				        dired-sidebar
+ 				        forge
+ 				        git-timemachine
+ 				        ibuffer
+ 				        indent
+ 				        minibuffer
+ 				        sh-script
+ 				        vertico
+ 				        vterm
                                     (custom cus-edit)
                                     (image image-mode)
                                     (magit magit-submodule)
@@ -1271,7 +1279,7 @@ Otherwise, return the path as is."
    :keymaps '(vterm-mode-map vterm-copy-mode-map)
    :prefix "SPC"
    
-   "m" '(:ignore t :wk "VTerm commands")
+   "m" '(:ignore t :wk "Mode commands")
    "m n" '(vterm-toggle-show :wk "Create new term")
    "m c" '(vterm-copy-mode :wk "Toggle copy mode")
    )
@@ -1330,7 +1338,7 @@ Otherwise, return the path as is."
          :map project-prefix-map
          ("m" . ghostel-project)
          ("M" . ghostel-project-list-buffers))
-  :commands (ghostel-spawn my/ghostel-bottom-window ghostel-other)
+  :commands (ghostel-spawn my/ghostel-bottom-window ghostel-other my/embark-ghostel-dir)
   :init
   ;; (defun ghostel-spawn (&optional name)
   ;;   (let ((name (or name ""))
@@ -1340,13 +1348,28 @@ Otherwise, return the path as is."
   ;;     (if (not (string-empty-p name))
   ;;         (ghostel name)
   ;;       (ghostel "Ghostel"))))
-  
+  (defun my/embark-ghostel-dir (target)
+  "Open a Ghostel terminal in the directory of TARGET (file, directory, or library)."
+  (let* ((resolved (cond
+                    ((and (stringp target) (file-exists-p target))
+                     target)
+                    ((and (stringp target) (locate-library (format "%s" target)))
+                     (locate-library (format "%s" target)))
+                    (t
+                     (user-error "Cannot resolve directory for target: %s" target))))
+         (default-directory (if (file-directory-p resolved)
+                                (file-name-as-directory resolved)
+                              (file-name-directory resolved))))
+    (ghostel)))
+  (after! embark
+    (keymap-set embark-file-map "G" #'my/embark-ghostel-dir)
+    (keymap-set embark-library-map "G" #'my/embark-ghostel-dir))
   (defun my/ghostel-bottom-window (number)
     (interactive "p")
     (let ((display-buffer-alist '(("^\\*ghostel" . (display-buffer-in-side-window
-                                                     (side . bottom)
-                                                     (slot . 0)
-                                                     (window-height . 0.4))))))
+                                                    (side . bottom)
+                                                    (slot . 0)
+                                                    (window-height . 0.4))))))
       (ghostel number)))
   
   (leader-key
@@ -1366,12 +1389,13 @@ Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
     "Send `C-k' to ghostel.
 Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
     (interactive)
-    (ghostel-send-key "d" "ctrl")
+    ;; (ghostel-send-key "d" "ctrl")
     (evil-quit))
   
   (add-to-list 'project-switch-commands '(ghostel-project "Ghostel") t)
   (add-to-list 'project-switch-commands '(ghostel-project-list-buffers "Ghostel buffers") t)
-  (add-to-list 'ghostel-eval-cmds '("magit-status-setup-buffer" magit-status-setup-buffer)))
+  (add-to-list 'ghostel-eval-cmds '("magit-status-setup-buffer" magit-status-setup-buffer))
+  )
 
 (use-package evil-ghostel
   :after (ghostel evil)
@@ -1559,8 +1583,17 @@ Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
 :END:
 #+begin_src emacs-lisp
 (use-package dirvish
-  :custom
-  (dirvish-hide-details nil)
+  :after dired
+  ;; :custom
+  ;; (dirvish-hide-details nil)
+  ;; (dirvish-preview-dispatchers '(vc-state video image gif audio epub archive font pdf))
+  :general-config
+  (:keymaps 'dirvish-mode-map :states 'normal
+            "q" #'dirvish-quit
+            "?" #'dirvish-dispatch
+            "p" #'dirvish-yank
+            "F" #'dirvish-layout-toggle
+            "TAB" #'dirvish-subtree-toggle)
   :init
   (dirvish-override-dired-mode))
 #+end_src

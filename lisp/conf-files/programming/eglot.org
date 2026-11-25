@@ -87,30 +87,30 @@
   
   ;; eglot-workspace-configuration doesn't change in :custom of use-package
   (setq-default eglot-workspace-configuration
-        '(:yaml
-          (
-           :validate t
-           :completion t
-           :hover t
-           :schemaStore  (:enable t)
-           :kubernetesCRDStore  (:enable t)
-           :schemas .
-           ((https://json.schemastore.org/github-workflow.json
-             [".github/workflows/*.yml"
-              ".github/workflows/*.yaml"]
-            https://raw.githubusercontent.com/compose-spec/compose-spec/master/schema/compose-spec.json
-             ["docker-compose.yml"
-              "docker-compose.yaml"
-              "docker-compose.*.yml"
-              "docker-compose.*.yaml"]
-            kubernetes
-             ["**/k8s/**/*.yml"
-              "**/k8s/**/*.yaml"
-              "*k8s*.yaml"
-              "*k8s*.yml"
-              "deployment*.yaml"]
-            ))
-           )))
+                '(:yaml
+                  (
+                   :validate t
+                   :completion t
+                   :hover t
+                   :schemaStore  (:enable t)
+                   :kubernetesCRDStore  (:enable t)
+                   :schemas .
+                   ((https://json.schemastore.org/github-workflow.json
+                     [".github/workflows/*.yml"
+                      ".github/workflows/*.yaml"]
+                     https://raw.githubusercontent.com/compose-spec/compose-spec/master/schema/compose-spec.json
+                     ["docker-compose.yml"
+                      "docker-compose.yaml"
+                      "docker-compose.*.yml"
+                      "docker-compose.*.yaml"]
+                     kubernetes
+                     ["**/k8s/**/*.yml"
+                      "**/k8s/**/*.yaml"
+                      "*k8s*.yaml"
+                      "*k8s*.yml"
+                      "deployment*.yaml"]
+                     ))
+                   )))
   (defun my/eglot--contains-8bit-p (s)
     (catch 'found
       (dotimes (i (length s))

@@ -12,6 +12,7 @@
 - [[#введение][Введение]]
 - [[#fast-loading][Fast-Loading]]
 - [[#org-mode][Org-Mode]]
+  - [[#agenda][Agenda]]
   - [[#ret---open-link-or-exec-src-block][RET - open link or exec src block]]
   - [[#org-babel][Org-Babel]]
   - [[#org-appear][Org-Appear]]
@@ -106,6 +107,18 @@
 
 #+RESULTS:
 : t
+
+** Agenda
+:PROPERTIES:
+:CUSTOM_ID: agenda
+:END:
+#+begin_src emacs-lisp
+(use-package org-agenda
+  :ensure nil
+  :after org
+  :custom
+  (org-agenda-window-setup 'current-window))
+#+end_src
 
 ** RET - open link or exec src block
 :PROPERTIES:
@@ -269,6 +282,7 @@
   :custom
   ;; (org-modern-hide-stars " ")		; adds extra indentation
   ;; (org-modern-table nil)
+  (org-modern-progress 5)
   (org-modern-list 
    '(;; (?- . "-")
      (?* . "•")
@@ -561,6 +575,7 @@ org файл, где находится tangled src blocks. К счастью, �
    :keymaps 'org-mode-map
    :prefix "]"
    "h" 'org-next-visible-heading
+   "]" 'org-forward-heading-same-level
    )
 
   (general-define-key
@@ -568,6 +583,7 @@ org файл, где находится tangled src blocks. К счастью, �
    :keymaps 'org-mode-map
    :prefix "["
    "h" 'org-previous-visible-heading
+   "[" 'org-backward-heading-same-level
    )
 
   (general-define-key
@@ -580,7 +596,6 @@ org файл, где находится tangled src blocks. К счастью, �
    "m *" 'org-ctrl-c-star
    "m +" 'org-ctrl-c-minus
    "m ," 'org-switchb
-   "m ." 'org-goto
    "m @" 'org-cite-insert
    "m ." 'consult-org-heading
    "m /" 'consult-org-agenda
@@ -591,7 +606,6 @@ org файл, где находится tangled src blocks. К счастью, �
    "m h" 'org-toggle-heading
    "m i" 'org-toggle-item
    "m I" 'org-id-get-create
-   "m k" 'org-babel-remove-result
    "m n" 'org-store-link
    "m o" 'org-set-property
    "m q" 'org-set-tags-command
@@ -611,19 +625,21 @@ org файл, где находится tangled src blocks. К счастью, �
    "m a u" 'org-attach-url
    "m a s" 'org-attach-set-directory
    "m a S" 'org-attach-sync
-   "m a c" 'org-download-screenshot
-   "m a p" 'org-download-clipboard
-   "m a P" 'org-download-yank
+
+   ;; Download
+   "m D c" 'org-download-screenshot
+   "m D p" 'org-download-clipboard
+   "m D y" 'org-download-yank
 
    ;; Transclusion
-   "m a t t" 'org-transclusion-make-from-link
-   "m a t a" 'org-transclusion-add
-   "m a t A" 'org-transclusion-add-all
-   "m a t r" 'org-transclusion-remove
-   "m a t d" 'org-transclusion-detach
-   "m a t l" 'org-transclusion-live-sync-start
-   "m a t L" 'org-transclusion-live-sync-exit
-   "m a t o" 'org-transclusion-open-source
+   "m T t" 'org-transclusion-make-from-link
+   "m T a" 'org-transclusion-add
+   "m T A" 'org-transclusion-add-all
+   "m T r" 'org-transclusion-remove
+   "m T d" 'org-transclusion-detach
+   "m T l" 'org-transclusion-live-sync-start
+   "m T L" 'org-transclusion-live-sync-exit
+   "m T o" 'org-transclusion-open-source
    
    ;; Tables
    "m b -" 'org-table-insert-hline
@@ -635,7 +651,9 @@ org файл, где находится tangled src blocks. К счастью, �
    "m b s" 'org-table-sort-lines
    "m b r" 'org-table-recalculate
    "m b R" 'org-table-recalculate-buffer-tables
-
+   "m b I" 'org-table-import
+   "m b E" 'org-table-export
+   "m b C" 'org-table-convert-region
    ;; Wide tables workflow
    "m b m" 'org-mark-element
    "m b w" 'org-table-wrap-region
@@ -651,6 +669,15 @@ org файл, где находится tangled src blocks. К счастью, �
    "m b t f" 'org-table-toggle-formula-debugger
    "m b t o" 'org-table-toggle-coordinate-overlays
 
+   ;; Babel
+   "m B x x" 'org-babel-execute-maybe
+   "m B x b" 'org-babel-execute-buffer
+   "m B x s" 'org-babel-execute-subtree
+   "m B t"   'org-babel-tangle
+   "m B T"   'org-babel-tangle-file
+   "m B r"   'org-babel-remove-result
+   "m B d"   'org-babel-demarcate-block
+   
    ;; Clock
    "m c c" 'org-clock-cancel
    "m c d" 'org-clock-mark-default-task
@@ -712,25 +739,27 @@ org файл, где находится tangled src blocks. К счастью, �
    "m s k" 'org-move-subtree-up
    "m s l" 'org-demote-subtree
    "m s n" 'org-narrow-to-subtree
+   "m s p" 'org-paste-subtree
    "m s r" 'org-refile
+   "m s y" 'org-copy-subtree
    "m s s" 'org-sparse-tree
    "m s A" 'org-archive-subtree-default
    "m s N" 'widen
    "m s S" 'org-sort
    
    ;; Chatu
-   "m a c" 'consult-chatu-new
+   "m a C" 'consult-chatu-new
    )
 
   (leader-key
-    "n" '(my/org-roam-tmenu :wk "Note menu"))
+    "n" '(my/org-roam-tmenu :wk "Note menu")))
 
 
   ;; (general-def 'normal 'override "C-x C-x" """)
  #+end_src
 *** Agenda
 :PROPERTIES:
-:CUSTOM_ID: agenda
+:CUSTOM_ID: agenda-0
 :END:
 #+begin_src emacs-lisp
 (after! org-agenda
@@ -759,7 +788,7 @@ org файл, где находится tangled src blocks. К счастью, �
     "p d" 'org-agenda-priority-down
     "p p" 'org-agenda-priority
     "p u" 'org-agenda-priority-up
-    )))
+    ))
 #+end_src
 
 * Provide

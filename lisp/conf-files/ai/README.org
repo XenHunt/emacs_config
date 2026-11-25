@@ -24,6 +24,7 @@
 - [[#aidermacs][Aidermacs]]
 - [[#context-navigator][Context-Navigator]]
 - [[#cariage][Cariage]]
+- [[#agent-shell][Agent-Shell]]
 - [[#provide][Provide]]
 :END:
 * Введение
@@ -326,7 +327,7 @@ Your role is to optimize and restructure prompts for other AI models to enhance 
    6. *Final Recommendation:*  
    - Summarize the most suitable algorithm(s) based on the problem's requirements.  
    - Justify the choice with reasoning tied to the analysis."))))
-    (mapc (lambda (x) (add-hook 'gptel-directives x)) directives))
+    (mapc (lambda (x) (add-to-list 'gptel-directives x)) directives))
   (leader-key
     "e" '(:ignore t :wk "LLM")
     "e g" '(:ignore t :wk "Gptel")
@@ -335,7 +336,10 @@ Your role is to optimize and restructure prompts for other AI models to enhance 
     "e gf" '(gptel-add-file :wk "Add file")
     "e gm" '(gptel-menu :wk "Confuguration menu")
     "e gs" '(gptel-send :wk "Send")
-    "e ga" '(gptel-abort :wk "Abort")))
+    "e ga" '(gptel-abort :wk "Abort"))
+
+  (after! embark
+    (keymap-set embark-file-map "a" #'gptel-add-file)))
 
 #+end_src
 
@@ -639,6 +643,80 @@ TAG should be a string key in each model's assoc list, and NAME is the value ass
 
 #+RESULTS:
 : [nil 27010 17134 913354 nil elpaca-process-queues nil nil 411000 nil]
+
+* Agent-Shell
+:PROPERTIES:
+:CUSTOM_ID: agent-shell
+:END:
+#+begin_src emacs-lisp
+(use-package agent-shell
+  :config
+  ;; Evil state-specific RET behavior: insert mode = newline, normal mode = send
+  (evil-define-key 'insert agent-shell-mode-map (kbd "RET") #'newline)
+  (evil-define-key 'normal agent-shell-mode-map (kbd "RET") #'comint-send-input)
+
+  ;; Configure *agent-shell-diff* buffers to start in Emacs state
+  (add-hook 'diff-mode-hook
+	        (lambda ()
+	          (when (string-match-p "\\*agent-shell-diff\\*" (buffer-name))
+		        (evil-emacs-state)))))
+
+(use-package agent-shell-attention
+  :after agent-shell
+  :config
+  (agent-shell-attention-mode 1))
+
+(use-package agent-shell-math-renderer
+  :ensure t
+  :hook (agent-shell-mode . agent-shell-math-renderer-mode)
+  ;; Optional: re-tint equations the instant you switch themes, and
+  ;; rescale them when the frame font changes.  See "Usage" below; omit
+  ;; if you never change themes or font sizes at runtime.
+  :config
+  (add-hook 'enable-theme-functions
+            #'agent-shell-math-renderer-on-appearance-change)
+  (add-hook 'after-setting-font-hook
+            #'agent-shell-math-renderer-on-appearance-change))
+
+(use-package agent-shell-notifications
+  :ensure (agent-shell-notifications
+             :type git
+             :host github
+             :repo "zackattackz/agent-shell-notifications")
+
+  :hook
+  ;; Enable notifications in each agent-shell buffer
+  (agent-shell-mode . agent-shell-notifications-mode)
+  ;; If using agent-shell-viewport, also add:
+  ;; (agent-shell-viewport-edit-mode . agent-shell-notifications-viewport-edit-mode)
+  ;; (agent-shell-viewport-view-mode . agent-shell-notifications-viewport-view-mode)
+
+  :config
+  ;; Notification display timeout in seconds (0 = never expire (the default), -1 = backend default)
+  ;; (setq agent-shell-notifications-timeout 5)
+
+  ;; Seconds to wait before notifying when the shell is already visible (default: 10)
+  ;; (setq agent-shell-notifications-idle-timeout 30)
+
+  ;; Advanced filtering: suppress notifications during certain hours
+  ;; (add-hook 'agent-shell-notifications-inhibit-functions
+  ;;           (lambda (_type _event)
+  ;;             (let ((hour (decoded-time-hour (decode-time))))
+  ;;               (and (>= hour 9) (< hour 17)))))
+
+  ;; Use the knockknock backend instead of the default libnotify
+  ;; (setq agent-shell-notifications-provider 'agent-shell-notifications-knockknock)
+  )
+(use-package ob-agent-shell
+  :ensure t
+  :after (agent-shell org)
+  :config
+  (add-to-list 'org-babel-load-languages '(agent-shell . t))
+  (org-babel-do-load-languages 'org-babel-load-languages
+                               org-babel-load-languages)
+  ;; Avoid org fontification error for agent-shell blocks
+  (add-to-list 'org-src-lang-modes '("agent-shell" . text)))
+#+end_src
 
 * Provide
 :PROPERTIES:

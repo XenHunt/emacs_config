@@ -66,6 +66,9 @@
 ;; Don't install anything. Defer execution of BODY
 ;;(elpaca nil (message "deferred"))
 
+(add-hook 'elpaca-manager-mode-hook (lambda () (setq tabulated-list-sort-key '("Date" nil))
+                                      (elpaca-ui-search-refresh)))
+
 (provide 'elpaca-setup)
 
 ;;; elpaca-setup.el ends here

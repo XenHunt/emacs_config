@@ -475,7 +475,19 @@
 :CUSTOM_ID: daemons
 :END:
 #+begin_src emacs-lisp
-(use-package daemons)
+(use-package daemons
+  :config
+  (defun my/daemons-ask-advice (prompt)
+    (let ((prompt (or prompt
+                      "Do you really want to do this with %s?")))
+      (lambda (orig-fun &rest args)
+        (let ((daemon (or args
+                          (daemons--daemon-at-point))))
+          (when (yes-or-no-p (format prompt
+                                     daemon))
+            (orig-fun daemon))))))
+  (advice-add #'daemons-stop-at-point :around (my/daemons-ask-advice "Do you really want to stop %s?"))
+  (advice-add #'daemons-reload-at-point :around (my/daemons-ask-advice "Do you really want to reload %s?")))
 #+end_src
 
 * Command-log-mode
